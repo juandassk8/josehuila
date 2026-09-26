@@ -95,14 +95,32 @@ export function parseWebResponse(body, pageId) {
   return batches;
 }
 
+// Proxy de salida estable y opcional. Las credenciales van en variables aparte,
+// nunca en la URL, para que no aparezcan en logs. Una configuración inválida
+// detiene la corrida en lugar de salir en silencio por la IP del servidor.
+export function proxyFromEnv(env = process.env) {
+  const raw = env.ADLIB_PROXY_SERVER?.trim();
+  if (!raw) return undefined;
+  let url;
+  try { url = new URL(raw); } catch { throw new Error('ADLIB_PROXY_INVALID'); }
+  if (!['http:', 'https:', 'socks5:'].includes(url.protocol) || !url.hostname || !url.port || url.username || url.password
+    || url.pathname.replace(/\/$/, '') || url.search || url.hash) throw new Error('ADLIB_PROXY_INVALID');
+  const username = env.ADLIB_PROXY_USERNAME?.trim(), password = env.ADLIB_PROXY_PASSWORD;
+  if (!!username !== !!password) throw new Error('ADLIB_PROXY_INVALID');
+  return { server: `${url.protocol}//${url.host}`, ...(username ? { username, password } : {}) };
+}
+
 export class MetaWebCollector {
-  constructor({ browserType = chromium, maxPages = 500, maxDurationMs = 15 * 60_000, idleTimeoutMs = 30_000 } = {}) {
-    Object.assign(this, { browserType, maxPages, maxDurationMs, idleTimeoutMs });
+  constructor({ browserType = chromium, maxPages = 500, maxDurationMs = 15 * 60_000, idleTimeoutMs = 30_000, proxy = proxyFromEnv() } = {}) {
+    Object.assign(this, { browserType, maxPages, maxDurationMs, idleTimeoutMs, proxy });
   }
 
   async *pages(brand) {
     if (!/^\d{5,25}$/.test(brand.meta_page_id) || !/^(ALL|[A-Z]{2})$/.test(brand.country || 'ALL')) throw new Error('META_INVALID_BRAND');
-    const browser = await this.browserType.launch(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {});
+    const browser = await this.browserType.launch({
+      ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}),
+      ...(this.proxy ? { proxy: this.proxy } : {}),
+    });
     const pending = new Set();
     const batches = [];
     const seen = new Set();

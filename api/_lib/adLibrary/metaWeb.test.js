@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mediaSource, normalizeMetaWebAd, parseWebResponse } from './metaWeb.js';
+import { MetaWebCollector, mediaSource, normalizeMetaWebAd, parseWebResponse, proxyFromEnv } from './metaWeb.js';
 
 const raw = () => ({ ad_archive_id: '2348098406020535', page_id: '646751588512715', is_active: true, start_date: 1789801200, end_date: 1790319600,
   snapshot: { page_name: 'Bonapet', body: { text: 'Copy de prueba' }, title: 'Título', cta_text: 'Shop now', link_url: 'https://www.bonapet.shop/products/test',
@@ -43,5 +43,34 @@ describe('public Meta page normalization', () => {
     expect(() => parseWebResponse(JSON.stringify({ errors: [{ code: 1675004, message: 'Rate limit exceeded' }] }), raw().page_id)).toThrow('META_RATE_LIMITED');
     expect(() => parseWebResponse('for (;;);' + JSON.stringify({ error: 1675004 }), raw().page_id)).toThrow('META_RATE_LIMITED');
     expect(() => parseWebResponse(JSON.stringify({ errors: [{ message: 'Unknown failure' }] }), raw().page_id)).toThrow('META_SOURCE_ERROR');
+  });
+});
+
+describe('optional egress proxy', () => {
+  it('uses the server IP when no proxy is configured', () => {
+    expect(proxyFromEnv({})).toBeUndefined();
+    expect(proxyFromEnv({ ADLIB_PROXY_SERVER: '  ' })).toBeUndefined();
+  });
+  it('keeps credentials out of the server URL', () => {
+    expect(proxyFromEnv({ ADLIB_PROXY_SERVER: 'http://proxy.example:8080', ADLIB_PROXY_USERNAME: 'user', ADLIB_PROXY_PASSWORD: 'secret' }))
+      .toEqual({ server: 'http://proxy.example:8080', username: 'user', password: 'secret' });
+    expect(proxyFromEnv({ ADLIB_PROXY_SERVER: 'socks5://10.0.0.2:1080/' })).toEqual({ server: 'socks5://10.0.0.2:1080' });
+  });
+  it('fails closed on invalid configuration instead of silently using the server IP', () => {
+    for (const env of [
+      { ADLIB_PROXY_SERVER: 'proxy.example:8080' },
+      { ADLIB_PROXY_SERVER: 'ftp://proxy.example:21' },
+      { ADLIB_PROXY_SERVER: 'http://proxy.example' },
+      { ADLIB_PROXY_SERVER: 'http://user:secret@proxy.example:8080' },
+      { ADLIB_PROXY_SERVER: 'http://proxy.example:8080/path?x=1' },
+      { ADLIB_PROXY_SERVER: 'http://proxy.example:8080', ADLIB_PROXY_USERNAME: 'user' },
+    ]) expect(() => proxyFromEnv(env)).toThrow('ADLIB_PROXY_INVALID');
+  });
+  it('launches the browser through the configured proxy', async () => {
+    let options;
+    const browserType = { launch: async value => { options = value; throw new Error('STOP'); } };
+    const collector = new MetaWebCollector({ browserType, proxy: { server: 'http://proxy.example:8080' } });
+    await expect(collector.pages({ meta_page_id: '646751588512715' }).next()).rejects.toThrow('STOP');
+    expect(options.proxy).toEqual({ server: 'http://proxy.example:8080' });
   });
 });

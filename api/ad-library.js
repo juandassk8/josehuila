@@ -146,7 +146,7 @@ async function follow(companyId, userId, body) {
   if (brand.last_complete_scan_at && Date.parse(brand.next_crawl_at) > Date.now())
     return { brand, queued: false, cached: true, collection: await brandCollection(companyId, brand.id, brand) };
   let queued = true;
-  try { await enqueueBrand(brand.id); } catch (error) { queued = false; console.error('[ad-library] queue unavailable', error.name); }
+  try { await enqueueBrand(brand.id, { reason: brand.last_complete_scan_at ? 'manual' : 'first_import' }); } catch (error) { queued = false; console.error('[ad-library] queue unavailable', error.name); }
   return { brand, queued, collection: await brandCollection(companyId, brand.id, brand) };
 }
 
@@ -162,7 +162,7 @@ async function sync(companyId, brandId) {
   const brand = brands.find(item => item.id === brandId);
   if (!brand) fail(403, 'Marca no seguida por esta empresa');
   if (brand.last_crawl_at && Date.now() - Date.parse(brand.last_crawl_at) < 10 * 60_000) fail(429, 'Espera diez minutos antes de sincronizar otra vez');
-  await enqueueBrand(brand.id);
+  await enqueueBrand(brand.id, { reason: 'manual' });
   return { queued: true, collection: await brandCollection(companyId, brand.id, brand) };
 }
 
