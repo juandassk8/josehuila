@@ -28,7 +28,7 @@ todos con medios archivados. Estas corridas reemplazan las primeras observacione
 parciales y la captura importada de Bonapet como evidencia de acceso en vivo.
 No demuestran cobertura permanente de Meta ni capacidad para cualquier catálogo.
 
-Release de esta entrega: `/opt/inforce/releases/20260926-proxy-failover-lite`.
+Release de esta entrega: `/opt/inforce/releases/20260926-proxy-recovery`.
 Integra los ocho archivos de `claude/scraper` (`6303344`), MCP, el dominio y la
 recuperación automática mediante el proxy de respaldo. `SOURCE_COMMIT` y
 `SOURCE_MANIFEST.json` identifican sus archivos versionados. La configuración
@@ -50,6 +50,9 @@ La versión inicial de recuperación volvió a consultar ProdentaCol completa en
 8 segundos. La prueba de Lummia detectó un cierre de Chrome por falta de memoria
 (`oom_kill` en el contenedor de 1.5 GiB); se omiten las imágenes de vista previa
 en el navegador. El worker de medios sigue descargando los originales por separado.
+Omitir imágenes permitió avanzar hasta 476 anuncios, pero no bastó para Lummia.
+El VPS dispone de 12 GB; se amplía el máximo del collector a 4 GB mediante
+`ADLIB_WORKER_MEMORY_LIMIT=4g`, conservando los límites de los otros contenedores.
 
 ## Creación de imágenes: prueba MCP
 

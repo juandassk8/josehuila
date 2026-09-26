@@ -72,6 +72,14 @@ cuando hubo cambios y 24 horas cuando no los hubo. Esa frecuencia es distinta
 de la pausa por limitación. Los reintentos ordinarios de errores de conexión
 mantienen los tres intentos y el backoff existente de BullMQ.
 
+El límite de memoria del collector se configura en `deploy/ad-library/.env`
+(el archivo que Compose lee con `--env-file`), mediante
+`ADLIB_WORKER_MEMORY_LIMIT`; por defecto sigue en `1536m`. En este VPS de 12 GB
+se establece `4g` tras confirmar más de 10 GB disponibles y cierres `oom_kill`
+durante Lummia incluso sin imágenes de vista previa. Esto limita memoria máxima,
+no reserva 4 GB permanentemente. Comprobar memoria disponible antes de aumentar
+este valor en otra instalación; no cambia los límites de medios o Redis.
+
 Prueba de aceptación aislada, sin Meta, base de datos, Redis ni credenciales:
 
 ```sh

@@ -28,7 +28,7 @@ services:
       ADLIB_REDIS_URL: redis://127.0.0.1:6379
       NODE_ENV: production
     restart: unless-stopped
-    mem_limit: 1536m
+    mem_limit: ${ADLIB_WORKER_MEMORY_LIMIT:-1536m}
     shm_size: 256m
     init: true
     depends_on:

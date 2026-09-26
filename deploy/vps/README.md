@@ -81,7 +81,7 @@ Solo continuar con el inicio si la migración termina correctamente. No ejecutar
 ## Operación
 
 Código activo: `/opt/inforce/current`. El 26/09/2026 apunta a
-`/opt/inforce/releases/20260926-proxy-failover-lite`, que integra MCP y el scraper
+`/opt/inforce/releases/20260926-proxy-recovery`, que integra MCP y el scraper
 de Claude (`6303344`) con recuperación mediante el proxy de respaldo. Consultar
 el enlace, `SOURCE_COMMIT`, el manifiesto y la bitácora antes de cada despliegue.
 
