@@ -77,7 +77,7 @@ describe("quien manda ve todo", () => {
 describe("alguien sin ningún rol", () => {
   it("al menos ve Resumen, Content Pipeline, Tareas y Equipo, no una pantalla vacía", () => {
     const nav = allowedNavForMember({ name: "Nuevo", roles: [] });
-    expect(nav).toEqual(["home", "pipeline", "adlibrary", "tareas", "equipo"]);
+    expect(nav).toEqual(["home", "pipeline", "adlibrary", "crear-imagenes", "tareas", "equipo"]);
   });
 
   // La ficha del propio cliente suele quedar sin roles, y así entraba al

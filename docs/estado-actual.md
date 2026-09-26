@@ -28,9 +28,26 @@ pero Meta limitó la segunda página. La corrida es parcial y no prueba que se
 pueda importar una marca completa desde el VPS. Bonapet tenía 71 anuncios de una
 captura previa importada. Prodental todavía no tenía una importación completada.
 
-Último release registrado: `/opt/inforce/releases/20260926-ad-import-status`.
+Release de esta publicación: `/opt/inforce/releases/20260926-mcp-published`.
+Conserva las dependencias de `/opt/inforce/releases/20260926-creative-mcp`;
+no borrar esa release mientras el enlace `node_modules` siga usándola.
 La imagen del crawler se fijó en `inforce-ad-library:chrome-stable`. Los videos
 y las imágenes van a R2 privado, deduplicados por SHA-256. No se versionan aquí.
+
+## Creación de imágenes: prueba MCP
+
+Creativos → Crear imágenes permite preparar la conexión de cada usuario de
+ChatGPT a una empresa y consultar las imágenes recibidas. Incluye OAuth,
+referencias guardadas, productos y recepción de archivos en R2 privado.
+El conector está activo; falta probar la generación nativa y la devolución del
+archivo con una cuenta Pro real. Inforce no invoca la suscripción como una API.
+Ver [alcance, pruebas y conexión](creative-images-mcp.md).
+
+La entrega MCP forma parte de esta base de código. La versión exacta instalada
+se registra en `/opt/inforce/current/SOURCE_COMMIT`. Actualizar las ramas de
+trabajo desde `origin/main` y consultar la bitácora compartida antes de desplegar
+trabajo de otro agente. La entrega móvil de Claude se mantiene en su propia rama
+hasta corregir y revisar el hallazgo pendiente.
 
 ## Límites y pendientes
 

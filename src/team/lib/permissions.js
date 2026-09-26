@@ -71,6 +71,7 @@ export const OVERRIDABLE_VIEWS = [
   { key: "banco",     label: "Banco creativos" },
   { key: "bandeja",   label: "Bandeja" },
   { key: "adlibrary", label: "Bibliotecas de anuncios" },
+  { key: "crear-imagenes", label: "Crear imágenes" },
   { key: "feedback",  label: "Feedback" },
   { key: "planimpl",  label: "Plan de implementación" },
   { key: "clientAccess", label: "Crear accesos de cliente" },
@@ -112,6 +113,7 @@ export function canAccessViewByRole(member, view) {
   // Bandeja de referentes: mismo alcance que el Banco (staging previo).
   if (view === "bandeja")   return role === "admin" || role === "member" || role === "editor";
   if (view === "adlibrary") return role === "admin" || role === "member" || role === "editor";
+  if (view === "crear-imagenes") return role === "admin" || role === "member" || role === "editor";
 
   return false;
 }

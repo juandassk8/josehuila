@@ -35,6 +35,7 @@ import { FeedbackPage } from "./feedback/FeedbackPage.jsx";
 import { ConceptBankPage } from "./concept_bank/ConceptBankPage.jsx";
 import { BandejaPage } from "./inbox/BandejaPage.jsx";
 import { AdLibraryPage } from "./ad_library/AdLibraryPage.jsx";
+import { CreativeImagesPage } from "./creative_images/CreativeImagesPage.jsx";
 import { AdminPlanPage } from "./planimpl/AdminPlanPage.jsx";
 import { lazy, Suspense } from "react";
 const OnboardingEquipoPage = lazy(() => import("../estandar/OnboardingEquipoPage.jsx").then((m) => ({ default: m.OnboardingEquipoPage })));
@@ -409,6 +410,8 @@ function TeamWorkspace({ member, signOut, refreshMember }) {
     content = <BandejaPage currentMember={member} companies={companies} />;
   } else if (allowedView === "adlibrary") {
     content = <AdLibraryPage currentMember={member} companies={companies} />;
+  } else if (allowedView === "crear-imagenes") {
+    content = <CreativeImagesPage />;
   } else if (allowedView === "finance") {
     content = (
       <Suspense fallback={<div style={{ padding: 60, color: "#888", fontSize: 12 }}>Cargando Finanzas…</div>}>

@@ -1,0 +1,13 @@
+.creative-images {
+  --ci-ink: var(--ink, oklch(94% .01 250));
+  --ci-muted: var(--ink-2, oklch(76% .03 250));
+  --ci-surface: var(--surface-solid, oklch(17% .01 250));
+  --ci-bg: var(--bg, oklch(10% .01 250));
+  --ci-line: var(--line, oklch(44% .03 250));
+  --ci-accent: oklch(52% .18 260);
+  --ci-on-accent: oklch(100% 0 0);
+  --ci-error: var(--brand, oklch(65% .2 25));
+  --ci-space-sm: 8px; --ci-space-md: 16px; --ci-space-lg: 24px; --ci-space-xl: 32px;
+  --ci-radius: 12px;
+  --ci-font: 'Plus Jakarta Sans', system-ui, sans-serif;
+}

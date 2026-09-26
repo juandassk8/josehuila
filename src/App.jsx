@@ -39,6 +39,9 @@ const ControlCreativos = lazy(() =>
 const AdLibraryPage = lazy(() =>
   import("./team/ad_library/AdLibraryPage.jsx").then((m) => ({ default: m.AdLibraryPage }))
 );
+const CreativeImagesPage = lazy(() =>
+  import("./team/creative_images/CreativeImagesPage.jsx").then((m) => ({ default: m.CreativeImagesPage }))
+);
 // Hoja de rodaje pública (`/brief/<token>`). Lazy a propósito: la abre gente sin
 // cuenta, y no tiene por qué descargar el portal entero para leer un guion.
 const BriefPublicPage = lazy(() =>
@@ -6178,6 +6181,7 @@ export default function InforceReports() {
     if (sub === "pipeline") return { prefix, slug, action: "pipeline" };
     if (sub === "control") return { prefix, slug, action: "control" };
     if (sub === "bibliotecas-anuncios") return { prefix, slug, action: "adlibrary" };
+    if (sub === "crear-imagenes") return { prefix, slug, action: "crear-imagenes" };
     // Sin esto ningún link puede apuntar a Tareas: el de las notificaciones que
     // arma el Content Pipeline aterrizaba en Resumen.
     if (sub === "tareas") return { prefix, slug, action: "tareas" };
@@ -6200,6 +6204,7 @@ export default function InforceReports() {
     if (v === "pipeline" && slug) return `${prefix}/${slug}/pipeline`;
     if (v === "control" && slug) return `${prefix}/${slug}/control`;
     if (v === "adlibrary" && slug) return `${prefix}/${slug}/bibliotecas-anuncios`;
+    if (v === "crear-imagenes" && slug) return `${prefix}/${slug}/crear-imagenes`;
     if (v === "tareas" && slug) return `${prefix}/${slug}/tareas`;
     return prefix === "/admin" ? "/admin" : "/";
   };
@@ -6497,6 +6502,7 @@ export default function InforceReports() {
       else if (action === "pipeline") setView("pipeline");
       else if (action === "control") setView("control");
       else if (action === "adlibrary") setView("adlibrary");
+      else if (action === "crear-imagenes") setView("crear-imagenes");
       else if (action === "tareas") setView("tareas");
       else setView("company");
     };
@@ -6533,7 +6539,7 @@ export default function InforceReports() {
   useEffect(() => {
     if (!currentMember) return;
     // `plan` faltaba: el menú lo ocultaba pero la URL entraba igual.
-    const guarded = ["reportes","pipeline","despliegue","adlibrary","control","plan","tareas","agenda","equipo","papelera"];
+    const guarded = ["reportes","pipeline","despliegue","adlibrary","crear-imagenes","control","plan","tareas","agenda","equipo","papelera"];
     if (guarded.includes(view) && !memberCanAccess(currentMember, view)) {
       setView("company");
     }
@@ -6572,6 +6578,7 @@ export default function InforceReports() {
             else if (action === "pipeline") setView("pipeline");
             else if (action === "control") setView("control");
             else if (action === "adlibrary") setView("adlibrary");
+            else if (action === "crear-imagenes") setView("crear-imagenes");
             else if (action === "tareas") setView("tareas");
             else setView("company");
           }
@@ -7814,22 +7821,23 @@ export default function InforceReports() {
   }
 
   // CONTROL DE CREATIVOS — hoja estilo Google Sheets por empresa
-  if (view === "adlibrary" && selectedCompany) {
+  if (["adlibrary", "crear-imagenes"].includes(view) && selectedCompany) {
     return (
       <CompanyWorkspace
         companyId={selectedCompany.id}
         companyName={selectedCompany.name}
-        currentSection="adlibrary"
+        currentSection={view}
         onSectionChange={(s) => setView(s === "home" ? "company" : s)}
         onBack={esInforce ? () => setView("home") : null}
         otherCompanies={isAdmin ? appData.companies : accessibleCompanies}
-        onSelectCompany={(co) => selectCompanyOrNavigate(co, "adlibrary")}
+        onSelectCompany={(co) => selectCompanyOrNavigate(co, view)}
         isAdmin={isAdmin}
         currentMember={currentMember}
         onLogout={logout}
       >
         <Suspense fallback={<LazyFallback label="Cargando bibliotecas de anuncios…" />}>
-          <AdLibraryPage fixedCompanyId={selectedCompany.id} canManage={canManageWorkspace} />
+          {view === "crear-imagenes" ? <CreativeImagesPage key={selectedCompany.id} fixedCompanyId={selectedCompany.id} />
+            : <AdLibraryPage fixedCompanyId={selectedCompany.id} canManage={canManageWorkspace} />}
         </Suspense>
       </CompanyWorkspace>
     );

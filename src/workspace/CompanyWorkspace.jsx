@@ -70,6 +70,7 @@ const NAV_GROUPS = [
     { key: "despliegue", label: "Despliegue", icon: IC.despliegue },
     { key: "pipeline", label: "Content Pipeline", icon: IC.pipeline },
     { key: "adlibrary", label: "Bibliotecas de anuncios", icon: IC.adlibrary },
+    { key: "crear-imagenes", label: "Crear imágenes", icon: IC.adlibrary },
     // "Control Creativos" oculto del portal del cliente a pedido de José (la
     // feature/código sigue existiendo; solo se saca del nav). 2026-07-27.
   ] },

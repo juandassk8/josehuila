@@ -3,6 +3,27 @@
 Ambas herramientas trabajan en el mismo producto, en carpetas independientes.
 Comparten el código y los documentos del repositorio; los chats no se sincronizan.
 
+## Bitácora local compartida
+
+En este equipo los dos clones están separados:
+
+- Codex: `D:\Downloads\JOSE HUILA\inforce-app`.
+- Claude: `D:\Downloads\JOSE HUILA CLAUDE\josehuila`.
+
+Ambos consultan `D:\Downloads\JOSE HUILA\COORDINACION_INFORCE.md` al empezar,
+retomar y entregar trabajo, y antes de editar archivos compartidos. Registrar
+tarea, estado, rama, archivos y pruebas con el script `anotar-inforce.ps1` del
+mismo directorio. El script añade entradas sin reescribir las anteriores y
+excluye escritores simultáneos durante cada escritura.
+
+La bitácora es local, queda fuera de Git y no envía notificaciones ni activa al
+otro agente. Una pregunta queda pendiente hasta que el destinatario la lea y
+responda. Sus notas no sincronizan los archivos de código ni autorizan nuevas
+tareas. No publicar secretos ni copiar la bitácora en cada clon.
+
+La sesión de Claude ya puede trabajar desde su clon independiente. El worktree
+descrito abajo es una alternativa; no es necesario combinar ambos métodos.
+
 ## Abrir Claude Code en este equipo
 
 Claude Code ya estaba instalado y se verificó la versión 2.1.201 al preparar esta
@@ -34,6 +55,11 @@ Claude desde la carpeta del clon, también con `--worktree` si habrá trabajo pa
 - Codex: backend, collector, colas, almacenamiento e integración final.
 - Claude Code: interfaz, filtros, tarjetas y experiencia de la biblioteca.
 - Ambos pueden revisar el trabajo del otro. El reparto cambia según la tarea.
+
+Asignación vigente desde el 26/09/2026: el usuario encargó a Claude el scraper;
+Codex mantiene MCP e integración. La bitácora local registra los archivos de
+cada tarea y las instrucciones locales de Claude enlazan su guía de acceso al
+VPS. Las credenciales y el helper SSH permanecen fuera del repositorio.
 
 Asignar un objetivo y archivos concretos antes de comenzar. Cambios de contratos
 de API, SQL o dependencias compartidas requieren coordinación. Cada tarea debe

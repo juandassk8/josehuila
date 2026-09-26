@@ -46,6 +46,7 @@ const NAV_GROUPS = [
       { key: "banco", label: "Banco de creativos", icon: "banco", roles: ["admin", "member", "editor"] },
       { key: "bandeja", label: "Bandeja", icon: "bandeja", roles: ["admin", "member", "editor"] },
       { key: "adlibrary", label: "Bibliotecas de anuncios", icon: "banco", roles: ["admin", "member", "editor"] },
+      { key: "crear-imagenes", label: "Crear imágenes", icon: "banco", roles: ["admin", "member", "editor"] },
     ],
   },
   {

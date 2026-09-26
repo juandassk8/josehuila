@@ -14,6 +14,7 @@ import { ImportQueueWidget } from "./imports/ImportQueueWidget.jsx";
 import { NotificationsBell } from './notifications/NotificationsBell.jsx'
 
 const TeamApp = lazy(() => import('./team/TeamApp.jsx'))
+const CreativeConnect = lazy(() => import('./team/creative_images/CreativeConnect.jsx'))
 const FormularioPage = lazy(() => import('./formulario/FormularioPage.jsx'))
 
 const teamFallback = (
@@ -148,6 +149,7 @@ function Router() {
     );
   }
 
+  if (zone === "creative-connect") return <Suspense fallback={null}><CreativeConnect /></Suspense>;
   if (zone === "team") {
     return (
       <Suspense fallback={teamFallback}>
@@ -174,7 +176,7 @@ function isPublicBriefPath() {
   if (typeof window === "undefined") return false;
   const path = window.location.pathname;
   // `/inicio/<token>` es igual: lo abre un cliente que todavía no tiene cuenta.
-  return path.startsWith("/brief/") || path.startsWith("/inicio/");
+  return path.startsWith("/brief/") || path.startsWith("/inicio/") || path === "/creative-connect";
 }
 
 function GlobalFeedback() {

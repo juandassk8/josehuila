@@ -67,11 +67,16 @@ export async function createApiServer({ directory = apiDirectory, backend = null
       if (url.pathname === '/healthz' && (req.method === 'GET' || req.method === 'HEAD')) {
         return res.json({ status: 'ok' });
       }
-      const endpoint = endpoints.get(url.pathname.replace(/\/$/, ''));
+      const oauthMetadata = {
+        '/.well-known/oauth-authorization-server': 'metadata',
+        '/.well-known/oauth-protected-resource/api/creative-mcp': 'resource',
+      }[url.pathname];
+      const endpoint = endpoints.get(oauthMetadata ? '/api/creative-mcp-auth' : url.pathname.replace(/\/$/, ''));
       if (!endpoint) return res.status(404).json({ error: 'Not found' });
       const mod = await import(endpoint);
       if (typeof mod.default !== 'function') return res.status(404).json({ error: 'Not found' });
       req.query = Object.fromEntries(url.searchParams);
+      if (oauthMetadata) req.query.action = oauthMetadata;
       // transcribe consume el stream multipart original: leerlo acá perdería el archivo.
       if (mod.config?.api?.bodyParser !== false) req.body = await parseBody(req, bodyLimit(mod.config));
       await mod.default(req, res);

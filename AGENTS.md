@@ -19,6 +19,11 @@ Inforce es una aplicación existente. La biblioteca de anuncios pertenece a
 
 ## Trabajo en paralelo
 
+- En este equipo, si existe `D:\Downloads\JOSE HUILA\COORDINACION_INFORCE.md`,
+  leer esa bitácora al empezar/retomar, antes de editar archivos compartidos y
+  antes de integrar. Registrar tarea, rama, archivos, avances, bloqueos y pruebas
+  con `D:\Downloads\JOSE HUILA\anotar-inforce.ps1`. Leer su protocolo; no duplicar
+  la bitácora dentro de cada clon ni escribir en nombre del otro agente.
 - Cada herramienta trabaja en una carpeta y rama propias, con una tarea concreta.
   Consultar `docs/colaboracion-agentes.md` para el procedimiento.
 - No sobrescribir cambios ajenos, reiniciar el árbol de trabajo ni cambiar de

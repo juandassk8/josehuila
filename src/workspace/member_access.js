@@ -5,7 +5,7 @@
 // Sin "ajustes": estaba en la lista y en el `guarded` de App.jsx, pero ninguna
 // vista la renderiza. Una clave que no lleva a ningún lado hace creer que hay un
 // permiso que dar o quitar cuando no hay nada del otro lado.
-export const NAV_KEYS = ["home", "reportes", "plan", "pipeline", "despliegue", "adlibrary", "control", "tareas", "equipo", "papelera"];
+export const NAV_KEYS = ["home", "reportes", "plan", "pipeline", "despliegue", "adlibrary", "crear-imagenes", "control", "tareas", "equipo", "papelera"];
 
 const ROLE_ACCESS = {
   // Dueño: todo.
@@ -44,7 +44,7 @@ export function allowedNavForMember(member) {
   // de la cuenta: los siete roles ya lo tenían, así que el único a quien se lo
   // negaba era la ficha SIN roles —típicamente la del propio cliente—, que
   // entraba y se encontraba un "Coming Soon" de una función que sí existe.
-  const allowed = new Set(["home", "pipeline", "adlibrary"]);
+  const allowed = new Set(["home", "pipeline", "adlibrary", "crear-imagenes"]);
   for (const r of roles) {
     const list = ROLE_ACCESS[r] || [];
     list.forEach((k) => allowed.add(k));
