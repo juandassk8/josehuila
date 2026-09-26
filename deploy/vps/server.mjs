@@ -69,6 +69,7 @@ export async function createApiServer({ directory = apiDirectory, backend = null
       }
       const oauthMetadata = {
         '/.well-known/oauth-authorization-server': 'metadata',
+        '/.well-known/oauth-protected-resource': 'resource',
         '/.well-known/oauth-protected-resource/api/creative-mcp': 'resource',
       }[url.pathname];
       const endpoint = endpoints.get(oauthMetadata ? '/api/creative-mcp-auth' : url.pathname.replace(/\/$/, ''));

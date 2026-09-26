@@ -28,7 +28,7 @@ pero Meta limitó la segunda página. La corrida es parcial y no prueba que se
 pueda importar una marca completa desde el VPS. Bonapet tenía 71 anuncios de una
 captura previa importada. Prodental todavía no tenía una importación completada.
 
-Release de esta publicación: `/opt/inforce/releases/20260926-mcp-published`.
+Release de esta publicación: `/opt/inforce/releases/20260926-mcp-discovery`.
 Conserva las dependencias de `/opt/inforce/releases/20260926-creative-mcp`;
 no borrar esa release mientras el enlace `node_modules` siga usándola.
 La imagen del crawler se fijó en `inforce-ad-library:chrome-stable`. Los videos

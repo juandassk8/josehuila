@@ -5,7 +5,7 @@ import { settings, READ_SCOPE, WRITE_SCOPE, registerClient, validateClient, appr
 export const config = { api: { bodyParser: { sizeLimit: '16kb' } } };
 export default async function handler(req, res) {
   try {
-    const cfg = settings(), db = creativeDb();
+    const cfg = settings();
     const action = req.query.action;
     res.setHeader('Cache-Control', 'no-store');
     if (req.method === 'GET' && action === 'resource') return res.json({ resource: cfg.resource,
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
       token_endpoint_auth_methods_supported: ['none'], code_challenge_methods_supported: ['S256'],
       scopes_supported: [READ_SCOPE, WRITE_SCOPE], authorization_response_iss_parameter_supported: true });
     throttle(req, action, action === 'register' ? 10 : 60);
+    const db = creativeDb();
     if (req.method === 'POST' && action === 'register') return res.status(201).json(await registerClient(db, req.body, cfg));
     if (req.method === 'POST' && action === 'token') return res.json(await exchange(db, req.body, cfg));
     if (req.method === 'POST' && action === 'revoke') {

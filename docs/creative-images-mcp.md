@@ -89,6 +89,14 @@ fases posteriores a validar el intercambio real con ChatGPT.
 
 ## Estado verificado: 26/09/2026
 
+- Corrección de descubrimiento: `GET`, `HEAD` y `POST` sin token anuncian OAuth
+  mediante `WWW-Authenticate`. La ruta raíz
+  `/.well-known/oauth-protected-resource` y la ruta específica del MCP devuelven
+  el mismo recurso. Se conservan OAuth, PKCE, scopes y permisos por empresa.
+  Prueba de regresión sobre el router HTTP real, sin consultas a PostgreSQL.
+  Pendiente volver a probar el formulario de ChatGPT: el intento inicial no
+  apareció en los registros HTTP del VPS, por lo que no se atribuye todavía el
+  fallo únicamente a estas rutas. HTTPS externo comprobado con Node.
 - Activo en `/opt/inforce/releases/20260926-creative-mcp` a las 06:02 UTC.
   Respaldo previo privado en `/var/backups/inforce/creative-mcp-20260926T060246Z`.
   La release anterior y sus dependencias se conservaron.
