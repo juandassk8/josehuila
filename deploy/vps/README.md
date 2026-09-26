@@ -1,6 +1,6 @@
 # Instalación independiente con PostgreSQL
 
-Instalación: https://144.91.92.87/equipo. Administrador: juanda2494@gmail.com.
+Instalación: https://inforceconsulting.online/equipo. Administrador: juanda2494@gmail.com.
 La contraseña inicial está en un archivo privado fuera del repositorio. No se reutiliza la contraseña SSH.
 
 ## Componentes y peticiones
@@ -25,7 +25,41 @@ El navegador envía correo y contraseña a `/backend/auth/v1/token`. Node compru
 - SSE transmite solo nombres de tablas y eventos. Los registros se vuelven a consultar con RLS.
 - Archivos: `/var/lib/inforce/uploads`, nombres físicos UUID y metadatos privados en PostgreSQL. Los enlaces de archivos son públicos como en el comportamiento original; subir y borrar requieren sesión. HTML/SVG y otros formatos no permitidos para visualización se descargan como adjuntos.
 
-La URL pública redirige HTTP a HTTPS y responde con un certificado válido para la IP. Las cookies de sesión incorporan `Secure` bajo HTTPS.
+La URL pública redirige HTTP, `www` y la IP anterior al dominio HTTPS canónico.
+Las cookies de sesión incorporan `Secure` bajo HTTPS. Al pasar de la IP al dominio
+hay que iniciar sesión otra vez: el almacenamiento y las cookies pertenecen a cada origen.
+
+## Dominio y certificados
+
+- DNS: `A @ → 144.91.92.87`; `CNAME www → inforceconsulting.online`.
+- `/etc/inforce/api.env`: `PUBLIC_BASE_URL=https://inforceconsulting.online`.
+  OAuth obtiene su issuer, endpoints y recurso MCP de ese origen.
+- Nginx: `/etc/nginx/sites-available/inforce`, basado en `nginx.conf` de esta carpeta.
+  El certificado del dominio cubre apex y `www`; el bloque TLS por defecto conserva
+  el certificado de la IP para clientes que no envían SNI al abrir la dirección antigua.
+- Certbot: `/opt/certbot-5.4/bin/certbot`, autenticación webroot en
+  `/var/lib/letsencrypt`. El certificado del dominio está en
+  `/etc/letsencrypt/live/inforceconsulting.online/`.
+- `certbot-renew.timer` comprueba ambos certificados dos veces al día y recarga
+  Nginx cuando renueva. `ProtectSystem=strict` necesita los tres `ReadWritePaths`
+  declarados en la unidad; sin ellos Certbot falla al crear su archivo de bloqueo.
+
+Para emitir el certificado antes de instalar una configuración que lo referencie,
+el DNS debe resolver al VPS y HTTP debe servir `/.well-known/acme-challenge/`:
+
+```sh
+/opt/certbot-5.4/bin/certbot certonly --webroot -w /var/lib/letsencrypt \
+  --cert-name inforceconsulting.online \
+  -d inforceconsulting.online -d www.inforceconsulting.online --non-interactive
+nginx -t
+systemctl reload nginx
+systemctl status certbot-renew.timer
+```
+
+El cambio de dominio del 26/09/2026 se aplicó a `/etc`, sin sustituir la release
+de Claude ni reiniciar los workers. Respaldo privado de configuración y estado:
+`/var/backups/inforce/domain-20260926T211113Z`. No copiar el `nginx.conf` histórico
+de una release antigua sobre esta configuración al desplegar el scraper.
 
 ## Migraciones
 
@@ -46,7 +80,10 @@ Solo continuar con el inicio si la migración termina correctamente. No ejecutar
 
 ## Operación
 
-Código activo: `/opt/inforce/current`, enlace a `/opt/inforce/releases/20260921-postgres`.
+Código activo: `/opt/inforce/current`. El 26/09/2026 apunta a
+`/opt/inforce/releases/20260926-scraper-proxy`: base MCP `2179cd1` más los ocho
+archivos de `claude/scraper` (`6303344`). Consultar el enlace y la bitácora antes
+de cada despliegue; no instalar una copia de una rama que omita esos cambios.
 
 ```sh
 systemctl status inforce-api inforce-data nginx postgresql

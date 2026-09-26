@@ -28,10 +28,15 @@ pero Meta limitó la segunda página. La corrida es parcial y no prueba que se
 pueda importar una marca completa desde el VPS. Bonapet tenía 71 anuncios de una
 captura previa importada. Prodental todavía no tenía una importación completada.
 
-Release de esta publicación: `/opt/inforce/releases/20260926-mcp-discovery`.
+Release observada tras el despliegue de Claude: `/opt/inforce/releases/20260926-scraper-proxy`.
+Compone la base MCP `2179cd1` y los ocho archivos de `claude/scraper` (`6303344`).
+La rama del scraper está publicada por separado; no desplegar esta rama sin
+incorporar ese trabajo o partir del código activo. El cambio de dominio solo
+actualizó la configuración de `/etc`, conservando esa release y sus contenedores.
 Conserva las dependencias de `/opt/inforce/releases/20260926-creative-mcp`;
 no borrar esa release mientras el enlace `node_modules` siga usándola.
-La imagen del crawler se fijó en `inforce-ad-library:chrome-stable`. Los videos
+Worker y scheduler usan `inforce-ad-library:scraper-proxy`; media-worker conserva
+`inforce-ad-library:local`. Los videos
 y las imágenes van a R2 privado, deduplicados por SHA-256. No se versionan aquí.
 
 ## Creación de imágenes: prueba MCP
@@ -43,11 +48,16 @@ El conector está activo; falta probar la generación nativa y la devolución de
 archivo con una cuenta Pro real. Inforce no invoca la suscripción como una API.
 Ver [alcance, pruebas y conexión](creative-images-mcp.md).
 
-La entrega MCP forma parte de esta base de código. La versión exacta instalada
-se registra en `/opt/inforce/current/SOURCE_COMMIT`. Actualizar las ramas de
+La entrega MCP forma parte de esta base de código. `SOURCE_COMMIT` identifica la
+base de la release; consultar también los cambios posteriores de Claude en la
+bitácora y contrastar sus archivos antes de desplegar. Actualizar las ramas de
 trabajo desde `origin/main` y consultar la bitácora compartida antes de desplegar
 trabajo de otro agente. La entrega móvil de Claude se mantiene en su propia rama
 hasta corregir y revisar el hallazgo pendiente.
+
+URL pública: https://inforceconsulting.online/equipo. El MCP usa
+`https://inforceconsulting.online/api/creative-mcp`. HTTPS y descubrimiento OAuth
+verificados desde fuera del VPS; falta la autorización real desde la cuenta Pro.
 
 ## Límites y pendientes
 

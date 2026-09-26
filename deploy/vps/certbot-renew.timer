@@ -1,5 +1,5 @@
 [Unit]
-Description=Renew the Inforce IP certificate twice daily
+Description=Renew Inforce certificates twice daily
 
 [Timer]
 OnCalendar=*-*-* 03,15:17:00

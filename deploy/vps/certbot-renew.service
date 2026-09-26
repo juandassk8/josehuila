@@ -1,5 +1,5 @@
 [Unit]
-Description=Renew the short-lived Inforce IP certificate
+Description=Renew Inforce domain and IP certificates
 After=network-online.target
 Wants=network-online.target
 
@@ -8,6 +8,6 @@ Type=oneshot
 ExecStart=/opt/certbot-5.4/bin/certbot renew --quiet --deploy-hook "systemctl reload nginx"
 PrivateTmp=true
 ProtectSystem=strict
+ReadWritePaths=/etc/letsencrypt /var/lib/letsencrypt /var/log/letsencrypt
 ProtectHome=true
 NoNewPrivileges=true
-

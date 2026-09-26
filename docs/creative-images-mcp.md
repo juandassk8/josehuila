@@ -64,6 +64,13 @@ que el archivo haya sido generado por IA.
 6. En ChatGPT habilitar modo desarrollador si está disponible, añadir el servidor
    con OAuth, revisar permisos y autorizar una empresa con la cuenta de Inforce.
 
+Servidor público: `https://inforceconsulting.online/api/creative-mcp`.
+Crear la conexión con OAuth y dejar el descubrimiento automático en los ajustes
+avanzados. Si se conserva un intento anterior con la IP, cerrar ese formulario
+y crear la conexión con el dominio. Entrar primero en
+`https://inforceconsulting.online/equipo` con la cuenta de Inforce; la sesión
+anterior de la IP no se comparte con el dominio.
+
 Con el flag apagado, endpoints responden 503 y la sección explica que falta activar.
 No hay API key de OpenAI ni contraseña de ChatGPT en Inforce. La conexión usa
 credenciales propias de Inforce para autorizar acceso a sus datos.
@@ -89,6 +96,14 @@ fases posteriores a validar el intercambio real con ChatGPT.
 
 ## Estado verificado: 26/09/2026
 
+- Dominio activado con certificado para apex y `www`, vigente hasta 25/12/2026.
+  `PUBLIC_BASE_URL` actualizado. HTTP, `www` y HTTPS por IP redirigen conservando
+  ruta y parámetros al dominio canónico. El descubrimiento publica únicamente
+  URLs del nuevo origen; GET/HEAD/POST sin token devuelven el desafío OAuth 401.
+  Frontend, recursos estáticos y protección de origen comprobados externamente.
+  Se conserva `20260926-scraper-proxy`, los ocho archivos del scraper y los IDs
+  y fechas de inicio de sus cuatro contenedores. No hubo migraciones ni nuevas
+  imágenes guardadas. Falta el reintento del usuario en ChatGPT con este dominio.
 - Corrección de descubrimiento: `GET`, `HEAD` y `POST` sin token anuncian OAuth
   mediante `WWW-Authenticate`. La ruta raíz
   `/.well-known/oauth-protected-resource` y la ruta específica del MCP devuelven
@@ -103,7 +118,7 @@ fases posteriores a validar el intercambio real con ChatGPT.
 - Migración aditiva registrada con checksum; flag activado; API, PostgREST y
   Nginx activos. Descubrimiento OAuth público por HTTPS comprobado. MCP sin token
   devuelve 401 con desafío de autorización; galería sin sesión devuelve 401.
-- Conector: `https://144.91.92.87/api/creative-mcp`. No abrirlo como una página:
+- Conector actual: `https://inforceconsulting.online/api/creative-mcp`. No abrirlo como una página:
   añadirlo como servidor MCP con OAuth en ChatGPT.
 - 763 pruebas Vitest y 8 pruebas Node aprobadas; build aprobado. Lint general:
   cero errores y 492 avisos; archivos nuevos sin avisos. 32 pruebas específicas
