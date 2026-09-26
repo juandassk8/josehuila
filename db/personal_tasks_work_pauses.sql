@@ -1,0 +1,2 @@
+-- Ya aplicada en producción (2026-09-19). work_type acepta 'personal' + tabla work_pauses.
+-- Ver migración "personal_tasks_and_work_pauses" en Supabase.

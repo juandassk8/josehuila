@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup local de Inforce
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /opt/inforce/current/deploy/vps/backup.sh
+UMask=0077

@@ -1,0 +1,122 @@
+{
+  "functions": {
+    "api/ai.js": {
+      "maxDuration": 30
+    },
+    "api/generate-script.js": {
+      "maxDuration": 60
+    },
+    "api/transcribe.js": {
+      "maxDuration": 60
+    },
+    "api/extract-knowledge.js": {
+      "maxDuration": 60
+    },
+    "api/save-feedback.js": {
+      "maxDuration": 30
+    },
+    "api/apify-ad.js": {
+      "maxDuration": 280
+    },
+    "api/import-jobs.js": {
+      "maxDuration": 300
+    }
+  },
+  "redirects": [
+    {
+      "source": "/cliente/signup",
+      "destination": "/signup",
+      "permanent": false
+    },
+    {
+      "source": "/cliente/login",
+      "destination": "/login",
+      "permanent": false
+    },
+    {
+      "source": "/cliente/forgot-password",
+      "destination": "/forgot-password",
+      "permanent": false
+    },
+    {
+      "source": "/cliente/onboarding",
+      "destination": "/onboarding",
+      "permanent": false
+    },
+    {
+      "source": "/cliente/app",
+      "destination": "/app",
+      "permanent": false
+    },
+    {
+      "source": "/admin/signup",
+      "destination": "/signup",
+      "permanent": false
+    },
+    {
+      "source": "/admin/login",
+      "destination": "/login",
+      "permanent": false
+    },
+    {
+      "source": "/admin/forgot-password",
+      "destination": "/forgot-password",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=()"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://www.googleapis.com; frame-src https://accounts.google.com https://drive.google.com https://www.youtube.com https://www.loom.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

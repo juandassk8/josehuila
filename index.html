@@ -1,0 +1,29 @@
+<!doctype html>
+<!--
+  `lang="es"` y `translate="no"`, y las dos por el mismo motivo.
+
+  La app está escrita entera en español y se declaraba en inglés. Chrome mira ese
+  atributo, ve "inglés", ve que el lector habla español, y ofrece traducir. Cuando
+  alguien acepta, Google Translate reemplaza los nodos de texto por los suyos — y React
+  guarda referencias a los nodos que él creó. La próxima vez que intenta mover uno se
+  encuentra con que no está donde lo dejó y tira `insertBefore: el nodo no es un hijo de
+  este nodo`, con un stack sin una sola línea de código propio.
+
+  Le pasó a Johan en producción. Se supo porque el error decía "Error de ejecución (modo
+  depuración)" y ese texto, en el código, está en inglés.
+
+  `translate="no"` es el cinturón además de los tirantes: aunque alguien fuerce la
+  traducción a mano, el navegador respeta la marca y deja la app quieta.
+-->
+<html lang="es" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inforce Reports - Sistema para acompañamiento de clientes</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

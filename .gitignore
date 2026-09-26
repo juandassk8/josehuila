@@ -1,0 +1,52 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.npm-cache/
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vercel
+
+# Variables de entorno / secretos — NUNCA subir a GitHub
+.env
+.env.*
+.env*.local
+
+# respaldos locales (contenían un PIN viejo; nunca al repo)
+.backups/
+
+# Credenciales locales y sesiones de herramientas
+*.pem
+*.key
+*.p12
+*.pfx
+*.passphrase.txt
+*-credentials.json
+*-access.json
+.claude/settings.local.json
+.claude/worktrees/
+CLAUDE.local.md
+
+# Evidencias operativas locales; publicar código y reportes redactados en Markdown
+security/*.png
+security/*-results.*
+security/hardening-status.txt
+security/dependency-audit-summary.json

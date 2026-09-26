@@ -1,0 +1,74 @@
+name: inforce-ad-library
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - adlib_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  worker:
+    image: inforce-ad-library:${ADLIB_IMAGE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: deploy/ad-library/Dockerfile
+    network_mode: host
+    env_file:
+      - ${INFORCE_API_ENV:-/etc/inforce/api.env}
+      - ${INFORCE_ADLIB_ENV:-/etc/inforce/ad-library.env}
+    environment:
+      BACKEND_URL: http://127.0.0.1:3001/backend
+      ADLIB_REDIS_URL: redis://127.0.0.1:6379
+      NODE_ENV: production
+    restart: unless-stopped
+    mem_limit: 1536m
+    shm_size: 256m
+    init: true
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: ["node", "services/ad-library/worker.mjs"]
+
+  media-worker:
+    image: inforce-ad-library:${ADLIB_IMAGE_TAG:-local}
+    network_mode: host
+    env_file:
+      - ${INFORCE_API_ENV:-/etc/inforce/api.env}
+      - ${INFORCE_ADLIB_ENV:-/etc/inforce/ad-library.env}
+    environment:
+      BACKEND_URL: http://127.0.0.1:3001/backend
+      ADLIB_REDIS_URL: redis://127.0.0.1:6379
+      NODE_ENV: production
+    restart: unless-stopped
+    mem_limit: 512m
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: ["node", "services/ad-library/media-worker.mjs"]
+
+  scheduler:
+    image: inforce-ad-library:${ADLIB_IMAGE_TAG:-local}
+    network_mode: host
+    env_file:
+      - ${INFORCE_API_ENV:-/etc/inforce/api.env}
+      - ${INFORCE_ADLIB_ENV:-/etc/inforce/ad-library.env}
+    environment:
+      BACKEND_URL: http://127.0.0.1:3001/backend
+      ADLIB_REDIS_URL: redis://127.0.0.1:6379
+      NODE_ENV: production
+    restart: unless-stopped
+    mem_limit: 256m
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: ["node", "services/ad-library/scheduler.mjs"]
+
+volumes:
+  adlib_redis:

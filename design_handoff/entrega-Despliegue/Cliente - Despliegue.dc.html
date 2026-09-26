@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+</helmet>
+
+<div class="{{ themeClass }}" style="height: 100vh; display: grid; grid-template-columns: 244px minmax(0, 1fr); background: {{ appBg }};">
+
+  <!-- MARCO — lo aporta Shell Cliente, no esta pantalla -->
+  <aside data-shell="cliente" style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-solid); border-right: 1px solid var(--line); overflow: hidden;">
+    <div style="position: absolute; inset: 0; background: var(--glow); pointer-events: none;"></div>
+    <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 20px 18px 14px;">
+      <div style="width: 34px; height: 34px; border-radius: 11px; background: rgba(88,166,255,0.14); display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(95,222,240,0.30), 0 0 24px rgba(88,166,255,0.34);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 0 7px rgba(95,222,240,0.85));"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" fill="var(--neon)"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+        <div style="font-size: 15.5px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); line-height: 1.1; text-shadow: 0 0 18px rgba(95,222,240,0.40);">Natucer</div>
+        <div style="font-size: 11.5px; color: var(--neon); line-height: 1.1;">Portal Inforce</div>
+      </div>
+      <button data-action="shell-cliente.toggle-tema" onClick="{{ toggleTheme }}" title="Cambiar tema" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ themeIcon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+    <nav style="position: relative; flex: 1; overflow-y: auto; min-height: 0; padding: 6px 10px 12px; display: flex; flex-direction: column; gap: 14px;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--ink-4); padding: 5px 12px 7px;">{{ group.label }}</div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <a data-action="{{ item.action }}" href="#" onClick="{{ prevent }}" style="display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 11px; font-size: 13.5px; cursor: pointer; background: {{ item.bg }}; color: {{ item.fg }}; font-weight: {{ item.weight }};" style-hover="background: var(--hover); color: var(--ink);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="{{ item.icon }}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.label }}</span>
+            </a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="position: relative; border-top: 1px solid var(--line); padding: 12px; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--purple); color: #FFFFFF; display: grid; place-items: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">M</div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Mariana Restrepo</div>
+        <div style="font-size: 11.5px; color: var(--ink-3);">Dueña</div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; position: relative; background-color: {{ appBg }}; background-image: {{ ambient }}; background-attachment: local;">
+
+    <header data-shell="cliente" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 20px 28px 14px; flex-shrink: 0;">
+      <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-4);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span>Natucer</span>
+          <span style="opacity: .5;">/</span>
+          <span style="color: var(--ink-3);">Despliegue</span>
+        </div>
+        <h1 style="font-size: 30px; font-weight: 700; letter-spacing: -0.032em; color: var(--ink); line-height: 1.1;">Despliegue creativo</h1>
+      </div>
+      <span title="Esta vista es de solo lectura: tu equipo de Inforce es quien arma y edita el despliegue." style="display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 999px; background: var(--chip); color: var(--ink-3); font-size: 11.5px; font-weight: 600; flex-shrink: 0;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+        Solo lectura
+      </span>
+    </header>
+
+    <div style="flex: 1; overflow-y: auto; min-height: 0; padding: 0 28px 40px; display: flex; flex-direction: column;">
+
+      <!-- TOOLBAR: vista + un solo botón de opciones de filtro -->
+      <div style="position: sticky; top: 0; z-index: 25; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0 14px; background: {{ stickyFade }};">
+        <div style="display: flex; align-items: center; gap: 3px; padding: 4px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line);">
+          <sc-for list="{{ layoutTabs }}" as="lt" hint-placeholder-count="3">
+            <button data-action="new:despliegue.cambiar-layout" onClick="{{ lt.select }}" title="{{ lt.hint }}" style="display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 11px; border: none; cursor: pointer; font-family: inherit; font-size: 12.5px; white-space: nowrap; background: {{ lt.bg }}; color: {{ lt.fg }}; font-weight: {{ lt.weight }}; box-shadow: {{ lt.shadow }};">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="{{ lt.icon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              {{ lt.label }}
+            </button>
+          </sc-for>
+        </div>
+
+        <span style="flex: 1;"></span>
+
+        <span style="font-size: 12.5px; color: var(--ink-4); white-space: nowrap;">{{ counterText }}</span>
+
+        <div data-menu-root="1" style="position: relative;">
+          <button data-action="despliegue.filtrar" onClick="{{ toggleFilter }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; border: 1px solid {{ filterBorder }}; background: {{ filterBg }}; color: {{ filterFg }}; box-shadow: var(--shadow);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>
+            {{ filterLabel }}
+          </button>
+
+          <sc-if value="{{ filterOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; top: calc(100% + 6px); right: 0; z-index: 40; width: 392px; max-height: 62vh; overflow-y: auto; padding: 16px; border-radius: 18px; background: var(--surface-solid); border: 1px solid var(--line-2); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; gap: 16px; animation: popIn .16s cubic-bezier(.16,1,.3,1);">
+
+              <div style="display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 16px; align-items: start;">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                  <sc-for list="{{ filterGroups }}" as="g" hint-placeholder-count="5">
+                    <button data-action="{{ g.action }}" onClick="{{ g.select }}" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 12.5px; text-align: left; background: {{ g.bg }}; color: {{ g.fg }}; font-weight: {{ g.weight }};" style-hover="background: var(--hover);">
+                      <span style="width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: {{ g.dot }};"></span>
+                      <span style="flex: 1;">{{ g.label }}</span>
+                      <span style="font-size: 11px; font-weight: 700; color: {{ g.badgeColor }};">{{ g.badge }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
+                  <span style="font-size: 11.5px; line-height: 1.5; color: var(--ink-4); text-wrap: pretty;">{{ groupHint }}</span>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <sc-for list="{{ groupValues }}" as="v" hint-placeholder-count="6">
+                      <button data-action="{{ groupAction }}" onClick="{{ v.select }}" style="display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; border: 1px solid {{ v.border }}; background: {{ v.bg }}; color: {{ v.fg }};">
+                        {{ v.label }}
+                        <span style="font-size: 10.5px; opacity: .7;">{{ v.count }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px; padding-top: 4px; border-top: 1px solid var(--line);">
+                <span style="font-size: 11.5px; color: var(--ink-4);">Al filtrar</span>
+                <div style="display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); gap: 2px;">
+                  <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+                    <button data-action="despliegue.filtro-modo" onClick="{{ m.select }}" style="padding: 6px 12px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 11.5px; background: {{ m.bg }}; color: {{ m.fg }}; font-weight: {{ m.weight }};">{{ m.label }}</button>
+                  </sc-for>
+                </div>
+                <span style="flex: 1;"></span>
+                <sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}">
+                  <button data-action="despliegue.limpiar-filtros" onClick="{{ clearFilters }}" style="padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit;">Limpiar</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- Chips de filtro activo -->
+      <sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 7px; flex-wrap: wrap; padding-bottom: 14px;">
+          <span style="font-size: 11.5px; color: var(--ink-4);">{{ activeModeLabel }}</span>
+          <sc-for list="{{ activeChips }}" as="ac" hint-placeholder-count="2">
+            <button data-action="despliegue.filtro-categoria" onClick="{{ ac.remove }}" title="Quitar este filtro" style="display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 11.5px; font-weight: 600; border: 1px solid {{ ac.border }}; background: {{ ac.bg }}; color: {{ ac.color }};">
+              {{ ac.label }}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"></path></svg>
+            </button>
+          </sc-for>
+          <button data-action="despliegue.limpiar-filtros" onClick="{{ clearFilters }}" style="padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit;">Limpiar todo</button>
+        </div>
+      </sc-if>
+
+      <!-- CARGANDO -->
+      <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1px solid var(--line); border-radius: 20px; background-color: {{ canvasBg }}; background-image: radial-gradient({{ canvasDot }} 1px, transparent 1px); background-size: 26px 26px; height: calc(100vh - 216px); min-height: 520px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;">
+          <sc-for list="{{ skeletons }}" as="sk" hint-placeholder-count="3">
+            <div style="width: {{ sk.width }}; max-width: 760px; border: 1.5px dashed var(--line); border-radius: 22px; padding: 20px; display: flex; justify-content: center; gap: 12px;">
+              <sc-for list="{{ sk.cards }}" as="c" hint-placeholder-count="3">
+                <div style="width: 130px; height: 150px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); animation: breathe 1.4s ease-in-out infinite;"></div>
+              </sc-for>
+            </div>
+          </sc-for>
+          <div style="display: flex; align-items: center; gap: 10px; color: var(--ink-3); font-size: 13px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="animation: spin 1s linear infinite;"><path d="M12 3a9 9 0 1 0 9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+            Cargando tu despliegue…
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- SIN DESPLIEGUE / VACÍO / SIN MATCH -->
+      <sc-if value="{{ isBlank }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1.5px dashed var(--line-2); border-radius: 20px; flex: 1; min-height: 460px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 48px 32px;">
+          <div style="width: 52px; height: 52px; border-radius: 16px; background: var(--surface-2); color: var(--ink-4); display: grid; place-items: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 4h18l-7 8v8l-4-2v-6L3 4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">{{ blankTitle }}</span>
+          <p style="font-size: 13.5px; line-height: 1.65; color: var(--ink-3); max-width: 54ch; text-wrap: pretty;">{{ blankBody }}</p>
+          <div style="display: flex; align-items: center; gap: 10px; padding-top: 4px;">
+            <sc-if value="{{ blankShowClear }}" hint-placeholder-val="{{ false }}">
+              <button data-action="despliegue.limpiar-filtros" onClick="{{ clearFilters }}" style="padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;" style-hover="border-color: var(--line-2); color: var(--ink);">Limpiar filtros</button>
+            </sc-if>
+            <button data-action="new:despliegue.contactar-equipo" onClick="{{ noop }}" style="padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;" style-hover="border-color: var(--line-2); color: var(--ink-2);">Escribirle a tu equipo</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═════ TABLERO: Conceptos y Colmena ═════ -->
+      <sc-if value="{{ showCanvas }}" hint-placeholder-val="{{ true }}">
+        <div ref="{{ canvasRef }}" onMouseDown="{{ onCanvasDown }}" style="position: relative; border: 1px solid var(--line); border-radius: 20px; background-color: {{ canvasBg }}; background-image: radial-gradient({{ canvasDot }} 1px, transparent 1px); background-size: 26px 26px; height: calc(100vh - 216px); min-height: 540px; overflow: hidden; cursor: {{ canvasCursor }};">
+
+          <div style="position: absolute; top: 0; left: 0; width: 100%; transform-origin: 50% 0; transform: {{ canvasTransform }};">
+            <div style="padding: 44px 32px 72px; display: flex; flex-direction: column; align-items: center; gap: 30px;">
+
+              <div style="text-align: center; display: flex; flex-direction: column; gap: 8px; pointer-events: none;">
+                <div style="font-size: 38px; font-weight: 800; letter-spacing: -0.035em; color: var(--ink); line-height: 1.05; text-shadow: 0 0 30px rgba(95,222,240,0.22);">Embudo de Natucer</div>
+                <div style="font-size: 14px; color: var(--ink-3);">{{ canvasSubtitle }}</div>
+              </div>
+
+              <sc-for list="{{ frames }}" as="fr" hint-placeholder-count="3">
+                <div style="width: {{ fr.width }}; display: flex; flex-direction: column; align-items: center; gap: 18px; border-left: 2px solid {{ fr.wall }}; border-right: 2px solid {{ fr.wall }}; border-radius: 24px; padding: 22px 26px 28px;">
+                  <div style="text-align: center; display: flex; flex-direction: column; gap: 5px; pointer-events: none;">
+                    <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: {{ fr.color }}; text-shadow: {{ fr.glow }};">{{ fr.label }}</div>
+                    <div style="font-size: 13px; color: var(--ink-3);">{{ fr.sub }}</div>
+                  </div>
+
+                  <div style="display: flex; gap: 26px; align-items: flex-start; justify-content: center; flex-wrap: wrap;">
+                    <sc-for list="{{ fr.formats }}" as="fmt" hint-placeholder-count="2">
+                      <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <div style="padding: 7px 20px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap;">{{ fmt.label }}</div>
+
+                        <!-- Vista Conceptos: una tarjeta por concepto -->
+                        <sc-if value="{{ isConceptView }}" hint-placeholder-val="{{ true }}">
+                          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 11px; max-width: 546px;">
+                            <sc-for list="{{ fmt.cards }}" as="sl" hint-placeholder-count="2">
+                              <div data-action="despliegue.abrir-concepto" onClick="{{ sl.open }}" title="Ver el concepto: por qué funciona, cómo se hace y sus referencias" style="width: 172px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; display: flex; flex-direction: column; cursor: pointer; box-shadow: var(--shadow); opacity: {{ sl.opacity }}; transition: opacity .18s ease;">
+                                <div style="height: 104px; border-bottom: 1px solid var(--line); background-color: var(--raised); background-image: repeating-linear-gradient(135deg, rgba(180,200,225,0.10) 0 6px, transparent 6px 13px); display: grid; place-items: center;">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color: var(--ink-4); opacity: .6;"><path d="{{ sl.icon }}" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div style="padding: 11px 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                                  <div style="font-size: 12.5px; font-weight: 700; line-height: 1.35; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: pretty;">{{ sl.name }}</div>
+                                  <div style="font-size: 11px; line-height: 1.45; color: var(--ink-3); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ sl.desc }}</div>
+                                  <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+                                    <sc-for list="{{ sl.chips }}" as="ch" hint-placeholder-count="2">
+                                      <span style="font-size: 9.5px; font-weight: 600; padding: 2px 7px; border-radius: 999px; white-space: nowrap; max-width: 78px; overflow: hidden; text-overflow: ellipsis; background: {{ ch.bg }}; color: {{ ch.color }};">{{ ch.value }}</span>
+                                    </sc-for>
+                                  </div>
+                                  <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px;">
+                                    <span style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.05em; color: var(--ink-4);">{{ sl.refsWord }}</span>
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+                                      <sc-for list="{{ sl.mini }}" as="t" hint-placeholder-count="4">
+                                        <span data-action="despliegue.abrir-referencia" onClick="{{ t.open }}" title="{{ t.tooltip }}" style="aspect-ratio: 4 / 5; border-radius: 6px; border: 1px solid var(--line); background-color: var(--raised); background-image: repeating-linear-gradient(135deg, rgba(180,200,225,0.10) 0 4px, transparent 4px 9px); display: grid; place-items: center; cursor: pointer; overflow: hidden;" style-hover="border-color: var(--line-2);">
+                                          <span style="font-size: 8.5px; font-weight: 600; color: var(--ink-4);">{{ t.badge }}</span>
+                                        </span>
+                                      </sc-for>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </sc-for>
+                            <sc-if value="{{ fmt.empty }}" hint-placeholder-val="{{ false }}">
+                              <div style="width: 316px; padding: 26px 0; text-align: center; font-size: 12.5px; font-style: italic; color: var(--ink-4);">{{ fmt.emptyText }}</div>
+                            </sc-if>
+                          </div>
+                        </sc-if>
+
+                        <!-- Vista Colmena: todas las referencias a la vez -->
+                        <sc-if value="{{ isHiveView }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: 760px;">
+                            <sc-for list="{{ fmt.cards }}" as="sl" hint-placeholder-count="2">
+                              <div style="width: {{ sl.hiveWidth }}; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; padding: 13px 13px 14px; opacity: {{ sl.opacity }}; transition: opacity .18s ease;">
+                                <div data-action="despliegue.abrir-concepto" onClick="{{ sl.open }}" title="Ver el concepto completo" style="display: flex; flex-direction: column; gap: 5px; cursor: pointer; border-bottom: 1px solid var(--line); padding-bottom: 9px;">
+                                  <span style="font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-wrap: pretty;">{{ sl.name }}</span>
+                                  <span style="font-size: 11px; line-height: 1.5; color: var(--ink-3); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ sl.desc }}</span>
+                                </div>
+                                <span style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-4);">{{ sl.refsWord }}</span>
+                                <div style="display: grid; grid-template-columns: repeat({{ sl.cols }}, 52px); gap: 6px; justify-content: center;">
+                                  <sc-for list="{{ sl.hive }}" as="r" hint-placeholder-count="8">
+                                    <span data-action="despliegue.abrir-referencia" onClick="{{ r.open }}" title="{{ r.tooltip }}" style="width: 52px; height: 65px; border-radius: 7px; border: 1px solid var(--line); background-color: var(--raised); background-image: repeating-linear-gradient(135deg, rgba(180,200,225,0.10) 0 4px, transparent 4px 9px); display: grid; place-items: center; cursor: pointer; overflow: hidden;" style-hover="border-color: var(--line-2);">
+                                      <span style="font-size: 8px; font-weight: 600; color: var(--ink-4); text-align: center; line-height: 1.2; padding: 0 3px;">{{ r.brand }}</span>
+                                    </span>
+                                  </sc-for>
+                                </div>
+                              </div>
+                            </sc-for>
+                            <sc-if value="{{ fmt.empty }}" hint-placeholder-val="{{ false }}">
+                              <div style="width: 316px; padding: 26px 0; text-align: center; font-size: 12.5px; font-style: italic; color: var(--ink-4);">{{ fmt.emptyText }}</div>
+                            </sc-if>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <sc-if value="{{ fr.hasNext }}" hint-placeholder-val="{{ true }}">
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 4px; pointer-events: none;">
+                      <div style="width: 2px; height: 24px; background: var(--ink-3); opacity: .55;"></div>
+                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" style="margin-top: -2px;"><path d="M2 2l6 7 6-7" stroke="var(--ink-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- PANEL FLOTANTE (read-only) -->
+          <div style="position: absolute; top: 16px; left: 16px; z-index: 15; width: {{ panelWidth }}; background: var(--surface-solid); border: 1px solid var(--line-2); border-radius: 18px; box-shadow: var(--shadow-lg); overflow: hidden;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 13px 14px;">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--ink-4);">DESPLIEGUE</span>
+                <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Natucer</span>
+                </sc-if>
+              </div>
+              <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ true }}">
+                <button data-action="new:despliegue.ver-cadencia" onClick="{{ openCadence }}" title="Ver la cadencia de creativos" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.3 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+                </button>
+              </sc-if>
+              <button data-action="despliegue.colapsar-panel" onClick="{{ togglePanel }}" title="{{ panelToggleTitle }}" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="transform: {{ panelIconRotate }};"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+            </div>
+
+            <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="padding: 0 14px 14px; display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; padding: 4px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); gap: 3px;">
+                  <sc-for list="{{ pipelineTabs }}" as="pt" hint-placeholder-count="2">
+                    <button data-action="despliegue.cambiar-pipeline" onClick="{{ pt.select }}" style="flex: 1; padding: 7px 10px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 12px; white-space: nowrap; background: {{ pt.bg }}; color: {{ pt.fg }}; font-weight: {{ pt.weight }};">{{ pt.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="display: flex; padding: 4px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); gap: 3px;">
+                  <sc-for list="{{ viewTabs }}" as="v" hint-placeholder-count="2">
+                    <button data-action="despliegue.cambiar-vista" onClick="{{ v.select }}" title="{{ v.hint }}" style="flex: 1; padding: 7px 10px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 12px; white-space: nowrap; background: {{ v.bg }}; color: {{ v.fg }}; font-weight: {{ v.weight }};">{{ v.label }}</button>
+                  </sc-for>
+                </div>
+
+                <button data-action="despliegue.estrategia-de-venta" onClick="{{ openStrategy }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(111,184,255,0.42); background: var(--sel-soft); color: var(--sel); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600;" style-hover="border-color: rgba(111,184,255,0.8);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zM8 9h8M8 13h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  Estrategia de venta
+                </button>
+
+                <div style="height: 1px; background: var(--line);"></div>
+
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                  <span style="font-size: 12.5px; color: var(--ink-2); flex: 1;">Cumplimiento semanal</span>
+                  <span style="font-size: 14px; font-weight: 700; color: {{ compColor }}; font-variant-numeric: tabular-nums;">{{ compLabel }}</span>
+                </div>
+                <div style="height: 5px; border-radius: 999px; background: var(--chip); overflow: hidden;">
+                  <div style="height: 100%; border-radius: 999px; width: {{ compPct }}; background: {{ compColor }};"></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 9px;">
+                  <sc-for list="{{ goals }}" as="g" hint-placeholder-count="3">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                      <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: {{ g.color }}; flex: 1;">{{ g.label }}</span>
+                        <span style="font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums;">{{ g.value }}</span>
+                      </div>
+                      <div style="height: 4px; border-radius: 999px; background: var(--chip); overflow: hidden;">
+                        <div style="height: 100%; border-radius: 999px; width: {{ g.pct }}; background: {{ g.bar }};"></div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="font-size: 11px; line-height: 1.55; color: var(--ink-4); text-wrap: pretty;">Arrastrá para mover · ⌘ + scroll para zoom.</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="position: absolute; bottom: 16px; right: 16px; display: flex; flex-direction: column; gap: 7px; z-index: 12;">
+            <button data-action="despliegue.zoom" onClick="{{ zoomIn }}" title="Acercar" style="width: 38px; height: 38px; border: 1px solid var(--line); background: var(--surface-solid); color: var(--ink); border-radius: 11px; cursor: pointer; font-family: inherit; font-size: 19px; display: grid; place-items: center;" style-hover="border-color: var(--line-2);">+</button>
+            <button data-action="despliegue.zoom" onClick="{{ zoomReset }}" title="Centrar" style="width: 38px; height: 38px; border: 1px solid var(--line); background: var(--surface-solid); color: var(--ink); border-radius: 11px; cursor: pointer; font-family: inherit; font-size: 15px; display: grid; place-items: center;" style-hover="border-color: var(--line-2);">⊙</button>
+            <button data-action="despliegue.zoom" onClick="{{ zoomOut }}" title="Alejar" style="width: 38px; height: 38px; border: 1px solid var(--line); background: var(--surface-solid); color: var(--ink); border-radius: 11px; cursor: pointer; font-family: inherit; font-size: 19px; display: grid; place-items: center;" style-hover="border-color: var(--line-2);">−</button>
+          </div>
+
+          <div style="position: absolute; bottom: 16px; left: 16px; z-index: 12; display: flex; align-items: center; gap: 12px; padding: 9px 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface-solid);">
+            <span style="font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums;">{{ zoomLabel }}</span>
+            <span style="width: 1px; height: 13px; background: var(--line);"></span>
+            <span style="font-size: 11.5px; color: var(--ink-3); white-space: nowrap;">{{ counterText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═════ GRILLA (vista secundaria) ═════ -->
+      <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <sc-for list="{{ frames }}" as="st" hint-placeholder-count="3">
+            <section style="position: relative; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;">
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: {{ st.color }};"></div>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span style="width: 9px; height: 9px; border-radius: 50%; background: {{ st.color }};"></span>
+                <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">{{ st.label }}</span>
+                <span style="font-size: 12.5px; color: var(--ink-3);">{{ st.sub }}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start;">
+                <sc-for list="{{ st.formats }}" as="col" hint-placeholder-count="2">
+                  <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; padding: 0 2px;">
+                      <span style="font-size: 12px; font-weight: 600; color: var(--ink-2);">{{ col.label }}</span>
+                    </div>
+                    <sc-for list="{{ col.cards }}" as="c" hint-placeholder-count="2">
+                      <button data-action="despliegue.abrir-concepto" onClick="{{ c.open }}" style="text-align: left; font-family: inherit; cursor: pointer; border: 1px solid var(--line); border-radius: 16px; background: var(--surface-2); box-shadow: var(--shadow); padding: 13px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; opacity: {{ c.opacity }};" style-hover="border-color: var(--line-2);">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                          <span style="font-size: 13.5px; font-weight: 700; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ c.name }}</span>
+                          <span style="font-size: 12px; line-height: 1.5; color: var(--ink-3); text-wrap: pretty;">{{ c.desc }}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, 96px); gap: 8px;">
+                          <sc-for list="{{ c.gridThumbs }}" as="r" hint-placeholder-count="8">
+                            <span data-action="despliegue.abrir-referencia" onClick="{{ r.open }}" title="{{ r.tooltip }}" style="width: 96px; height: 120px; border-radius: 10px; border: 1px solid var(--line); background-color: var(--raised); background-image: repeating-linear-gradient(135deg, rgba(180,200,225,0.10) 0 5px, transparent 5px 11px); display: grid; place-items: center; cursor: pointer; overflow: hidden;" style-hover="border-color: var(--line-2);">
+                              <span style="font-size: 10px; font-weight: 600; color: var(--ink-4); text-align: center; padding: 0 6px;">{{ r.brand }}</span>
+                            </span>
+                          </sc-for>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; row-gap: 6px;">
+                          <span style="font-size: 11px; color: var(--ink-3); white-space: nowrap;">{{ c.refsWord }}</span>
+                          <sc-for list="{{ c.chips }}" as="ch" hint-placeholder-count="2">
+                            <span style="padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; white-space: nowrap; background: {{ ch.bg }}; color: {{ ch.color }};">{{ ch.value }}</span>
+                          </sc-for>
+                        </div>
+                      </button>
+                    </sc-for>
+                    <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}">
+                      <div style="border: 1.5px dashed var(--line); border-radius: 16px; padding: 22px 14px; text-align: center; font-size: 12px; color: var(--ink-4);">{{ col.emptyText }}</div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- PANEL DE CONCEPTO (read-only) -->
+    <sc-if value="{{ conceptOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeConcept }}" style="position: absolute; inset: 0; z-index: 60; background: rgba(8,8,14,0.62); backdrop-filter: blur(3px); display: flex; justify-content: center; padding: 56px 24px 24px; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 100%; max-width: 800px; height: fit-content; max-height: 100%; overflow-y: auto; background: var(--surface-solid); border: 1px solid var(--line-2); border-radius: 20px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+          <div style="display: flex; align-items: flex-start; gap: 12px; padding: 20px 22px 16px; border-bottom: 1px solid var(--line);">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--chip); color: {{ concept.stageColor }};">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ concept.stageColor }};"></span>{{ concept.stageLabel }}
+                </span>
+                <span style="padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--chip); color: var(--ink-3);">{{ concept.formatLabel }}</span>
+                <sc-for list="{{ concept.chips }}" as="ch" hint-placeholder-count="3">
+                  <span style="padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: {{ ch.bg }}; color: {{ ch.color }};">{{ ch.value }}</span>
+                </sc-for>
+              </div>
+              <h2 style="font-size: 22px; font-weight: 700; letter-spacing: -0.028em; color: var(--ink); line-height: 1.15; text-wrap: pretty;">{{ concept.name }}</h2>
+              <span style="font-size: 12.5px; color: var(--ink-3);">{{ concept.desc }}</span>
+            </div>
+            <button data-action="despliegue.cerrar-concepto" onClick="{{ closeConcept }}" title="Cerrar (Esc)" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            </button>
+          </div>
+
+          <div style="padding: 18px 22px 24px; display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start;">
+              <div style="border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 14px 15px; display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Por qué funciona</span>
+                <p style="font-size: 13px; line-height: 1.65; color: var(--ink-2); text-wrap: pretty; display: -webkit-box; -webkit-line-clamp: {{ whyClamp }}; -webkit-box-orient: vertical; overflow: hidden;">{{ concept.why }}</p>
+                <button data-action="new:despliegue.ver-mas-concepto" onClick="{{ toggleWhy }}" style="align-self: flex-start; padding: 5px 10px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); font-family: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;" style-hover="border-color: var(--line-2); color: var(--ink);">{{ whyLabel }}</button>
+              </div>
+              <div style="border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 14px 15px; display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Cómo se hace</span>
+                <p style="font-size: 13px; line-height: 1.65; color: var(--ink-2); text-wrap: pretty; display: -webkit-box; -webkit-line-clamp: {{ howClamp }}; -webkit-box-orient: vertical; overflow: hidden;">{{ concept.how }}</p>
+                <button data-action="new:despliegue.ver-mas-concepto" onClick="{{ toggleHow }}" style="align-self: flex-start; padding: 5px 10px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); font-family: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;" style-hover="border-color: var(--line-2); color: var(--ink);">{{ howLabel }}</button>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--ink);">{{ concept.refsTitle }}</span>
+                <span style="font-size: 12px; color: var(--ink-4); font-variant-numeric: tabular-nums;">{{ concept.refsCount }}</span>
+                <span style="flex: 1;"></span>
+                <span style="font-size: 11.5px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px;">{{ concept.refBrands }}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 10px;">
+                <sc-for list="{{ concept.refs }}" as="r" hint-placeholder-count="6">
+                  <button data-action="despliegue.abrir-referencia" onClick="{{ r.open }}" title="{{ r.tooltip }}" style="text-align: left; font-family: inherit; cursor: pointer; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 0; overflow: hidden; display: flex; flex-direction: column;" style-hover="border-color: var(--line-2);">
+                    <span style="position: relative; aspect-ratio: {{ r.ar }}; background-color: var(--raised); background-image: repeating-linear-gradient(135deg, rgba(180,200,225,0.10) 0 6px, transparent 6px 13px); display: grid; place-items: center;">
+                      <span style="width: 32px; height: 32px; border-radius: 50%; background: rgba(8,10,16,0.7); border: 1px solid var(--line-2); display: grid; place-items: center; color: var(--ink);">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="{{ r.playIcon }}"></path></svg>
+                      </span>
+                      <span style="position: absolute; right: 6px; bottom: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(4,6,10,0.78); font-size: 10px; color: #DCE7F7;">{{ r.badge }}</span>
+                    </span>
+                    <span style="padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 4px;">
+                      <span style="font-size: 11.5px; font-weight: 700; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.brand }}</span>
+                      <span style="font-size: 11px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.title }}</span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- MODAL DE REFERENCIA (read-only) -->
+    <sc-if value="{{ refOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeRef }}" style="position: absolute; inset: 0; z-index: 70; background: rgba(6,7,12,0.72); backdrop-filter: blur(4px); display: flex; align-items: flex-start; justify-content: center; padding: 36px 24px 24px; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 100%; max-width: 1000px; max-height: 100%; background: var(--surface-solid); border: 1px solid var(--line-2); border-radius: 20px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; overflow: hidden; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+          <div style="display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px 14px; border-bottom: 1px solid var(--line); flex-shrink: 0;">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 16px; font-weight: 700; letter-spacing: -0.022em; color: var(--ink);">{{ ref.brand }}</span>
+                <span style="font-size: 13px; color: var(--ink-3);">{{ ref.title }}</span>
+              </div>
+              <span style="font-size: 12px; color: var(--ink-4);">{{ ref.meta }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+              <button data-action="new:despliegue.referencia-anterior" onClick="{{ refPrev }}" title="Referencia anterior" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+              <span style="font-size: 11.5px; color: var(--ink-4); white-space: nowrap; font-variant-numeric: tabular-nums;">{{ refPosition }}</span>
+              <button data-action="new:despliegue.referencia-siguiente" onClick="{{ refNext }}" title="Referencia siguiente" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+              <button data-action="despliegue.cerrar-referencia" onClick="{{ closeRef }}" title="Cerrar (Esc)" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; margin-left: 4px;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 0;">
+            <div style="border-right: 1px solid var(--line); padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow-y: auto;">
+              <div data-action="despliegue.reproducir-video" style="border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #05070B;">
+                <sc-if value="{{ isVideoRef }}" hint-placeholder-val="{{ true }}">
+                  <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" controls="" playsInline="" preload="metadata" style="display: block; width: 100%; aspect-ratio: 9 / 16; max-height: 52vh; background: #05070B; object-fit: contain;"></video>
+                </sc-if>
+                <sc-if value="{{ isStaticRef }}" hint-placeholder-val="{{ false }}">
+                  <div style="width: 100%; aspect-ratio: {{ ref.ar }}; background-color: var(--raised); background-image: repeating-linear-gradient(135deg, rgba(180,200,225,0.10) 0 7px, transparent 7px 15px); display: grid; place-items: center;">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3); text-align: center; padding: 0 16px; line-height: 1.6;">creativo estático<br />{{ ref.arLabel }}</span>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <a data-action="despliegue.descargar-video" href="#" onClick="{{ prevent }}" style="display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M6 11l6 6 6-6M4 21h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  {{ downloadLabel }}
+                </a>
+                <a data-action="despliegue.ver-en-meta" href="#" onClick="{{ prevent }}" style="display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  Ver en Meta
+                </a>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 7px;">
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Etiquetas</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <sc-for list="{{ ref.chips }}" as="ch" hint-placeholder-count="4">
+                    <span style="padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: {{ ch.bg }}; color: {{ ch.color }};">{{ ch.value }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <sc-for list="{{ ref.facts }}" as="f" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line);">
+                    <span style="font-size: 11.5px; color: var(--ink-4); flex: 1;">{{ f.label }}</span>
+                    <span style="font-size: 12px; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums;">{{ f.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding: 16px 20px 18px; display: flex; flex-direction: column; gap: 14px; min-height: 0;">
+              <div style="display: flex; flex-direction: column; gap: 7px; flex-shrink: 0;">
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Notas del equipo</span>
+                <p style="font-size: 13px; line-height: 1.65; color: var(--ink-2); text-wrap: pretty;">{{ ref.notes }}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0;">
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Guion / transcripción</span>
+                <div style="flex: 1; min-height: 140px; padding: 14px 16px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12.5px; line-height: 1.75; color: var(--ink-2); white-space: pre-wrap; overflow-y: auto;">{{ ref.transcript }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ESTRATEGIA DE VENTA (read-only, escala a mucho contenido) -->
+    <sc-if value="{{ strategyOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeStrategy }}" style="position: absolute; inset: 0; z-index: 65; background: rgba(8,8,14,0.64); backdrop-filter: blur(3px); display: flex; align-items: flex-start; justify-content: center; padding: 44px 24px 24px; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 100%; max-width: 900px; max-height: 100%; background: var(--surface-solid); border: 1px solid var(--line-2); border-radius: 20px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; overflow: hidden; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+          <div style="display: flex; align-items: flex-start; gap: 12px; padding: 20px 22px 14px; flex-shrink: 0;">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+              <h2 style="font-size: 20px; font-weight: 700; letter-spacing: -0.026em; color: var(--ink);">Estrategia de venta</h2>
+              <span style="font-size: 12.5px; color: var(--ink-3);">Los puntos de contacto que guían cada concepto del embudo.</span>
+            </div>
+            <button data-action="despliegue.cerrar-estrategia" onClick="{{ closeStrategy }}" title="Cerrar (Esc)" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            </button>
+          </div>
+
+          <div style="padding: 0 22px 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0;">
+            <span style="font-size: 11.5px; color: var(--ink-4);">Mostrar</span>
+            <sc-for list="{{ strategyToggles }}" as="t" hint-placeholder-count="3">
+              <button data-action="new:despliegue.estrategia-seccion" onClick="{{ t.toggle }}" title="{{ t.title }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; border: 1px solid {{ t.border }}; background: {{ t.bg }}; color: {{ t.fg }};">
+                <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ t.dot }};"></span>
+                {{ t.label }}
+                <span style="font-size: 10.5px; opacity: .75;">{{ t.count }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 2px 22px 24px; display: grid; grid-template-columns: repeat({{ strategyCols }}, minmax(0, 1fr)); gap: 14px; align-items: start;">
+            <sc-for list="{{ strategySections }}" as="sec" hint-placeholder-count="3">
+              <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
+                <div style="position: sticky; top: 0; z-index: 2; display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 12px; background: {{ sec.headBg }}; border: 1px solid {{ sec.headBorder }};">
+                  <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span style="font-size: 13px; font-weight: 700; color: {{ sec.color }}; flex: 1;">{{ sec.label }}</span>
+                    <span style="font-size: 11.5px; color: var(--ink-4); font-variant-numeric: tabular-nums;">{{ sec.count }}</span>
+                  </div>
+                  <span style="font-size: 11px; line-height: 1.5; color: var(--ink-3); text-wrap: pretty;">{{ sec.hint }}</span>
+                </div>
+                <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
+                  <div style="border: 1px solid var(--line); border-left: 2px solid {{ sec.color }}; border-radius: 12px; background: {{ sec.cardBg }}; padding: 12px 13px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 12.5px; font-weight: 700; color: var(--ink); text-wrap: pretty;">{{ it.title }}</span>
+                    <span style="font-size: 12px; line-height: 1.6; color: var(--ink-3); text-wrap: pretty; display: -webkit-box; -webkit-line-clamp: {{ it.clamp }}; -webkit-box-orient: vertical; overflow: hidden;">{{ it.body }}</span>
+                    <button data-action="new:despliegue.estrategia-ver-mas" onClick="{{ it.toggle }}" style="align-self: flex-start; padding: 4px 9px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;" style-hover="border-color: var(--line-2); color: var(--ink-2);">{{ it.moreLabel }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- CADENCIA DE CREATIVOS (read-only) -->
+    <sc-if value="{{ cadenceOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeCadence }}" style="position: absolute; inset: 0; z-index: 65; background: rgba(8,8,14,0.64); backdrop-filter: blur(3px); display: flex; align-items: flex-start; justify-content: center; padding: 44px 24px 24px; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 100%; max-width: 880px; max-height: 100%; background: var(--surface-solid); border: 1px solid var(--line-2); border-radius: 20px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; overflow: hidden; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+          <div style="display: flex; align-items: flex-start; gap: 12px; padding: 20px 22px 16px; border-bottom: 1px solid var(--line); flex-shrink: 0;">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+              <h2 style="font-size: 20px; font-weight: 700; letter-spacing: -0.026em; color: var(--ink);">Cadencia de creativos</h2>
+              <span style="font-size: 12.5px; color: var(--ink-3);">Cuántos creativos se producen por semana según tu inversión. La configura tu equipo.</span>
+            </div>
+            <button data-action="despliegue.cerrar-cadencia" onClick="{{ closeCadence }}" title="Cerrar (Esc)" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            </button>
+          </div>
+
+          <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 18px 22px 24px; display: flex; flex-direction: column; gap: 20px;">
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <span style="font-size: 12.5px; font-weight: 700; color: var(--ink);">Números de la cuenta</span>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px;">
+                <sc-for list="{{ cadenceFacts }}" as="f" hint-placeholder-count="4">
+                  <div style="border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 13px 15px; display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-size: 11.5px; color: var(--ink-4);">{{ f.label }}</span>
+                    <span style="font-size: 21px; font-weight: 700; letter-spacing: -0.028em; color: var(--ink); font-variant-numeric: tabular-nums;">{{ f.value }}</span>
+                    <span style="font-size: 11.5px; line-height: 1.5; color: var(--ink-3); text-wrap: pretty;">{{ f.hint }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                <span style="font-size: 12.5px; font-weight: 700; color: var(--ink);">Presupuesto de prueba por creativo</span>
+                <span style="font-size: 11.5px; color: var(--ink-3);">Cuántas veces el CPA recibe cada creativo antes de descartarlo.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 9px;">
+                <div style="position: relative; height: 36px;">
+                  <div style="position: absolute; left: 0; right: 0; top: 16px; height: 4px; border-radius: 999px; background: var(--chip);"></div>
+                  <div style="position: absolute; left: {{ bandLeft }}; width: {{ bandWidth }}; top: 16px; height: 4px; border-radius: 999px; background: rgba(52,192,138,0.5);"></div>
+                  <div style="position: absolute; left: {{ markerLeft }}; top: 6px; width: 34px; margin-left: -17px; height: 24px; border-radius: 999px; background: var(--surface-solid); border: 1.5px solid var(--green); display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--green);">{{ cadenceActive }}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <sc-for list="{{ cadenceTicks }}" as="t" hint-placeholder-count="10">
+                    <span style="font-size: 10.5px; font-weight: {{ t.weight }}; color: {{ t.color }}; font-variant-numeric: tabular-nums;">{{ t.label }}</span>
+                  </sc-for>
+                </div>
+                <span style="font-size: 11.5px; color: var(--green);">Entre 3× y 5× es el rango recomendado para tu CPA actual.</span>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <span style="font-size: 12.5px; font-weight: 700; color: var(--ink);">Distribución del presupuesto</span>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <sc-for list="{{ cadenceSplit }}" as="sp" hint-placeholder-count="2">
+                  <div style="border: 1px solid {{ sp.border }}; border-radius: 14px; background: {{ sp.bg }}; padding: 13px 15px; display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.05em; color: {{ sp.color }};">{{ sp.label }}</span>
+                    <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums;">{{ sp.pct }}</span>
+                    <span style="font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums;">{{ sp.amount }}</span>
+                    <span style="font-size: 11.5px; color: var(--ink-4); text-wrap: pretty;">{{ sp.hint }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="border: 1px solid rgba(52,192,138,0.3); border-radius: 16px; background: rgba(52,192,138,0.07); padding: 16px 18px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+              <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 180px;">
+                <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em; color: var(--green);">CREATIVOS MÍNIMOS POR SEMANA</span>
+                <span style="font-size: 12px; color: var(--ink-3); text-wrap: pretty;">Presupuesto de testing ÷ (CPA × presupuesto de prueba).</span>
+              </div>
+              <span style="font-size: 42px; font-weight: 800; letter-spacing: -0.04em; color: var(--ink); line-height: 1; font-variant-numeric: tabular-nums;">{{ minWeekly }}</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <span style="font-size: 12.5px; font-weight: 700; color: var(--ink);">Distribución por embudo</span>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                <sc-for list="{{ cadenceFunnel }}" as="cf" hint-placeholder-count="3">
+                  <div style="border: 1px solid var(--line); border-left: 2px solid {{ cf.color }}; border-radius: 14px; background: var(--surface-2); padding: 13px 15px; display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-size: 11.5px; font-weight: 700; color: {{ cf.color }};">{{ cf.label }}</span>
+                    <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums;">{{ cf.pct }}</span>
+                    <span style="font-size: 12px; color: var(--ink-3);">{{ cf.creatives }}</span>
+                    <span style="font-size: 11.5px; color: var(--ink-4);">{{ cf.split }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1512,&quot;height&quot;:950},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;listo&quot;,&quot;options&quot;:[&quot;listo&quot;,&quot;cargando&quot;,&quot;vacio&quot;,&quot;sin-despliegue&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Estados&quot;},&quot;layoutInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;conceptos&quot;,&quot;options&quot;:[&quot;conceptos&quot;,&quot;colmena&quot;,&quot;grilla&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;vistaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;referentes&quot;,&quot;options&quot;:[&quot;referentes&quot;,&quot;creados&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+// Despliegue — VISTA CLIENTE, read-only.
+// El tablero tiene DOS vistas: "Conceptos" (una tarjeta por concepto, se abre
+// para ver sus referencias) y "Colmena" (todas las referencias de todos los
+// conceptos a la vez). La "Grilla" queda como vista secundaria.
+// Canvas con zoom/pan, embudo Top → Middle → Bottom con anchos decrecientes y
+// columnas Estáticos | Video (DespliegueCreativo.jsx + FunnelLines).
+// Panel flotante read-only: Anuncios/Orgánico, Referentes/Creados, Estrategia
+// de venta y cumplimiento semanal por etapa; ⚙ abre la cadencia en lectura.
+// Un solo botón de filtros: etapa, formato, marca/nicho/sub-nicho/ángulo,
+// links y modo Resaltar / Ocultar resto (CanvasFilterBar sobre variations).
+// Detalle: ConceptViewPanel (por qué funciona / cómo se hace / referencias) y
+// ExampleModal read-only (reproductor o imagen, notas, guion, descargar, Meta).
+// Sin drag, sin agregar/editar, sin simulador, sin sincronizar/importar.
+// El sidebar y el topbar llevan data-shell="cliente": los aporta Shell Cliente.
+
+const IC = {
+  gauge: "M22 12h-4l-3 9L9 3l-3 9H2",
+  chart: "M4 20V10M10 20V4M16 20v-7M22 20v-12",
+  clipboard: "M9 3h6v3H9zM7 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2M9 12h6M9 16h4",
+  film: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM3 9h18M3 15h18M8.5 3v18M15.5 3v18",
+  funnel: "M3 4h18l-7 8v8l-4-2v-6L3 4z",
+  grid: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+  check: "M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9",
+  users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87",
+  trash: "M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6",
+  moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
+  sun: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+  board: "M3 4h18v16H3zM9 4v16M15 4v16",
+  hive: "M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM7 16h4v4H7zM13 16h4v4h-4z",
+  list: "M4 6h16M4 12h16M4 18h10",
+  playFill: "M8 5l12 7-12 7V5z",
+  imageFill: "M4 5h16v14H4V5zm2.5 9.5 3-3.5 3 3.5 2.5-3 3.5 4.5h-12z",
+};
+
+const NAV = [
+  { label: "Resumen", items: [
+    { key: "home", label: "Resumen", icon: IC.gauge, action: "nav.resumen" },
+    { key: "reportes", label: "Reportes", icon: IC.chart, action: "nav.reportes" },
+  ]},
+  { label: "Creativos", items: [
+    { key: "despliegue", label: "Despliegue", icon: IC.funnel, action: "nav.despliegue" },
+    { key: "pipeline", label: "Content Pipeline", icon: IC.film, action: "nav.content-pipeline" },
+    { key: "control", label: "Control Creativos", icon: IC.grid, action: "nav.control-creativos" },
+  ]},
+  { label: "Operación", items: [
+    { key: "plan", label: "Plan de implementación", icon: IC.clipboard, action: "nav.plan" },
+    { key: "tareas", label: "Tareas", icon: IC.check, action: "nav.tareas" },
+    { key: "equipo", label: "Equipo", icon: IC.users, action: "nav.equipo" },
+    { key: "papelera", label: "Papelera", icon: IC.trash, action: "nav.papelera" },
+  ]},
+];
+
+// constants.js — STAGES, con el label en capital inicial (no en mayúsculas).
+const STAGES = [
+  { key: "tofu", label: "Top Of The Funnel", sub: "Atraer a quien no te conoce", color: "#27E38F", ink: "#0F8F5B", wall: "rgba(39,227,143,0.34)", glow: "0 0 26px rgba(39,227,143,0.55)", width: "100%", goal: 24 },
+  { key: "mofu", label: "Middle Of The Funnel", sub: "Convencer a quien te está considerando", color: "#FFD23F", ink: "#8A6A12", wall: "rgba(255,210,63,0.34)", glow: "0 0 26px rgba(255,210,63,0.5)", width: "84%", goal: 12 },
+  { key: "bofu", label: "Bottom Of The Funnel", sub: "Cerrar a quien ya está listo", color: "#FF5A5A", ink: "#C4302F", wall: "rgba(255,90,90,0.34)", glow: "0 0 26px rgba(255,90,90,0.5)", width: "68%", goal: 4 },
+];
+const STAGE_BY_KEY = Object.fromEntries(STAGES.map((s) => [s.key, s]));
+const FORMATS = [{ key: "static", label: "Estáticos" }, { key: "video", label: "Video" }];
+
+// labels.js — categorías de etiqueta (sin "formato": ya es columna).
+const CATS = [
+  { key: "marca", label: "Marca", color: "var(--purple)", tint: "rgba(155,123,240,0.15)" },
+  { key: "nicho", label: "Nicho", color: "var(--blue)", tint: "rgba(74,144,226,0.14)" },
+  { key: "subnicho", label: "Sub-nicho", color: "#22B8C6", tint: "rgba(34,184,198,0.14)" },
+  { key: "angulo", label: "Ángulo", color: "var(--amber)", tint: "rgba(240,169,59,0.15)" },
+];
+
+const LINK_FILTERS = [
+  { key: "all", label: "Todos" },
+  { key: "meta", label: "Con Meta" },
+  { key: "drive", label: "Con Drive" },
+  { key: "meta_no_drive", label: "Meta sin Drive" },
+  { key: "meta_and_drive", label: "Meta + Drive" },
+  { key: "no_link", label: "Sin link" },
+];
+
+const AR = ["9 / 16", "4 / 5", "1 / 1"];
+const AR_LABEL = { "9 / 16": "9:16", "4 / 5": "4:5", "1 / 1": "1:1" };
+
+const NOTE_A = "Corre desde hace 34 días con el mismo hook. El gancho de los primeros 2 segundos es lo que sostiene la retención; el resto es demostración pura, sin claim hablado.";
+const NOTE_B = "La versión con subtítulos rinde mejor en frío. Sin música la voz sola da más credibilidad, y el cierre con precio sube el CTR sin bajar la conversión.";
+const TR_A = "HOOK\nSi tu piso se mancha con todo, mirá esto antes de comprar otro limpiador.\n\nBODY\nAplicamos el producto sobre cerámica sucia y pasamos un paño una sola vez. Sin refregar, sin olor fuerte.\nComparamos lado a lado con el limpiador de siempre: la diferencia se ve en el borde de la junta.\nTestimonio corto de clienta real: \"lo uso hace tres meses y no volví al otro\".\n\nCTA\nEntrá y pedí el tuyo hoy — llega en 48 horas.";
+const TR_B = "HOOK\nTres cosas que nadie te dice antes de renovar el baño.\n\nBODY\nUno: la junta importa más que el azulejo.\nDos: el brillo se pierde por el producto, no por el uso.\nTres: medí antes de comprar, siempre.\n\nCTA\nGuardá este video para cuando vayas a comprar.";
+
+// Cada concepto toma referencias de UN grupo chico de marcas, con su nicho y
+// sus ángulos: así filtrar por marca/nicho/ángulo deja un subconjunto real.
+function refs(prefix, n, seed, tags, kind) {
+  const titles = ["Demo lado a lado", "Testimonio de clienta", "Antes y después", "Voz en off + texto", "UGC en baño chico", "Detalle de junta", "Comparativa de precio", "Unboxing rápido"];
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const k = (seed + i) % 8;
+    out.push({
+      id: prefix + "-r" + i,
+      brand: tags.brands[i % tags.brands.length],
+      title: titles[k],
+      kind,
+      ar: AR[(seed + i) % AR.length],
+      dur: ["0:18", "0:24", "0:31", "0:42"][(seed + i) % 4],
+      days: 12 + ((seed + i * 7) % 70),
+      labels: {
+        marca: [tags.brands[i % tags.brands.length]],
+        nicho: [tags.nicho],
+        subnicho: tags.subnicho && i % 2 === 0 ? [tags.subnicho] : [],
+        angulo: [tags.angulos[i % tags.angulos.length]],
+      },
+      meta: (seed + i) % 4 !== 0,
+      drive: (seed + i) % 2 === 0,
+      notes: i % 2 === 0 ? NOTE_A : NOTE_B,
+      transcript: i % 2 === 0 ? TR_A : TR_B,
+    });
+  }
+  return out;
+}
+
+const T1 = { brands: ["Lumia", "Edge"], nicho: "Hogar", subnicho: "Cerámica", angulos: ["Demostración", "Prueba social"] };
+const T2 = { brands: ["One Rise", "Doctor Squatch"], nicho: "Hogar", subnicho: "", angulos: ["Miedo a equivocarse"] };
+const T3 = { brands: ["Nordika", "Halo"], nicho: "Reformas", subnicho: "Junta", angulos: ["Ahorro"] };
+const T4 = { brands: ["Lumia", "Nordika", "Bloom"], nicho: "Reformas", subnicho: "Porcelanato", angulos: ["Ahorro", "Demostración"] };
+const T5 = { brands: ["Bloom", "Doctor Squatch"], nicho: "Hogar", subnicho: "", angulos: ["Prueba social"] };
+const T6 = { brands: ["Edge", "Halo"], nicho: "Reformas", subnicho: "Junta", angulos: ["Miedo a equivocarse", "Prueba social"] };
+
+const CONCEPTS = [
+  { ref: "A-141", stage: "tofu", format: "video", pipeline: "ads",
+    name: "Hook de pregunta directa a cámara", desc: "UGC de 20s que abre con una pregunta incómoda.",
+    why: "La pregunta frena el scroll antes de que aparezca el producto: el usuario se queda a ver si le pasa a él. Funciona porque no promete nada todavía — solo nombra el problema con las mismas palabras que usaría la clienta, y eso baja la guardia publicitaria de los primeros dos segundos. En frío es el formato que mejor sostiene la retención hasta el segundo 8, que es donde recién entra el producto.",
+    how: "Un plano vertical, luz natural, sin música, subtítulos quemados y corte seco al resultado. La pregunta se dice mirando al lente, sin saludo y sin presentación de marca. A los 3 segundos entra la demostración; el nombre del producto no aparece hasta el segundo 10. Cierre con una sola línea de CTA hablada, nunca sobreimpresa.",
+    refs: refs("A-141", 8, 1, T1, "video") },
+  { ref: "A-142", stage: "tofu", format: "video", pipeline: "ads",
+    name: "Demostración en cámara lenta", desc: "El producto haciendo su trabajo, sin voz.",
+    why: "La demostración física es la prueba más barata: se entiende sin sonido, en cualquier idioma y sin que nadie tenga que confiar en un claim. Cuando el resultado es visible en menos de 5 segundos, el video se comparte solo.",
+    how: "Cámara fija, 120 fps, fondo oscuro y una sola acción por toma. Nada de manos entrando y saliendo del cuadro; el producto se mueve, la cámara no.",
+    refs: refs("A-142", 6, 4, T2, "video") },
+  { ref: "A-148", stage: "tofu", format: "video", pipeline: "organic",
+    name: "Tres cosas que nadie te dice", desc: "Cara a cámara, tono de consejo, sin venta.",
+    why: "Construye autoridad y alimenta el remarketing con público tibio y muy barato. Al no vender nada, la gente lo guarda y lo comparte, y el algoritmo lo trata como contenido y no como anuncio.",
+    how: "Un solo plano, tres puntos, cierre con \"guardá este video\". Sin logo, sin música y sin llamada a la acción comercial.",
+    refs: refs("A-148", 5, 5, T5, "video") },
+  { ref: "A-152", stage: "tofu", format: "video", pipeline: "organic",
+    name: "Rutina de limpieza en 60 segundos", desc: "Rutina completa condensada, ritmo alto.",
+    why: "El formato rutina se guarda: cada paso es una micro-promesa y el usuario vuelve al video cuando va a hacerlo de verdad. Gana alcance orgánico sin pauta.",
+    how: "Seis clips de 10s con el mismo encuadre, música de fondo y el paso numerado en pantalla.",
+    refs: refs("A-152", 4, 2, T1, "video") },
+  { ref: "A-143", stage: "tofu", format: "static", pipeline: "ads",
+    name: "Lista de 5 errores comunes", desc: "Carrusel de 5 placas, un error por placa.",
+    why: "La lista da permiso a leer: cada placa es una micro-promesa que sostiene el swipe y deja al lector calificado para la última, que es la única que vende.",
+    how: "Una idea por placa, título de 4 palabras máximo, mismo fondo en las cinco y la oferta recién en la quinta.",
+    refs: refs("A-143", 12, 3, T4, "static") },
+  { ref: "A-149", stage: "tofu", format: "static", pipeline: "ads",
+    name: "Comparativa precio-metro", desc: "Dos precios enfrentados y una línea de copy.",
+    why: "Ataca la duda de precio antes de que aparezca. En frío el número hace el trabajo que un video tarda 20 segundos en hacer.",
+    how: "Fondo plano, dos columnas, el precio de la competencia en gris y el propio en color de marca. Nada más en la placa.",
+    refs: refs("A-149", 9, 0, T3, "static") },
+  { ref: "A-144", stage: "mofu", format: "video", pipeline: "ads",
+    name: "Clienta narrando su rutina", desc: "UGC de 45s en primera persona.",
+    why: "En consideración la objeción ya no es el precio, es si funciona para alguien como ella. Un testimonio sin producción resuelve eso mejor que cualquier claim.",
+    how: "Grabado por la propia clienta, sin guion cerrado, con dos preguntas guía y sin retoque de color.",
+    refs: refs("A-144", 7, 2, T5, "video") },
+  { ref: "A-150", stage: "mofu", format: "video", pipeline: "ads",
+    name: "Comparativa con la competencia", desc: "Mismo test aplicado a dos productos.",
+    why: "Quien compara ya está decidiendo: mostrarle el test le ahorra la búsqueda y hace que la comparación quede a favor nuestro.",
+    how: "Split screen, mismo tiempo y mismo paño para los dos lados, y el resultado en primer plano al final.",
+    refs: refs("A-150", 6, 6, T6, "video") },
+  { ref: "A-145", stage: "mofu", format: "static", pipeline: "ads",
+    name: "Antes y después con métricas", desc: "Dos fotos y tres cifras reales.",
+    why: "Muestra durabilidad, que es la duda que aparece después de la primera visita a la web.",
+    how: "Mismo encuadre en las dos fotos, la fecha sobreimpresa y solo tres cifras — más números confunden.",
+    refs: refs("A-145", 8, 4, T3, "static") },
+  { ref: "A-146", stage: "bofu", format: "video", pipeline: "ads",
+    name: "Testimonial de resultados a 90 días", desc: "Seguimiento de una clienta durante tres meses.",
+    why: "Cierra con la prueba más difícil de discutir: tiempo real de uso, con la misma persona y el mismo espacio.",
+    how: "Tres grabaciones espaciadas, mismo encuadre, y un cierre con la garantía dicha en voz de la clienta.",
+    refs: refs("A-146", 5, 7, T6, "video") },
+  { ref: "A-151", stage: "bofu", format: "video", pipeline: "ads",
+    name: "Objeción de precio con garantía", desc: "15s por objeción: precio, instalación, garantía.",
+    why: "Recupera a quien abandonó el carrito con una duda concreta: cada corte responde una sola objeción y se puede servir por separado.",
+    how: "Tres cortes del mismo rodaje, cada uno con su objeción dicha en el primer segundo.",
+    refs: refs("A-151", 4, 7, T2, "video") },
+  { ref: "A-147", stage: "bofu", format: "static", pipeline: "ads",
+    name: "Oferta con garantía de 30 días", desc: "Placa de cierre con envío en 48 h.",
+    why: "Al público que ya visitó le falta un motivo para hoy; la garantía lo da sin tener que descontar precio.",
+    how: "Copy corto, un solo botón y la garantía en el bloque de mayor contraste de la placa.",
+    refs: refs("A-147", 10, 6, T4, "static") },
+];
+
+const STRATEGY = [
+  { key: "angles", label: "Ángulos", color: "#34C08A", ink: "#17976A", tint: "rgba(52,192,138,0.13)", tintLight: "rgba(23,151,106,0.10)", hint: "Las razones por las que la gente sí compra — cada concepto sale de un ángulo.", items: [
+    { title: "Ahorro real por metro", body: "Comparado con reponer el piso completo, el ahorro se ve en la primera compra: un litro cubre 90 m² y el costo por metro queda por debajo de cualquier alternativa del canal tradicional." },
+    { title: "Rinde el triple", body: "Un litro cubre 90 m²; la competencia cubre 30. El argumento no es precio de botella, es cuántas veces la vas a comprar en el año." },
+    { title: "Sin olor fuerte", body: "Se puede usar con la casa habitada, con niños y con mascotas: no obliga a ventilar ni a salir de la casa mientras seca." },
+    { title: "Resultado en una pasada", body: "No hay que refregar. Eso convierte una tarea de 40 minutos en una de 10, y es lo que la gente cuenta cuando recomienda." },
+    { title: "Sirve en cualquier superficie", body: "Cerámica, porcelanato y micro-cemento. Amplía el público sin cambiar el mensaje." },
+  ]},
+  { key: "objections", label: "Objeciones", color: "#E24B4A", ink: "#C4302F", tint: "rgba(226,75,74,0.14)", tintLight: "rgba(196,48,47,0.09)", hint: "Motivos por los que NO compran — hay que derribarlos con contenido.", items: [
+    { title: "\"Es más caro\"", body: "Se responde con costo por metro y con duración, nunca con precio de botella. El video de comparativa precio-metro existe exactamente para esto." },
+    { title: "\"No sé si sirve en mi piso\"", body: "Demostración sobre las tres superficies más comunes, con el nombre de la superficie en pantalla." },
+    { title: "\"Ya probé de todo\"", body: "Testimonial de alguien que también probó de todo antes: la credibilidad viene del escepticismo compartido." },
+    { title: "\"Me va a dañar la junta\"", body: "Detalle en primer plano de la junta después de 90 días de uso." },
+    { title: "\"No quiero esperar el envío\"", body: "Envío en 48 h visible en la placa de cierre y en el copy del anuncio." },
+  ]},
+  { key: "awareness", label: "Conciencia", color: "#58A6FF", ink: "#2664CC", tint: "rgba(88,166,255,0.14)", tintLight: "rgba(38,100,204,0.09)", hint: "Cosas que la gente no sabe y, si las entendiera, te compraría más.", items: [
+    { title: "La junta es lo que se ensucia", body: "No es el azulejo: es el borde. Entender esto cambia el criterio de compra y hace que el producto se evalúe por lo que sí resuelve." },
+    { title: "El brillo se pierde por el producto", body: "El uso no opaca; los limpiadores con cera sí. Es el dato que más comentarios genera en orgánico." },
+    { title: "Diluir de más no rinde más", body: "Rinde menos: la mezcla pierde efecto y obliga a repetir la pasada." },
+    { title: "El piso mojado no está limpio", body: "Brillo por humedad ≠ limpieza. Sirve para explicar por qué el resultado se juzga en seco." },
+  ]},
+];
+
+const CADENCE = {
+  facts: [
+    { label: "Inversión semanal", value: "$10.000.000", hint: "COP por semana en pauta" },
+    { label: "Costo por compra (CPA)", value: "$100.000", hint: "Promedio de los últimos 30 días" },
+    { label: "Ticket promedio (AOV)", value: "$500.000", hint: "Lo que deja cada venta" },
+    { label: "ROAS objetivo", value: "3,2×", hint: "Meta acordada con tu equipo" },
+  ],
+  scaleMax: 10,
+  bandFrom: 3,
+  bandTo: 5,
+  activeScale: 3,
+  split: [
+    { label: "ESCALAR GANADORES", pct: "70 %", amount: "≈ $7.000.000 COP", hint: "Se reparte entre los winners validados.", color: "var(--green)", border: "rgba(52,192,138,0.35)", bg: "rgba(52,192,138,0.08)" },
+    { label: "TESTING", pct: "30 %", amount: "≈ $3.000.000 COP", hint: "Financia los creativos nuevos de la semana.", color: "var(--amber)", border: "rgba(240,169,59,0.35)", bg: "rgba(240,169,59,0.08)" },
+  ],
+  minWeekly: "40",
+  funnel: [
+    { key: "tofu", pct: "60 %", creatives: "≈ 24 creativos", split: "16 video · 8 estáticos" },
+    { key: "mofu", pct: "30 %", creatives: "≈ 12 creativos", split: "8 video · 4 estáticos" },
+    { key: "bofu", pct: "10 %", creatives: "≈ 4 creativos", split: "2 video · 2 estáticos" },
+  ],
+};
+
+function norm(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); }
+
+function chipsOf(labels) {
+  const out = [];
+  for (const c of CATS) for (const v of labels[c.key] || []) out.push({ value: v, color: c.color, bg: c.tint });
+  return out;
+}
+
+function linkMatches(r, lf) {
+  if (!lf || lf === "all") return true;
+  if (lf === "meta") return r.meta;
+  if (lf === "drive") return r.drive;
+  if (lf === "meta_no_drive") return r.meta && !r.drive;
+  if (lf === "meta_and_drive") return r.meta && r.drive;
+  if (lf === "no_link") return !r.meta && !r.drive;
+  return true;
+}
+
+function refMatches(r, filters, lf) {
+  for (const c of CATS) {
+    const sel = filters[c.key] || [];
+    if (!sel.length) continue;
+    const selN = new Set(sel.map(norm));
+    if (!(r.labels[c.key] || []).some((v) => selN.has(norm(v)))) return false;
+  }
+  return linkMatches(r, lf);
+}
+
+function brandsOf(list) {
+  const seen = [];
+  for (const r of list) if (!seen.includes(r.brand)) seen.push(r.brand);
+  return seen;
+}
+
+class Component extends DCLogic {
+  state = {
+    theme: "dark", layout: null, view: null, pipeline: "ads",
+    stage: "all", format: "all",
+    filters: {}, linkFilter: "all", mode: "resaltar", filterOpen: false, filterTab: "etapa",
+    panelOpen: true, scale: 1, panX: 0, panY: 0, panning: false,
+    conceptRef: null, refId: null, whyOpen: false, howOpen: false,
+    strategyOpen: false, strategyHidden: {}, strategyExpanded: {},
+    cadenceOpen: false,
+  };
+
+  componentDidMount() {
+    this._key = (e) => {
+      if (e.key !== "Escape") return;
+      const s = this.state;
+      if (s.refId) this.setState({ refId: null });
+      else if (s.conceptRef) this.setState({ conceptRef: null, whyOpen: false, howOpen: false });
+      else if (s.strategyOpen || s.cadenceOpen) this.setState({ strategyOpen: false, cadenceOpen: false });
+      else this.setState({ filterOpen: false });
+    };
+    this._click = (e) => {
+      if (e.target.closest && e.target.closest("[data-menu-root]")) return;
+      if (this.state.filterOpen) this.setState({ filterOpen: false });
+    };
+    this._move = (e) => {
+      if (!this._drag) return;
+      this.setState({ panX: this._drag.x0 + (e.clientX - this._drag.mx), panY: this._drag.y0 + (e.clientY - this._drag.my) });
+    };
+    this._up = () => { this._drag = null; this.setState({ panning: false }); };
+    window.addEventListener("keydown", this._key);
+    window.addEventListener("click", this._click);
+    window.addEventListener("mousemove", this._move);
+    window.addEventListener("mouseup", this._up);
+  }
+  componentWillUnmount() {
+    if (this._canvas) this._canvas.removeEventListener("wheel", this._wheel);
+    window.removeEventListener("keydown", this._key);
+    window.removeEventListener("click", this._click);
+    window.removeEventListener("mousemove", this._move);
+    window.removeEventListener("mouseup", this._up);
+  }
+
+  // El zoom/pan se escucha con un listener nativo NO pasivo sobre el canvas:
+  // así preventDefault() funciona y el ⌘+scroll no hace zoom a toda la página.
+  attachCanvas = (el) => {
+    if (this._canvas === el) return;
+    if (this._canvas) this._canvas.removeEventListener("wheel", this._wheel);
+    this._canvas = el;
+    if (el) el.addEventListener("wheel", this._wheel, { passive: false });
+  };
+
+  _wheel = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.ctrlKey || e.metaKey) this.zoomBy(Math.exp(-e.deltaY * 0.006));
+    else this.setState((st) => ({ panX: st.panX - e.deltaX, panY: st.panY - e.deltaY }));
+  };
+
+  zoomBy(f) { this.setState((st) => ({ scale: Math.min(2.2, Math.max(0.28, st.scale * f)) })); }
+
+  toggleVal(catKey, val) {
+    const cur = this.state.filters[catKey] || [];
+    const next = cur.includes(val) ? cur.filter((x) => x !== val) : [...cur, val];
+    this.setState({ filters: { ...this.state.filters, [catKey]: next } });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const estado = this.props.estado ?? "listo";
+    const layout = s.layout ?? this.props.layoutInicial ?? "conceptos";
+    const view = s.view ?? this.props.vistaInicial ?? "referentes";
+    const isLoading = estado === "cargando";
+    const noDeploy = estado === "sin-despliegue";
+    const noConcepts = estado === "vacio";
+
+    const activeCount =
+      CATS.reduce((n, c) => n + ((s.filters[c.key] || []).length), 0) +
+      (s.linkFilter !== "all" ? 1 : 0) +
+      (s.stage !== "all" ? 1 : 0) + (s.format !== "all" ? 1 : 0);
+    const anyLabelFilter = CATS.some((c) => (s.filters[c.key] || []).length > 0) || s.linkFilter !== "all";
+    const anyFilter = activeCount > 0;
+
+    const base = (isLoading || noDeploy || noConcepts) ? [] : CONCEPTS;
+    const inPipeline = base.filter((c) => c.pipeline === s.pipeline);
+    const inView = view === "referentes" ? inPipeline.filter((c) => c.refs.length > 0) : inPipeline;
+    const scoped = inView.filter((c) =>
+      (s.stage === "all" || c.stage === s.stage) && (s.format === "all" || c.format === s.format));
+
+    // El filtro de etiquetas/links opera sobre las REFERENCIAS.
+    const visRefs = (c) => anyLabelFilter ? c.refs.filter((r) => refMatches(r, s.filters, s.linkFilter)) : c.refs;
+    const marked = scoped.map((c) => { const rs = visRefs(c); return { c, rs, ok: rs.length > 0 }; });
+    const visible = marked.filter((m) => s.mode === "filtrar" ? m.ok : true);
+    const shownRefs = visible.reduce((n, m) => n + (m.ok ? m.rs.length : 0), 0);
+    const emptyByFilter = inPipeline.length > 0 && visible.length === 0;
+
+    const openRef = (c, r) => () => this.setState({ conceptRef: c.ref, refId: r.id });
+
+    const card = ({ c, rs, ok }) => {
+      const list = ok ? rs : c.refs;
+      const brands = brandsOf(list);
+      // Colmena: todas las miniaturas del MISMO tamaño y la grilla crece a lo
+      // ancho antes que a lo alto (nunca más filas que columnas).
+      const cols = list.length <= 6 ? 3 : Math.max(4, Math.min(8, Math.ceil(Math.sqrt(list.length))));
+      return { ...c,
+        opacity: ok ? 1 : 0.26,
+        refsWord: anyLabelFilter && ok ? `${list.length} de ${c.refs.length} referencias` : `${list.length} referencias`,
+        refBrands: brands.slice(0, 3).join(" · ") + (brands.length > 3 ? ` +${brands.length - 3}` : ""),
+        icon: c.format === "video" ? IC.film : IC.grid,
+        mini: list.slice(0, 4).map((r, i) => (i === 3 && list.length > 4)
+          ? { badge: `+${list.length - 3}`, tooltip: `${list.length - 3} referencias más`, open: () => this.setState({ conceptRef: c.ref }) }
+          : { badge: r.brand.slice(0, 6), tooltip: `${r.brand} · ${r.title}`, open: openRef(c, r) }),
+        cols, hiveWidth: `${cols * 52 + (cols - 1) * 6 + 28}px`,
+        hive: list.map((r) => ({ ...r, tooltip: `${r.brand} · ${r.title}`, open: openRef(c, r) })),
+        gridThumbs: list.slice(0, 16).map((r) => ({ brand: r.brand, tooltip: `${r.brand} · ${r.title}`, open: openRef(c, r) })),
+        chips: chipsOf(list[0] ? list[0].labels : {}).slice(0, 2),
+        open: () => this.setState({ conceptRef: c.ref, whyOpen: false, howOpen: false }) };
+    };
+
+    const light = s.theme === "light";
+    // En claro los neones de constants.js no tienen contraste como TEXTO: se usa
+    // la variante oscura de cada etapa (los rellenos siguen con el hex neón).
+    const stageInk = (st) => light ? st.ink : st.color;
+
+    const stagesShown = STAGES.filter((st) => s.stage === "all" || st.key === s.stage);
+    const frames = stagesShown.map((st, i, arr) => {
+      const mine = visible.filter((m) => m.c.stage === st.key);
+      return { ...st,
+        color: stageInk(st),
+        glow: light ? "none" : st.glow,
+        width: s.stage === "all" ? st.width : "100%",
+        hasNext: i < arr.length - 1,
+        formats: FORMATS.filter((f) => s.format === "all" || f.key === s.format).map((f) => {
+          const list = mine.filter((m) => m.c.format === f.key);
+          return { label: f.label,
+            empty: list.length === 0,
+            emptyText: anyFilter ? "nada coincide con el filtro" : "sin conceptos en este bucket",
+            cards: list.map(card) };
+        }) };
+    });
+
+    const seg = (on) => on
+      ? { bg: "var(--surface)", fg: "var(--ink)", weight: 600, shadow: "var(--shadow)" }
+      : { bg: "transparent", fg: "var(--ink-3)", weight: 500, shadow: "none" };
+
+    const conceptObj = CONCEPTS.find((c) => c.ref === s.conceptRef);
+    const conceptRefs = conceptObj
+      ? (anyLabelFilter ? conceptObj.refs.filter((r) => refMatches(r, s.filters, s.linkFilter)) : conceptObj.refs)
+      : [];
+    const conceptList = conceptRefs.length ? conceptRefs : (conceptObj ? conceptObj.refs : []);
+    const refObj = conceptObj ? conceptObj.refs.find((r) => r.id === s.refId) : null;
+
+    const allRefs = CONCEPTS.flatMap((c) => c.refs);
+    const countFor = (k, v) => allRefs.filter((r) => (r.labels[k] || []).some((x) => norm(x) === norm(v))).length;
+    const distinct = (k) => Array.from(new Set(allRefs.flatMap((r) => r.labels[k] || []))).sort((a, b) => a.localeCompare(b));
+
+    const chipStyle = (on, color, tint) => ({
+      bg: on ? tint : "transparent",
+      fg: on ? color : "var(--ink-2)",
+      border: on ? color : "var(--line)",
+    });
+
+    // Filtros en dos paneles: categorías a la izquierda, valores a la derecha.
+    const groupDefs = [
+      { key: "etapa", label: "Etapa", dot: "var(--ink-4)", action: "new:despliegue.filtrar-etapa",
+        hint: "Mostrá una sola etapa del embudo o el embudo completo.",
+        selected: s.stage === "all" ? 0 : 1,
+        values: [{ key: "all", label: "Todo el embudo" }].concat(STAGES.map((st) => ({ key: st.key, label: st.label })))
+          .map((o) => ({ label: o.label,
+            count: String(o.key === "all" ? inView.length : inView.filter((c) => c.stage === o.key).length),
+            ...chipStyle(s.stage === o.key, "var(--sel)", "var(--sel-soft)"),
+            select: () => this.setState({ stage: o.key }) })) },
+      { key: "formato", label: "Formato", dot: "var(--ink-4)", action: "new:despliegue.filtrar-formato",
+        hint: "Solo estáticos, solo video, o los dos.",
+        selected: s.format === "all" ? 0 : 1,
+        values: [{ key: "all", label: "Todos" }, { key: "static", label: "Estáticos" }, { key: "video", label: "Video" }]
+          .map((o) => ({ label: o.label,
+            count: String(o.key === "all" ? inView.length : inView.filter((c) => c.format === o.key).length),
+            ...chipStyle(s.format === o.key, "var(--sel)", "var(--sel-soft)"),
+            select: () => this.setState({ format: o.key }) })) },
+    ].concat(CATS.map((c) => ({
+      key: c.key, label: c.label, dot: c.color, action: "despliegue.filtro-categoria",
+      hint: c.key === "marca" ? "Mirá solo las referencias de una marca."
+        : c.key === "angulo" ? "El ángulo de venta con el que se hizo la referencia."
+        : `Filtrá por ${c.label.toLowerCase()}.`,
+      selected: (s.filters[c.key] || []).length,
+      values: distinct(c.key).map((v) => ({ label: v, count: String(countFor(c.key, v)),
+        ...chipStyle((s.filters[c.key] || []).includes(v), c.color, c.tint),
+        select: () => this.toggleVal(c.key, v) })),
+    })).filter((g) => g.values.length > 0));
+
+    const activeGroup = groupDefs.find((g) => g.key === s.filterTab) || groupDefs[0];
+    const filterGroups = groupDefs.map((g) => ({ ...g,
+      badge: g.selected ? String(g.selected) : "",
+      badgeColor: g.dot,
+      ...(g.key === activeGroup.key
+        ? { bg: "var(--sel-soft)", fg: "var(--sel)", weight: 600 }
+        : { bg: "transparent", fg: "var(--ink-2)", weight: 500 }),
+      select: () => this.setState({ filterTab: g.key }) }));
+
+    const activeChips = [];
+    if (s.stage !== "all") activeChips.push({ label: STAGE_BY_KEY[s.stage].label, color: "var(--sel)", bg: "var(--sel-soft)", border: "var(--sel)", remove: () => this.setState({ stage: "all" }) });
+    if (s.format !== "all") activeChips.push({ label: s.format === "static" ? "Estáticos" : "Video", color: "var(--sel)", bg: "var(--sel-soft)", border: "var(--sel)", remove: () => this.setState({ format: "all" }) });
+    for (const c of CATS) for (const v of (s.filters[c.key] || [])) {
+      activeChips.push({ label: v, color: c.color, bg: c.tint, border: c.color, remove: () => this.toggleVal(c.key, v) });
+    }
+    if (s.linkFilter !== "all") {
+      const lf = LINK_FILTERS.find((l) => l.key === s.linkFilter);
+      activeChips.push({ label: lf.label, color: "var(--sel)", bg: "var(--sel-soft)", border: "var(--sel)", remove: () => this.setState({ linkFilter: "all" }) });
+    }
+
+    const goalRows = STAGES.map((st) => {
+      const done = inPipeline.filter((c) => c.stage === st.key).length * 2;
+      return { label: st.label, color: stageInk(st), bar: st.color, value: `${Math.min(done, st.goal)} / ${st.goal}`,
+        pct: `${Math.min(100, Math.round((done / st.goal) * 100))}%` };
+    });
+    const doneTotal = goalRows.reduce((n, g) => n + parseInt(g.value, 10), 0);
+    const goalTotal = STAGES.reduce((n, st) => n + st.goal, 0);
+    const compRatio = doneTotal / goalTotal;
+
+    const strategyVisible = STRATEGY.filter((x) => !s.strategyHidden[x.key]);
+
+    return {
+      themeClass: s.theme === "light" ? "theme-light" : "",
+      themeIcon: s.theme === "light" ? IC.sun : IC.moon,
+      toggleTheme: () => this.setState((st) => ({ theme: st.theme === "light" ? "dark" : "light" })),
+      navGroups: NAV.map((g) => ({
+        label: g.label,
+        items: g.items.map((it) => ({ ...it,
+          bg: it.key === "despliegue" ? "var(--sel-soft)" : "transparent",
+          fg: it.key === "despliegue" ? "var(--sel)" : "var(--ink-2)",
+          weight: it.key === "despliegue" ? 600 : 500 })),
+      })),
+
+      // En claro los halos azules del tema se ven raros sobre el canvas: acá el
+      // fondo es neutro y el papel del tablero casi blanco.
+      appBg: s.theme === "light" ? "#F5F6F8" : "var(--bg)",
+      ambient: s.theme === "light" ? "none" : "var(--ambient)",
+      stickyFade: s.theme === "light"
+        ? "linear-gradient(180deg, #F5F6F8 70%, rgba(245,246,248,0))"
+        : "linear-gradient(180deg, var(--bg) 70%, transparent)",
+      canvasBg: s.theme === "light" ? "#FBFBFC" : "var(--canvas)",
+      canvasDot: s.theme === "light" ? "rgba(30,45,80,0.12)" : "var(--canvas-dot)",
+
+      canvasSubtitle: view === "referentes" ? "Referentes que inspiran cada concepto" : "Anuncios creados para tu cuenta",
+      counterText: isLoading || noDeploy ? "" : `${visible.length} conceptos · ${shownRefs} referencias`,
+
+      layoutTabs: [
+        { key: "conceptos", label: "Conceptos", icon: IC.board, hint: "Una tarjeta por concepto; se abre para ver sus referencias" },
+        { key: "colmena", label: "Colmena", icon: IC.hive, hint: "Todas las referencias del embudo de un solo vistazo" },
+        { key: "grilla", label: "Grilla", icon: IC.list, hint: "Lista compacta por etapa y formato" },
+      ].map((lt) => ({ ...lt, ...seg(lt.key === layout), select: () => this.setState({ layout: lt.key }) })),
+      isConceptView: layout === "conceptos",
+      isHiveView: layout === "colmena",
+
+      viewTabs: [
+        { key: "referentes", label: "Referentes", hint: "Las referencias que inspiran cada concepto" },
+        { key: "creados", label: "Creados", hint: "Los anuncios ya producidos para tu cuenta" },
+      ].map((v) => ({ ...v, ...seg(v.key === view), select: () => this.setState({ view: v.key }) })),
+
+      pipelineTabs: [
+        { key: "ads", label: "Anuncios" },
+        { key: "organic", label: "Orgánico" },
+      ].map((p) => ({ ...p, ...seg(p.key === s.pipeline), select: () => this.setState({ pipeline: p.key }) })),
+
+      filterOpen: s.filterOpen,
+      toggleFilter: () => this.setState((st) => ({ filterOpen: !st.filterOpen })),
+      filterLabel: activeCount ? `Opciones de filtro · ${activeCount}` : "Opciones de filtro",
+      filterBg: anyFilter ? "var(--sel-soft)" : "var(--surface)",
+      filterFg: anyFilter ? "var(--sel)" : "var(--ink-2)",
+      filterBorder: anyFilter ? "rgba(111,184,255,0.5)" : "var(--line)",
+      filterGroups, anyFilter, activeChips,
+      groupHint: activeGroup.hint, groupValues: activeGroup.values, groupAction: activeGroup.action,
+      activeModeLabel: s.mode === "filtrar" ? "Ocultando lo que no coincide:" : "Resaltando:",
+      clearFilters: () => this.setState({ filters: {}, linkFilter: "all", stage: "all", format: "all" }),
+      modes: [
+        { key: "resaltar", label: "Resaltar" },
+        { key: "filtrar", label: "Ocultar resto" },
+      ].map((m) => ({ ...m, ...seg(m.key === s.mode), select: () => this.setState({ mode: m.key }) })),
+
+      isLoading,
+      skeletons: [{ width: "100%", cards: [1, 2, 3] }, { width: "84%", cards: [1, 2] }, { width: "68%", cards: [1, 2] }],
+      isBlank: noDeploy || noConcepts || emptyByFilter,
+      showCanvas: !isLoading && !noDeploy && !noConcepts && !emptyByFilter && layout !== "grilla",
+      showGrid: !isLoading && !noDeploy && !noConcepts && !emptyByFilter && layout === "grilla",
+      blankTitle: noDeploy ? "Tu despliegue todavía no está armado"
+        : noConcepts ? "Todavía no hay conceptos"
+        : "Nada coincide con este filtro",
+      blankBody: noDeploy ? "Tu equipo de Inforce está definiendo el embudo de esta cuenta. Cuando esté listo vas a ver acá el tablero completo: qué atrae, qué convence y qué cierra."
+        : noConcepts ? "El embudo existe pero todavía no tiene conceptos cargados. En cuanto el equipo suba el primero aparece en esta pantalla."
+        : "Probá con menos etiquetas, o cambiá el modo a Resaltar para seguir viendo todo el embudo.",
+      blankShowClear: emptyByFilter,
+
+      frames,
+
+      panelOpen: s.panelOpen,
+      panelWidth: s.panelOpen ? "286px" : "150px",
+      panelToggleTitle: s.panelOpen ? "Colapsar el panel" : "Expandir el panel",
+      panelIconRotate: s.panelOpen ? "rotate(90deg)" : "rotate(-90deg)",
+      togglePanel: () => this.setState((st) => ({ panelOpen: !st.panelOpen })),
+      compLabel: `${doneTotal} / ${goalTotal}`,
+      compPct: `${Math.min(100, Math.round(compRatio * 100))}%`,
+      compColor: compRatio >= 0.8 ? "var(--green)" : compRatio >= 0.4 ? "var(--amber)" : "var(--brand)",
+      goals: goalRows,
+
+      canvasRef: this.attachCanvas,
+      canvasTransform: `translate(${s.panX}px, ${s.panY}px) scale(${s.scale})`,
+      canvasCursor: s.panning ? "grabbing" : "grab",
+      zoomLabel: `${Math.round(s.scale * 100)}%`,
+      zoomIn: () => this.zoomBy(1.2),
+      zoomOut: () => this.zoomBy(1 / 1.2),
+      zoomReset: () => this.setState({ scale: 1, panX: 0, panY: 0 }),
+      onCanvasDown: (e) => {
+        if (e.button !== 0) return;
+        if (e.target.closest && e.target.closest("[data-action]")) return;
+        this._drag = { x0: s.panX, y0: s.panY, mx: e.clientX, my: e.clientY };
+        this.setState({ panning: true });
+      },
+
+      conceptOpen: !!conceptObj,
+      closeConcept: () => this.setState({ conceptRef: null, whyOpen: false, howOpen: false }),
+      whyClamp: s.whyOpen ? 40 : 4,
+      howClamp: s.howOpen ? 40 : 4,
+      whyLabel: s.whyOpen ? "Ver menos" : "Ver más",
+      howLabel: s.howOpen ? "Ver menos" : "Ver más",
+      toggleWhy: () => this.setState((st) => ({ whyOpen: !st.whyOpen })),
+      toggleHow: () => this.setState((st) => ({ howOpen: !st.howOpen })),
+      concept: conceptObj ? {
+        ...conceptObj,
+        stageLabel: STAGE_BY_KEY[conceptObj.stage].label,
+        stageColor: stageInk(STAGE_BY_KEY[conceptObj.stage]),
+        formatLabel: conceptObj.format === "video" ? "Video" : "Estático",
+        chips: chipsOf(conceptList[0] ? conceptList[0].labels : {}).slice(1, 3),
+        refsTitle: view === "creados" ? "Anuncios creados" : "Referentes",
+        refsCount: anyLabelFilter ? `${conceptRefs.length} de ${conceptObj.refs.length}` : String(conceptObj.refs.length),
+        refBrands: brandsOf(conceptList).join(" · "),
+        refs: conceptList.map((r) => ({ ...r,
+          playIcon: r.kind === "video" ? IC.playFill : IC.imageFill,
+          badge: r.kind === "video" ? r.dur : AR_LABEL[r.ar],
+          tooltip: `${r.brand} · ${r.title}`,
+          open: () => this.setState({ refId: r.id }) })),
+      } : {},
+
+      refOpen: !!refObj,
+      closeRef: () => this.setState({ refId: null }),
+      refPosition: refObj ? `${conceptList.findIndex((r) => r.id === refObj.id) + 1} / ${conceptList.length}` : "",
+      refPrev: () => {
+        const i = conceptList.findIndex((r) => r.id === s.refId);
+        const next = conceptList[(i - 1 + conceptList.length) % conceptList.length];
+        if (next) this.setState({ refId: next.id });
+      },
+      refNext: () => {
+        const i = conceptList.findIndex((r) => r.id === s.refId);
+        const next = conceptList[(i + 1) % conceptList.length];
+        if (next) this.setState({ refId: next.id });
+      },
+      isVideoRef: !!refObj && refObj.kind === "video",
+      isStaticRef: !!refObj && refObj.kind === "static",
+      downloadLabel: refObj && refObj.kind === "static" ? "Descargar imagen" : "Descargar video",
+      ref: refObj ? {
+        ...refObj,
+        arLabel: AR_LABEL[refObj.ar],
+        chips: chipsOf(refObj.labels),
+        meta: `${conceptObj.name} · ${STAGE_BY_KEY[conceptObj.stage].label}`,
+        facts: [
+          { label: "Formato", value: refObj.kind === "video" ? `Video ${refObj.dur}` : `Estático ${AR_LABEL[refObj.ar]}` },
+          { label: "Días corriendo", value: `${refObj.days} días` },
+          { label: "Meta Ads Library", value: refObj.meta ? "Disponible" : "Sin link" },
+          { label: "Archivo en Drive", value: refObj.drive ? "Disponible" : "Sin archivo" },
+        ],
+      } : {},
+
+      strategyOpen: s.strategyOpen,
+      openStrategy: () => this.setState({ strategyOpen: true }),
+      closeStrategy: () => this.setState({ strategyOpen: false }),
+      strategyToggles: STRATEGY.map((x) => {
+        const on = !s.strategyHidden[x.key];
+        const col = light ? x.ink : x.color;
+        const tint = light ? x.tintLight : x.tint;
+        return { label: x.label, count: String(x.items.length), dot: col,
+          title: on ? `Ocultar ${x.label.toLowerCase()}` : `Mostrar ${x.label.toLowerCase()}`,
+          bg: on ? tint : "transparent", fg: on ? col : "var(--ink-4)",
+          border: on ? col : "var(--line)",
+          toggle: () => this.setState((st) => ({ strategyHidden: { ...st.strategyHidden, [x.key]: on } })) };
+      }),
+      strategyCols: Math.max(1, strategyVisible.length),
+      strategySections: strategyVisible.map((sec) => ({
+        label: sec.label, color: light ? sec.ink : sec.color, hint: sec.hint,
+        headBg: light ? sec.tintLight : sec.tint,
+        headBorder: light ? sec.ink : sec.color,
+        cardBg: light ? "#FFFFFF" : "var(--surface-2)",
+        count: String(sec.items.length),
+        items: sec.items.map((it, i) => {
+          const key = sec.key + i;
+          const open = !!s.strategyExpanded[key];
+          return { ...it, clamp: open ? 40 : 3,
+            moreLabel: open ? "Ver menos" : "Ver más",
+            toggle: () => this.setState((st) => ({ strategyExpanded: { ...st.strategyExpanded, [key]: !st.strategyExpanded[key] } })) };
+        }),
+      })),
+
+      cadenceOpen: s.cadenceOpen,
+      openCadence: () => this.setState({ cadenceOpen: true }),
+      closeCadence: () => this.setState({ cadenceOpen: false }),
+      cadenceFacts: CADENCE.facts,
+      cadenceActive: `${CADENCE.activeScale}×`,
+      cadenceTicks: Array.from({ length: CADENCE.scaleMax }, (_, i) => {
+        const n = i + 1;
+        const inBand = n >= CADENCE.bandFrom && n <= CADENCE.bandTo;
+        return { label: `${n}×`, color: inBand ? "var(--green)" : "var(--ink-4)", weight: inBand ? 700 : 500 };
+      }),
+      bandLeft: `${((CADENCE.bandFrom - 1) / (CADENCE.scaleMax - 1)) * 100}%`,
+      bandWidth: `${((CADENCE.bandTo - CADENCE.bandFrom) / (CADENCE.scaleMax - 1)) * 100}%`,
+      markerLeft: `${((CADENCE.activeScale - 1) / (CADENCE.scaleMax - 1)) * 100}%`,
+      cadenceSplit: CADENCE.split,
+      minWeekly: CADENCE.minWeekly,
+      cadenceFunnel: CADENCE.funnel.map((f) => ({ ...f,
+        label: STAGE_BY_KEY[f.key].label, color: stageInk(STAGE_BY_KEY[f.key]) })),
+
+      prevent: (e) => e.preventDefault(),
+      stop: (e) => e.stopPropagation(),
+      noop: () => {},
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+/* Inforce — tokens compartidos.
+   Cada pantalla lo carga con <link rel="stylesheet" href="tokens.css"> en su
+   <helmet>. Un solo lugar para el tema; ninguna pantalla repite la paleta. */
+
+:root {
+  --bg: #000000;
+  --surface: rgba(20,24,30,0.52); --surface-solid: #06080B;
+  --surface-2: rgba(26,31,38,0.46); --raised: #12161C;
+  --line: rgba(180,200,225,0.11); --line-2: rgba(150,215,240,0.26);
+  --ink: #EFF4FC; --ink-2: #A2B5D4; --ink-3: #6F84A6; --ink-4: #4E628A;
+  --brand: #E24B4A; --brand-soft: rgba(226,75,74,0.18);
+  --green: #34C08A; --amber: #F0A93B; --blue: #58A6FF;
+  --purple: #9B7BF0; --pink: #EC6FA8; --yellow: #E9C435;
+  --neon: #5FDEF0; --neon-2: #58A6FF;
+  --sel: #6FB8FF; --sel-soft: rgba(88,166,255,0.16);
+  --sel-rim: 0 0 0 1px rgba(88,166,255,0.34), 0 0 22px rgba(88,166,255,0.24);
+  --chip: rgba(180,200,225,0.08); --hover: rgba(180,200,225,0.055);
+  --glow: radial-gradient(560px 300px at 16% -8%, rgba(95,222,240,0.14), transparent 64%);
+  --ambient:
+    radial-gradient(460px 300px at 6% -14%, rgba(95,222,240,0.16), transparent 58%),
+    radial-gradient(380px 260px at 99% -8%, rgba(124,98,236,0.10), transparent 60%),
+    radial-gradient(1200px 260px at 50% 116%, rgba(95,222,240,0.13), transparent 54%);
+  --shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 0 0 1px rgba(180,200,225,0.035),
+    0 16px 40px rgba(0,0,0,0.78);
+  --shadow-lg:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 38px 100px rgba(0,0,0,0.9);
+  --rim: 0 0 0 1px rgba(95,222,240,0.32), 0 0 24px rgba(95,222,240,0.18);
+  --blur: blur(24px) saturate(1.25);
+  --canvas: #000000; --canvas-dot: rgba(180,200,225,0.10);
+}
+
+.theme-light {
+  --bg: #EBF2FC;
+  --surface: rgba(255,255,255,0.92); --surface-solid: #FFFFFF;
+  --surface-2: rgba(222,233,250,0.88); --raised: #FFFFFF;
+  --line: rgba(30,82,170,0.22); --line-2: rgba(30,82,170,0.40);
+  --ink: #0B1626; --ink-2: #465879; --ink-3: #7183A1; --ink-4: #93A3BD;
+  --brand: #D93F3E; --brand-soft: rgba(217,63,62,0.12);
+  --green: #17976A; --amber: #C4801C; --blue: #2664CC;
+  --purple: #6E54D0; --pink: #D4497F; --yellow: #B58C15;
+  --neon: #1E8FB8; --neon-2: #2664CC;
+  --sel: #1F62C8; --sel-soft: rgba(38,100,204,0.13);
+  --sel-rim: 0 0 0 1px rgba(38,100,204,0.30), 0 0 18px rgba(38,100,204,0.16);
+  --chip: rgba(30,82,170,0.11); --hover: rgba(30,82,170,0.09);
+  --glow: radial-gradient(680px 340px at 20% -4%, rgba(38,100,204,0.16), transparent 66%);
+  --ambient:
+    radial-gradient(720px 400px at 14% -10%, rgba(38,100,204,0.15), transparent 62%),
+    radial-gradient(600px 360px at 94% 2%, rgba(110,84,208,0.09), transparent 64%),
+    radial-gradient(880px 480px at 62% 106%, rgba(38,100,204,0.08), transparent 60%);
+  --shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 0 0 1px rgba(255,255,255,0.55),
+    0 8px 28px rgba(16,44,100,0.10);
+  --shadow-lg:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    0 34px 90px rgba(16,44,100,0.20);
+  --rim: 0 0 0 1px rgba(30,143,184,0.28), 0 0 20px rgba(30,143,184,0.14);
+  --blur: blur(20px) saturate(1.22);
+  --canvas: #E2EBFA; --canvas-dot: rgba(38,100,204,0.17);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 14px; -webkit-font-smoothing: antialiased;
+}
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--ink); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--line-2); background-clip: content-box; }
+
+/* Glass uniforme: toda superficie que declara box-shadow: var(--shadow). */
+main [style*="var(--shadow)"], aside [style*="var(--shadow)"] {
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+main [style*="var(--shadow)"]:hover { box-shadow: var(--shadow), var(--rim); }
+
+/* Selección: glow azul, nunca rojo. */
+[style*="var(--sel-soft)"] { box-shadow: var(--sel-rim); }
+
+/* Acción primaria y de aprobación. Se marcan con data-btn, NO con la cadena
+   rgba del style inline (React la serializa con espacios y el selector falla). */
+main [data-btn="primary"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 0 26px rgba(88,166,255,0.34);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+main [data-btn="primary"]:hover {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 0 34px rgba(88,166,255,0.5);
+  border-color: rgba(111,184,255,0.7);
+}
+main [data-btn="approve"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 0 24px rgba(52,192,138,0.3);
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+
+/* En claro el vidrio se pierde: superficies sólidas y acento lleno. */
+.theme-light main [style*="var(--shadow)"], .theme-light aside [style*="var(--shadow)"] {
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.theme-light main [style*="var(--shadow)"]:hover {
+  box-shadow: 0 0 0 1px rgba(30,82,170,0.34), 0 6px 18px rgba(16,44,100,0.12);
+}
+.theme-light main [data-btn="primary"] {
+  background: #1F62C8 !important; border-color: #1B55B0 !important; color: #FFFFFF !important;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(16,44,100,0.28), 0 6px 18px rgba(31,98,200,0.28);
+}
+.theme-light main [data-btn="primary"]:hover { background: #1B55B0 !important; }
+.theme-light main [data-btn="approve"] {
+  background: #17976A !important; border-color: #12805A !important; color: #FFFFFF !important;
+  box-shadow: 0 1px 2px rgba(10,60,40,0.26), 0 6px 18px rgba(23,151,106,0.28);
+}
+.theme-light main [data-btn="approve"]:hover { background: #12805A !important; }
+.theme-light button[style*="background: var(--surface)"] {
+  background: #FFFFFF !important;
+  box-shadow: 0 1px 2px rgba(16,44,100,0.08), 0 2px 6px rgba(16,44,100,0.06);
+}
+
+@keyframes breathe { 0%,100% { opacity: .45 } 50% { opacity: 1 } }
+@keyframes popIn { from { opacity: 0; transform: translateY(10px) scale(.985) } to { opacity: 1; transform: none } }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes spin { to { transform: rotate(360deg) } }

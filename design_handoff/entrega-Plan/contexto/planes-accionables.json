@@ -1,0 +1,2051 @@
+{
+  "generado": "2026-07-27",
+  "planes": [
+    {
+      "cliente": "alexis-rivas",
+      "marca": "Alexis Rivas · Novamarket GT",
+      "documento": "https://plan.josehuila.com/alexis-rivas/",
+      "total_fases": 6,
+      "total_pasos": 17,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Suma volumen de productos",
+          "tiempo": "Continuo",
+          "descripcion": "Tu mayor limitante de escala hoy es que todo depende de un solo producto.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Vuelve a testear productos nuevos cada semana",
+              "descripcion": "Ponte un estándar y cúmplelo: 2 productos nuevos por semana, cada uno con 3 a 5 creativos. El stock del lapicito se está acabando y hoy toda tu facturación depende de él. Es mucho más fácil tener 5 productos en $30K cada uno que uno solo en $150K.",
+              "responsable": "José"
+            },
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Testea con videos descargados de TikTok, no con videos hechos por ti",
+              "descripcion": "Bajas los ganadores del nicho, les haces las alteraciones que necesiten —otro hook, otro corte, otra voz en off— y los mandas a pauta. En dropshipping no tiene sentido invertir en producción para validar: el producto no es tuyo y cualquier otro te lo copia. Producir propio se justifica cuando tengas tu marca.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema de trabajo",
+          "tiempo": "~1 semana",
+          "descripcion": "El plan de día 1, día 2, día 3 que dijiste que te faltaba.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Monta tu sistema de trabajo con el contenido pregrabado",
+              "descripcion": "Lo ves completo y replicas el sistema de carpetas para Novamarket. Tú mismo lo dijiste en la llamada: lo que te falta no es saber hacerlo, es tener el orden y ejecutarlo todos los días.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Hoy corres un solo formato, así que le vendes a una sola tajada del público.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue completo y quedan confirmados tus ángulos de venta, tus objeciones y tus puntos de conciencia: qué formatos te faltan, cómo se reparten por nivel de conciencia y cuál ataca cada ángulo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Investiga referencias ganadoras de tu nicho cada semana",
+              "descripcion": "Con la extensión de Claude sobre TikTok y a mano en la biblioteca de anuncios, que la extensión no alcanza. Sáltate la fase 1 del sistema de Nath, que es para marcas. Tu filtro para quedarte con un referente es que tenga los tres momentos claros: problema, agitación y solución. Si no los tiene, no sirve por más likes que traiga. Tus referentes son RISE y PetLab.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Replica y adapta los ganadores de la semana",
+              "descripcion": "Descargas el video (con Video Downloader cuando sea de la biblioteca de anuncios), lo transcribes en Gemini y en tu Claude ya educado con tu producto le dices \"adapta este guion a mi producto desde otro ángulo\" — eso evita que quede igual al original. De cada 10 piezas, 7 van a TOFU, 2 a MOFU y 1 a BOFU, y cada una sale con sus variaciones de hook: mismo cuerpo, cambian solo los primeros 3 segundos.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Reedita con tus tomas de apoyo para probar formatos nuevos",
+              "descripcion": "Tus propias tomas de solo manos y un unboxing —que de uno solo sacas muchos cortes— te dan variaciones que ningún otro dropshipper tiene. Y lo que ya te funcionó también se reedita: le cambias el avatar, el formato visual del hook o la voz, y abres audiencias nuevas sin arrancar de cero.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Monta los anuncios de la semana",
+              "descripcion": "Subiéndolos a medida que van saliendo, sin esperar el lote completo.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Agenda la reunión semanal de revisión",
+              "descripcion": "Hoy lanzas 5 o 6 creativos, te funciona uno y ahí te quedas. Aquí se mira qué mostraron los que no funcionaron y qué mostró el que sí — incluyendo el segundo exacto donde se cayó la retención — para poder replicarlo en el siguiente lote.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Ordena tu tráfico",
+          "tiempo": "~1 semana",
+          "descripcion": "El costo se te sube porque estás en CBO y cada campaña arranca de cero.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Te recomendamos crear la campaña nueva en ABO",
+              "descripcion": "Con el presupuesto a nivel de conjunto tú decides a qué creativo le metes plata, en vez de dejárselo a Meta. Esto no se puede editar en la campaña que ya tienes, toca crearla de nuevo: una campaña de videos y una de imágenes por producto, de 3 a 5 creativos por conjunto, y cada conjunto de testeo arranca entre $20 y $25.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Ajusta la ubicación a “solo incluir ciudades” y la nomenclatura de tus conjuntos",
+              "descripcion": "Hoy la tienes con todas las zonas y le estás llegando a gente en zonas rurales que no puede recibir el paquete. Al ir solo a ciudades principales calificas mejor el público y la entrega es más rápida. Y nombra cada conjunto como Creativo 1 · formato · producto, para identificar de un vistazo qué es cada uno.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Crea las métricas personalizadas de la lista de Deison",
+              "descripcion": "Hook rate (3s ÷ impresiones, 30%+), hold rate, CPC como métrica reina, carga de página, pagos iniciados y checkout. Con eso sabes dónde está el cuello de botella antes de saltar a otro producto. Y las reglas: cada creativo tiene permitido gastar tu CPA para testearse; si va caro le bajas 20-30%, y si va por debajo del CPA le subes 20-30%.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Arregla lo que frena la conversión",
+          "tiempo": "~1 semana",
+          "descripcion": "Tráfico que ya pagaste y se te cae en la página.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Compra el dominio de Novamarket GT",
+              "descripcion": "Hoy no tienes uno propio y eso te está costando confianza en cada visita. Cambiarlo no afecta la tienda: solo hay que actualizar los links de los anuncios al dominio nuevo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Pídele a José el contacto para revisar tu landing",
+              "descripcion": "Tiene un contacto con una IA que genera landings validadas. Seguir vendiendo por landing por producto es lo correcto para dropshipping; lo que se revisa es la estructura.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cuando el sistema ya esté rodando.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Produce tus propios creativos con IA",
+              "descripcion": "Cuando salga el módulo de José. Hoy dependes de encontrar los ganadores orgánicamente y eso te limita a 5 o 10 creativos; cuando saques 15 o 20 semanales tienes control real sobre las ventas. Escalar con contenido es mucho más estable que escalar con presupuesto.",
+              "responsable": "José"
+            },
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Brandea el producto que te esté funcionando",
+              "descripcion": "Es lo que evita que mañana otro copie el mismo producto y la misma landing, y lo que te deja sostener un ganador en vez de quemarlo.",
+              "responsable": "José"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "artilleria-fox",
+      "marca": "Artillería Fox",
+      "documento": "https://plan.josehuila.com/artilleria-fox/",
+      "total_fases": 6,
+      "total_pasos": 16,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Deja de perder los mensajes que ya estás pagando",
+          "tiempo": "~1-2 semanas",
+          "descripcion": "Tu fuga más grande hoy está en la atención, no en la pauta.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Automatiza la atención de WhatsApp con ChateaPro o Dropi",
+              "descripcion": "Hoy respondes manual y muchos mensajes quedan sin contestar; cuando alcanzas a responder, la persona ya perdió el impulso de compra. Armas filtros: casi todos llegan preguntando lo mismo (precio y referencias), eso lo resuelve la plataforma con el catálogo y los precios, y tú solo atiendes manual al que llega al tercer filtro, ya caliente. Se monta de a poco para no arriesgar el número.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema de trabajo",
+          "tiempo": "~1 semana",
+          "descripcion": "Deja la maquinaria instalada antes de producir a full.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Monta tu sistema de trabajo con el contenido pregrabado",
+              "descripcion": "Lo ves completo y replicas el sistema de carpetas para Artillería Fox. Es el mapa de qué se hace cada día, quién hace qué y cómo fluye de la idea hasta el anuncio publicado.",
+              "responsable": "José"
+            },
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Consigue quien te ayude a grabar",
+              "descripcion": "Ya lo identificaste tú mismo en la llamada. Mientras llega, arrancas solo con trípode al cerrar el local: en una noche te salen dos o tres videos.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Grabación y edición esos tres días; los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Tienes alcance, pero no viene por la ropa. El problema es de formatos.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue completo y quedan confirmados tus ángulos de venta, tus objeciones y tus puntos de conciencia. Hoy tu contenido atrae por el hook y no por la ropa; esto es lo que lo endereza.",
+              "responsable": "José"
+            },
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Entrena un chat de Claude con tu marca",
+              "descripcion": "Cargado con tu producto, tus dolores y la investigación de las 4 fases de Nath, que corres una vez al mes y guardas en tu Drive. Después le dices \"adapta este guion a Artillería Fox mostrando el jogger\" y te lo reescribe con tu producto. Tus referentes son Imperio Stories y Big Focus.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Guioniza la entrega 1",
+              "descripcion": "Repartida entre los cuatro formatos que sí venden ropa: \"esta es la tienda\" (el que más jala, con su versión mayorista), variedad de prendas con música pegada, el outfit completo modelado, y la confianza detrás de la marca — paquetes saliendo, el chequeo antes de empacar, las asesoras respondiendo, tu local físico. El producto siempre protagonista y con situación: no es \"esta camiseta es buena\", es \"¿quieres una camiseta que te sirva para el trabajo y para jugar fútbol el fin de semana?\".",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Graba la entrega 1",
+              "descripcion": "Trípode, buena luz y producto en uso. Nada de catálogo: la gente no entra a Instagram a ver catálogos, entra a ver cómo se ve la ropa puesta.",
+              "responsable": "José"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Edita la entrega 1",
+              "descripcion": "Cuidando que cada formato se sostenga y no se mezclen entre sí.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Monta los anuncios de la entrega 1",
+              "descripcion": "Usando \"publicación existente\" y jalando el reel desde Instagram, para que el anuncio conserve los likes y los comentarios que ya trae.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Agenda la reunión semanal de revisión",
+              "descripcion": "Para mirar qué ganó, qué no y por qué, y con eso definir la siguiente entrega. Es lo que sube tu eficiencia entrega tras entrega en vez de crear a ciegas.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Arregla las bases de tu Instagram",
+          "tiempo": "~1 semana",
+          "descripcion": "La cuenta es tu vitrina: hoy le estás hundiendo el alcance solo.",
+          "a_futuro": false,
+          "color": "#AF52DE",
+          "pasos": [
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Reemplaza las fotos del proveedor por fotos tuyas",
+              "descripcion": "Esa misma foto del proveedor ya la subió otro emprendedor y otra tienda; Instagram detecta que fue publicada antes y le baja muchísimo el alcance a todo lo que montes. Y entre mejor calidad y mejor espacio, mejor se ve la prenda y mejor funciona.",
+              "responsable": "José"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Publica lo mismo en TikTok y compártelo a Facebook",
+              "descripcion": "Al arranque el mismo contenido va a las tres plataformas; más adelante se separan las estrategias. La pauta en TikTok la ves a fondo con Deison.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Ordena tu tráfico",
+          "tiempo": "~1 semana",
+          "descripcion": "Ya sabes montarlas tú: ahora es sostenerlas y leerlas bien.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Deja corriendo dos campañas, una por evento",
+              "descripcion": "Ventas a WhatsApp y Tráfico al perfil de Instagram, 50 y 50. Las tuyas venían a 34 pesos por clic al perfil y entre 400 y 700 por conversación, muy buenos números — solo estaban pausadas por el pago pendiente. La configuración: catálogo desactivado, presupuesto a nivel de conjunto (mínimo 50 mil), público Colombia 18+, y de 3 a 5 videos por conjunto. Para gastar más duplicas el conjunto, no el anuncio.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Te recomendamos pautar solo lo que ya jaló en orgánico",
+              "descripcion": "Sacas los videos, miras cuáles funcionan solos y esos son los que llevas a pauta. Para leerlas te bastan dos métricas: resultados y costo por resultado.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cuando el sistema ya esté rodando.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Suma UGC para diversificar sin depender de ti",
+              "descripcion": "Le mandas 3 joggers a un creador, te hace 4 videos, entre 80 y 90 mil cada uno (100 mil si te lo pasa editado). Así tienes contenido fresco todo el tiempo sin que tengas que grabarlo tú.",
+              "responsable": "Nath"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "autoecomjk",
+      "marca": "Autoecomjk",
+      "documento": "https://plan.josehuila.com/autoecomjk/",
+      "total_fases": 4,
+      "total_pasos": 7,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Testea ángulos de venta",
+          "tiempo": "~Semana 1",
+          "descripcion": "Dejar de depender de un solo mensaje por producto.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Sacar ángulos nuevos del armario",
+              "descripcion": "Además del ángulo de orden, testear apartamentos/casas pequeñas (\"si no tienes espacio, este armario te ayuda\").",
+              "responsable": "José"
+            },
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Repetir el ejercicio de ángulos con cada producto",
+              "descripcion": "Como con las gomitas (estreñimiento + bajar de peso): identificar los distintos dolores por los que la gente compra.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Baja el costo del contenido IA",
+          "tiempo": "~Semana 1",
+          "descripcion": "Salir de Magnific y su costo por video.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Migrar la generacion de video a Apimart",
+              "descripcion": "Es mucho mas barata que Magnific/Freepik (~14-15 mil por 8 segundos); un video completo sale por 60-80 mil.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Armar un banco de tomas de apoyo y trabajar por B-roll + voz en off",
+              "descripcion": "De un lote grande de tomas de apoyo salen muchos videos; asi se abarata y se puede delegar la produccion.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ordena el sistema de produccion",
+          "tiempo": "~Semanas 1-2",
+          "descripcion": "Quitar el bloqueo y la friccion que frena el volumen.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Delegar la produccion de video del equipo",
+              "descripcion": "Que no todo dependa de Keitel, para testear mas productos sin la tension de quemar plata y tiempo.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Prepara el salto a marca",
+          "tiempo": "Tras Nath y Deison",
+          "descripcion": "Dejar de quemar productos y empezar a construir.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Subir la calidad del contenido para atraer mejores compradores",
+              "descripcion": "Verse como marca (no como dropshipping barato) trae clientes responsables y baja las cancelaciones.",
+              "responsable": "José"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Dejar en el radar el Instagram/organico y el checkout",
+              "descripcion": "Cuando definan producto/nicho: montar redes que generen confianza y mejorar el checkout para vender anticipado.",
+              "responsable": "José"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "brahian-drop",
+      "marca": "Brahian Drop",
+      "documento": "https://plan.josehuila.com/brahian-drop/",
+      "total_fases": 6,
+      "total_pasos": 17,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Retoma el testeo de productos",
+          "tiempo": "Continuo",
+          "descripcion": "Tu motor de crecimiento en drop.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Vuelve a testear entre 2 y 5 productos por semana",
+              "descripcion": "El corre-corre del día a día te hizo parar. En drop el producto se quema rápido: el testeo es tu motor de crecimiento, no algo que se hace si sobra tiempo.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema y suelta lo operativo",
+          "tiempo": "~1 semana",
+          "descripcion": "Hoy trabajas solo y reaccionando a lo que salga en el día.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Monta tu sistema de trabajo con el contenido pregrabado",
+              "descripcion": "Lo ves completo y replicas el sistema de carpetas para Brahian Drop. Es el tablero que pediste: qué se hace cada día, quién hace qué y cómo fluye de la idea hasta el anuncio publicado.",
+              "responsable": "José"
+            },
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Define qué rol necesitas y delega lo operativo",
+              "descripcion": "Hoy haces solo el testeo, los creativos, la pauta, la logística y la atención al cliente. Ordénalos por el tiempo que te comen contra la plata que te generan: lo primero que se suelta es la logística, y con eso te liberas para montar el sistema de contenido, que es tu prioridad número uno.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Grabación y edición esos tres días; los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Tu prioridad número uno: dejar de depender de los creativos que encuentras.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue completo y quedan confirmados tus ángulos de venta, tus objeciones y tus puntos de conciencia. Hoy tu estrategia creativa es \"monto lo que trae ventas y replico lo similar\"; esto es lo que la vuelve deliberada, y es justo el gap que tú mismo identificaste.",
+              "responsable": "José"
+            },
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Entrena un chat de Claude por producto",
+              "descripcion": "Cargado con tu oferta, tus dolores y la investigación de las 4 fases de Nath. Después le pides \"hazme un guion con el ángulo de X\" y sale en minutos sin repetirle el contexto. Es lo que te permite sostener volumen estando solo.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Guioniza la entrega 1",
+              "descripcion": "Definiendo primero cuántos creativos vas a sacar por semana. Cada guion arranca con una situación real, no con el beneficio: no es \"este producto limpia tu mueble\", es \"¿estás cansado de que la visita le haga mala cara a tu sofá?\". Del mismo producto salen varios dolores — el cepillo sirve para \"tu casa huele feo por las mascotas\" y para \"los ácaros del colchón te disparan la rinitis\". Cada guion con 3 a 5 hooks: mismo cuerpo, mismo CTA.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Genera los videos de la entrega 1",
+              "descripcion": "Con el sistema de creativos con IA cada video te sale entre 35 y 40 mil, contra los 80 mil de una UGC con modelo, y puedes sacar 5 en un día. La regla es que se vea humano, no que se note la IA. Y cuando el producto esté en Colombia, como el Trulli, graba tomas propias: el producto, la mano y una voz encima ya te sirven.",
+              "responsable": "José"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Edita la entrega 1",
+              "descripcion": "Cuidando que el formato se refuerce y no se pierda cuando entran tomas distintas.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Monta los anuncios de la entrega 1",
+              "descripcion": "Subiéndolos a medida que van saliendo, sin esperar el lote completo.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Agenda la reunión semanal de revisión",
+              "descripcion": "Para mirar qué ganó, qué no y por qué. Si sacas 10 creativos y te funcionan 3, tienes 30% de eficiencia; analizando qué hiciste bien en esos 3, la próxima semana sacas 5 y consigues los mismos 3 ganadores.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Ordena tu tráfico",
+          "tiempo": "~1 semana",
+          "descripcion": "Recomendaciones de Deison sobre tu estructura actual.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Te recomendamos pasar tu testeo de CBO a ABO",
+              "descripcion": "En ABO tú decides a qué creativo le subes el presupuesto. En CBO le subes a la campaña y Meta reparte como quiera, no necesariamente al video que está vendiendo. Además, con muchos creativos en una CBO Meta se enamora de uno y demora en darle chance a los demás.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Alimenta una sola campaña por producto en vez de abrir nuevas",
+              "descripcion": "Los creativos nuevos entran como conjunto nuevo dentro de la misma campaña: duplicas un conjunto, cambias los videos y listo. Esa campaña va acumulando data del público y se vuelve más estable con el tiempo. Y siempre entre 3 y 5 creativos por conjunto, porque con 10 juntos Meta se demora en darle oportunidad a cada uno.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Crea las métricas personalizadas de la lista de Deison",
+              "descripcion": "Hook rate (3s ÷ impresiones, 30%+), hold rate (TruePlay ÷ 3s, 20%+), CPC como métrica reina, carga de página, pagos iniciados y conversion rate. Con eso ves si el problema es el video o la landing antes de mirar el costo por compra. Y ojo con el creativo que te está prospectando: aunque se ponga costoso, si lo apagas el que cierra deja de venderte.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Brandea tu producto estable",
+          "tiempo": "~1 mes",
+          "descripcion": "Dejar de quemar productos y empezar a construir un activo.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Escoge cuál de tus 4 productos estables vas a brandear y cotiza la versión con marca propia",
+              "descripcion": "En dropshipping eliges el producto según el creativo que encuentras; cuando controlas la creación, controlas el juego. Con marca propia sostienes un producto vendiendo 8 o 9 meses en vez de quemarlo en uno, y te separas de todos los que venden lo mismo del catálogo público en México.",
+              "responsable": "José"
+            },
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Monta el Instagram de esa marca",
+              "descripcion": "Con contenido orgánico que genere confianza. Es lo que sostiene la venta cuando el creativo se satura.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cuando el sistema ya esté rodando.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Re-testea tus ganadores en otra cuenta publicitaria",
+              "descripcion": "Un creativo que se quemó en una cuenta muchas veces revive en otra, porque la data acumulada y el público al que le llega son distintos.",
+              "responsable": "Deison"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "nubora",
+      "marca": "Nubora",
+      "documento": "https://plan.josehuila.com/nubora/",
+      "total_fases": 10,
+      "total_pasos": 32,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Vuélvelo una marca de nicho",
+          "tiempo": "~3 días",
+          "descripcion": "El producto es la palanca #1 de crecimiento. Piensa en el nicho \"cuidado de la piel\", no en la crema sola.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Reactivar el proceso recurrente de testeo de productos",
+              "descripcion": "Volver a poner a andar de forma continua la investigación de mercado (Amazon, Reddit, keywords, Koalidata), no pararla.",
+              "responsable": "José"
+            },
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Definir el catálogo del nicho \"cuidado de la piel\"",
+              "descripcion": "Priorizar el jabón (abre acné + hongos); mapear cápsulas, champú y cepillos; explorar mascarillas, serums y bloqueador.",
+              "responsable": "José"
+            },
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Conseguir un laboratorio/proveedor de confianza",
+              "descripcion": "Que fabrique bien y permita pedir muestras / ingeniería inversa (Vitalcom lo hace — es referencia, no recomendación).",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Aplicar el filtro para decidir qué testear (recomendación, no ley)",
+              "descripcion": "(1) que ya esté validado; (2) que resuelva un problema constante o deseo fuerte; (3) que sea muy visible (antes/después o aplicación llamativa).",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Posiciónate como marca en redes",
+          "tiempo": "~3 días",
+          "descripcion": "Que quien entre a tus redes vea una marca de una, no un dropshipper.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Montar el perfil de Instagram como marca",
+              "descripcion": "Foto de perfil bonita, descripción buena e historias destacadas (página, clientes felices, cómo funciona). Si necesitas diseñador, yo te consigo uno.",
+              "responsable": "José"
+            },
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Subir 3-5 videos propios que ya funcionaron",
+              "descripcion": "Anuncios propios con UGC que han funcionado (nunca contenido robado); si falta portada bonita, se hace con IA.",
+              "responsable": "José"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Publicar 3-5 posts de feed mostrando el producto como marca",
+              "descripcion": "Piezas que se vean de marca (guía en el módulo de redes sociales del curso).",
+              "responsable": "José"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Poner el link al perfil y dejar IG + Facebook viéndose como marca",
+              "descripcion": "Que quien entre vea una marca en ambas redes.",
+              "responsable": "José"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Montar campañas de tráfico al perfil",
+              "descripcion": "$10-15K/día entre los videos (yo te lo enseño en el curso).",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ordena la cuenta publicitaria",
+          "tiempo": "~2-3 días",
+          "descripcion": "Menos campañas, data más concentrada, mejor rendimiento.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Consolidar todo en menos campañas",
+              "descripcion": "Pocas campañas (ej. una por producto o por ángulo) para que la data se acumule en menos lugares y el rendimiento mejore; dejar de abrir campañas por reguero.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Dejar la segmentación abierta",
+              "descripcion": "Segmentar desde el creativo, no por intereses ni edad; dejar que el algoritmo de Meta dirija.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Confirmar el CPA objetivo",
+              "descripcion": "CPA meta ~$21K (20% del ticket de $109K) y break-even $40K.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Monta el sistema de creativos",
+          "tiempo": "Semana 1",
+          "descripcion": "Deja instalada la maquinaria antes de producir a full.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Ver el curso completo del sistema",
+              "descripcion": "El contenido pregrabado del sistema de trabajo semanal (WOP, 3h08) visto completo, idealmente antes de la reunión.",
+              "responsable": "José"
+            },
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Tener la reunión de despliegue creativo conmigo",
+              "descripcion": "Reunión donde te explico el despliegue, los conceptos y qué aplica a Nubora.",
+              "responsable": "José"
+            },
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Montar el sistema para ustedes",
+              "descripcion": "Duplicar todas las carpetas, documentos y plantillas para Nubora.",
+              "responsable": "José"
+            },
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Organizar carpetas y definir roles",
+              "descripcion": "Repartir roles entre Castillo y Cuesta y definir qué van a delegar (empezando por el editor).",
+              "responsable": "José"
+            },
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Reclutar el editor de video conmigo",
+              "descripcion": "Comunicarme los roles a delegar; yo hago convocatoria, entrevistas y cierre.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Produce con volumen, calidad y los ángulos que ganan",
+          "tiempo": "Continuo",
+          "descripcion": "Primero variedad, luego volumen, luego calidad — con los ángulos que la competencia no puede copiar.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 18,
+              "id": "t18",
+              "accionable": "Arrancar el flujo semanal (ideas → guiones → grabar → UGC)",
+              "descripcion": "Con base en el despliegue creativo; la 1a semana sin editor, para organizarse sin embalarse.",
+              "responsable": "José"
+            },
+            {
+              "orden": 19,
+              "id": "t19",
+              "accionable": "Ponerse la meta de volumen",
+              "descripcion": "~25 videos/semana (editor, 5/día) + ~15 estáticos/semana (rol diseñador, flujo Magnific).",
+              "responsable": "José"
+            },
+            {
+              "orden": 20,
+              "id": "t20",
+              "accionable": "Grabar el ángulo de fundador",
+              "descripcion": "Tú como dueño y fabricante (autoridad + confianza); el formato que los copiones no pueden replicar.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 21,
+              "id": "t21",
+              "accionable": "Comunicar \"somos la original\" y alertar sobre las copias",
+              "descripcion": "Una vez mejorada la marca, posicionarse como los verdaderos y cuidar a la gente de imitaciones malas y baratas.",
+              "responsable": "José"
+            },
+            {
+              "orden": 22,
+              "id": "t22",
+              "accionable": "Abrir la comunicación hacia mujeres",
+              "descripcion": "Posición de la pareja / la mujer que ve el problema y le compra al novio; abre una audiencia nueva.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "n6",
+          "titulo": "Exprime y optimiza los ganadores",
+          "tiempo": "Continuo",
+          "descripcion": "Sácale todo el jugo a lo que ya funciona. Ten en cuenta: cuando un ganador se caiga, revisa su frecuencia como diagnóstico.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 23,
+              "id": "t23",
+              "accionable": "Variar los hooks",
+              "descripcion": "Mismo cuerpo, cambiar el gancho (los primeros 3 seg mandan; hook rate +30% bueno, 35-40% ganador).",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 24,
+              "id": "t24",
+              "accionable": "Exprimir el hook ganador en otros formatos",
+              "descripcion": "Pantalla dividida, pantalla verde u otro avatar/modelo (cambia el público al que le hablas).",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 7,
+          "id": "n7",
+          "titulo": "Prueba la nueva landing",
+          "tiempo": "En paralelo",
+          "descripcion": "Lo que ya funciona no se toca — se prueba la nueva a ver si mejora.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 25,
+              "id": "t25",
+              "accionable": "Contactar al diseñador que te paso y cerrar la nueva landing",
+              "descripcion": "Llegar a un precio para que haga la nueva landing que venda.",
+              "responsable": "José"
+            },
+            {
+              "orden": 26,
+              "id": "t26",
+              "accionable": "Probar la nueva landing contra la actual",
+              "descripcion": "Testear la nueva a ver si mejora; lo que ya funciona se deja quieto. Habilitada para móvil y computador.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 8,
+          "id": "n8",
+          "titulo": "Escala con cabeza",
+          "tiempo": "Cuando haya ganadores",
+          "descripcion": "Sube presupuesto leyendo las señales correctas, no las corazonadas.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 27,
+              "id": "t27",
+              "accionable": "Escalar leyendo los pagos iniciados y la señal de gasto",
+              "descripcion": "Sube presupuesto cuando la campaña \"quiere gastar más\" de su tope (ej. gastó $120K de $100K) con buen costo por compra y buenos pagos iniciados.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 28,
+              "id": "t28",
+              "accionable": "Guíate por el CPA global, pero mata lo que no rinde",
+              "descripcion": "Te basas en el CPA global, pero si un anuncio queda fuera del break-even 3+ días seguidos, se mata.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 9,
+          "id": "n9",
+          "titulo": "Delega lo repetitivo y sube de nivel",
+          "tiempo": "2-3 semanas",
+          "descripcion": "El dinero es para comprar trabajo de otros y liberar tu tiempo.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 29,
+              "id": "t29",
+              "accionable": "Identificar tus tareas repetitivas",
+              "descripcion": "Con el sistema ya andando (entregas hechas, editor puesto), listar qué se repite cada semana.",
+              "responsable": "José"
+            },
+            {
+              "orden": 30,
+              "id": "t30",
+              "accionable": "Encajarlas en un rol y evaluar contratar",
+              "descripcion": "Ej. project manager (procesos, equipo) o guionista (guiones, estrategia, orgánico). Contratar en A: gente mejor que tú.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 10,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cosas que valen la pena, pero para cuando ya estén rodando y con más capital (camino a los 300M).",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 31,
+              "id": "t31",
+              "accionable": "Evaluar el cambio de presentación/envase",
+              "descripcion": "Cambiar el envase hace más difícil que te repliquen; hay inventario, así que hay que planearlo.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 32,
+              "id": "t32",
+              "accionable": "Montar la web completa súper diseñada",
+              "descripcion": "Con alguien que te recomiende, cuando haya más capital para invertirlo bien.",
+              "responsable": "José"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "nutriplus",
+      "marca": "Nutriplus",
+      "documento": "https://plan.josehuila.com/nutriplus/",
+      "total_fases": 7,
+      "total_pasos": 27,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Suma más productos al catálogo",
+          "tiempo": "~2 semanas",
+          "descripcion": "Meter más ads escala, pero meter más productos escala muchísimo más.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Saca los productos nuevos que ya tienes en marcha",
+              "descripcion": "La fibra con Piper y el colágeno. Si uno te da X, cinco te dan mucho más: es la palanca de escala más grande que tienes disponible hoy.",
+              "responsable": "José"
+            },
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Revisa la encuesta que ya le hiciste a tu base",
+              "descripcion": "Para sacar de ahí nuevos ángulos de venta y descubrir qué otros productos te está pidiendo tu propia gente, sin tener que adivinar.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema de trabajo semanal",
+          "tiempo": "~1 semana",
+          "descripcion": "Deja la maquinaria instalada antes de producir a full.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Ve completo el contenido pregrabado del sistema",
+              "descripcion": "Es el mapa de cómo se organiza el trabajo semana a semana: qué se hace cada día, quién hace qué y cómo fluye de la idea hasta el anuncio publicado.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Replica el sistema de carpetas para Nutriplus",
+              "descripcion": "Tu propia copia de toda la estructura, para que el equipo trabaje sobre un solo lugar y deje de perderse material entre chats y computadores.",
+              "responsable": "José"
+            },
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Reparte los roles del equipo",
+              "descripcion": "Dejar por escrito quién saca ideas, quién guioniza, quién graba, quién edita y quién pauta entre tú, William y Daniel. Sin eso definido, el sistema no arranca.",
+              "responsable": "José"
+            },
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Grabación y edición esos tres días; los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Hoy es casi todo transformacional y founder, y por eso se te satura a los ~20 días.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue completo y los conceptos que aplican a Nutriplus: qué formatos te faltan, cómo se reparten por nivel de conciencia y cuál ataca cada ángulo de venta.",
+              "responsable": "José"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Deja confirmados tus ángulos, objeciones y puntos de conciencia",
+              "descripcion": "Los validas en la reunión y quedan escritos en la plataforma. Ese es el mapa sobre el que se guioniza todo de aquí en adelante: cada creativo tiene que atacar al menos uno.",
+              "responsable": "José"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Define tu cadencia semanal de anuncios",
+              "descripcion": "Cuántos creativos vas a sacar por semana y en cuántas entregas, con un número que puedas cumplir sin bajarle a la calidad. Tu problema hoy no es solo volumen: es que todo se ve igual.",
+              "responsable": "José"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Guioniza la entrega 1",
+              "descripcion": "Tomando los conceptos ya validados y repartiéndolos entre los formatos que hoy no tienes: animación IA, profesional/autoridad, testimonial y comparativos. Cada guion sale con 3 a 5 hooks —mismo cuerpo y mismo CTA, cambian solo los primeros 3 segundos— que es lo que hace que un ganador dure más de una semana en vez de quemarse.",
+              "responsable": "José"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Coordina y graba la entrega 1",
+              "descripcion": "Repartiendo qué graba cada quien: lo tuyo como founder, lo de las UGC y lo que se genera con IA. Incluye la versión con avatar hombre de tu mejor ganador: casi todos tus videos son con mujer y ahí tienes una audiencia entera sin explotar.",
+              "responsable": "José"
+            },
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Edita la entrega 1",
+              "descripcion": "Con el dinamismo que pide el formato: cambio de toma cada 3-4 segundos, sonidos y transiciones apoyando el guion y el producto siempre visible. Es lo que sostiene la retención después del hook.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Monta los anuncios de la entrega 1",
+              "descripcion": "Subiéndolos a medida que van saliendo, sin esperar el lote completo, y con un solo copy por anuncio para poder leer de verdad qué está funcionando.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Agenda la reunión semanal de revisión con el equipo",
+              "descripcion": "Para mirar qué ganó, qué no y por qué, y con eso definir la siguiente entrega. Es lo que hace que tu tasa de eficiencia suba entrega tras entrega en vez de estar creando a ciegas.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Arma tu equipo de UGC y tu cara de marca",
+          "tiempo": "~2-3 semanas",
+          "descripcion": "El activo más fuerte es una persona identificable con la que tu clienta se sienta reflejada.",
+          "a_futuro": false,
+          "color": "#AF52DE",
+          "pasos": [
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Mándale a Nath el perfil de UGC que buscas",
+              "descripcion": "Chicas de 25-35 que quieran mostrar su proceso de cambio. Ella arma la convocatoria, hace la preselección y tú das el visto bueno; también te pasa el contacto de la creadora de Bogotá para que la evalúes.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Cierra las UGC con contrato de uso de imagen a 12 meses",
+              "descripcion": "Pago único de 80-90 mil por video asegurando 6 al mes. Así la creadora lo ve como negocio estable, tú tienes contenido asegurado y no terminas pagando fee recurrente por mantener el contenido en pauta.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Valida cuál cara pega y convierte antes de nombrar embajadora",
+              "descripcion": "Medir cuál genera más ventas y más comentarios en anuncios, y recién ahí hacer la alianza. No todas las caras convierten igual, y lo que buscas es una persona identificable tipo Daniela de MUMU.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Ordena el tráfico",
+          "tiempo": "~1 semana",
+          "descripcion": "Tus ganadores no duran más de una semana: acá está por qué y cómo se arregla.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 18,
+              "id": "t18",
+              "accionable": "Prueba consolidar una sola campaña por producto en ABO",
+              "descripcion": "Sin apagar lo que ya tienes andando: la montas en paralelo y cada creativo nuevo entra como conjunto dentro de esa campaña, con 3-5 creativos por conjunto (60-80 mil). Así la campaña acumula data y se vuelve más estable, en vez de repartirla entre campañas nuevas.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 19,
+              "id": "t19",
+              "accionable": "Escala con surf scaling",
+              "descripcion": "Revisas 3-4 veces al día y subes 20-30% cada 2-3 horas mientras el costo por compra aguante; si se dispara, lo devuelves al punto anterior. Y no apagues el educativo que prospecta aunque se ponga costoso: si cierras esa llave, el estático de cierre deja de funcionar.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 20,
+              "id": "t20",
+              "accionable": "Analiza cada entrega con Google AI Studio",
+              "descripcion": "Subes el video, las capturas de métricas y el prompt: te dice dónde se cayó la retención, qué se mostró en ese punto y qué cambiar. Con eso las variaciones de la siguiente entrega salen de tu propia data y no de un referente de la biblioteca.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "n6",
+          "titulo": "Convierte tu Instagram en la comunidad de la marca",
+          "tiempo": "Continuo",
+          "descripcion": "Creces 300-500 seguidores al día con el tráfico al perfil: cada persona que llega y ve una cuenta a medias es una venta que se cae.",
+          "a_futuro": false,
+          "color": "#AF52DE",
+          "pasos": [
+            {
+              "orden": 21,
+              "id": "t21",
+              "accionable": "Arregla las bases de tu Instagram con el contenido pregrabado",
+              "descripcion": "El módulo de redes del curso: cómo debe quedar el perfil, la bio, las destacadas y la apariencia general antes de empezar a publicar con ritmo.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 22,
+              "id": "t22",
+              "accionable": "Publica mínimo 4 veces por semana",
+              "descripcion": "Con los tres pilares: comunidad (ustedes como expertos y los testimonios), marca (educativo de ingredientes y beneficios) y UGC bueno reutilizado. Y en video: la gente ignora las imágenes y prefiere lo que puede oír mientras hace otra cosa.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 23,
+              "id": "t23",
+              "accionable": "Arma la parrilla por cortes de 15 días",
+              "descripcion": "Lunes educativo, martes o miércoles comunidad, domingo venta; el viernes no vende. Trabajar por cortes te evita improvisar y te deja grabar todo de una sola sentada.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 24,
+              "id": "t24",
+              "accionable": "Lanza el reto Fusión X con 5 UGCs",
+              "descripcion": "15 días documentando su proceso, con grupo de WhatsApp de apoyo y mensajes de motivación diaria generados con Claude. La gente que quiere bajar de peso abandona por falta de apoyo: la validación social del grupo es lo que las sostiene y lo que convierte el reto en un movimiento.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 25,
+              "id": "t25",
+              "accionable": "Corre el sistema de investigación con IA de Nath",
+              "descripcion": "Las 4 fases: tu cuenta, 3 competidores, 15 palabras clave y la síntesis con calendario de 30 días. De ahí salen los contenidos que puedes replicar.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 7,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Lo que vale la pena para cuando ya esté rodando el sistema.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 26,
+              "id": "t26",
+              "accionable": "Termina la reestructuración de la landing con Mateo Costa",
+              "descripcion": "Es lo que está causando los baneos de TikTok: el error salió por URL, no por el video. Con la landing arreglada recuperas esa fuente de tráfico.",
+              "responsable": "José"
+            },
+            {
+              "orden": 27,
+              "id": "t27",
+              "accionable": "Retoma las campañas de WhatsApp para retargeting",
+              "descripcion": "Para cerrar a quien ya interactuó con tus anuncios y no compró; ahí es donde mejor cierras.",
+              "responsable": "Deison"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "splicito",
+      "marca": "Splicito",
+      "documento": "https://plan.josehuila.com/splicito/",
+      "total_fases": 7,
+      "total_pasos": 28,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Pon a vender varias referencias al tiempo",
+          "tiempo": "~1 semana",
+          "descripcion": "Tu meta son 7-10 referencias vendiendo al tiempo. Hoy toda la fuerza está en una sola.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Elige las 7 a 10 referencias que vas a trabajar en paralelo",
+              "descripcion": "Hoy toda la fuerza está en los runners (Adizero). Deja escrito cuáles van a estar activas al mismo tiempo, cada una con sus propios anuncios.",
+              "responsable": "José"
+            },
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Retoma el testeo por referencia como lo hacías antes",
+              "descripcion": "Por cada referencia nueva: 2-3 imágenes y 2-3 videos, y mides cuál pega antes de meterle fuerte.",
+              "responsable": "José"
+            },
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Compra por cantidad la referencia que valide",
+              "descripcion": "Cuando una pegue, compras volumen de esa referencia y de su color ganador para bajar el costo unitario y competir con precio. Así fue como el 80% de tu facturación salía de 2-3 referencias.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema de trabajo semanal",
+          "tiempo": "~1 semana",
+          "descripcion": "Hoy el flujo es reactivo y todo recae en Mari. Deja la maquinaria instalada antes de producir a full.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Ve completo el contenido pregrabado del sistema",
+              "descripcion": "Antes de la reunión de despliegue creativo, para llegar con el mapa claro.",
+              "responsable": "José"
+            },
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Duplica las carpetas, documentos y plantillas para Splicito",
+              "descripcion": "Tu propia copia de todo: guiones, crudos, creativos y las dos parrillas.",
+              "responsable": "José"
+            },
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Reparte los roles entre Mari y tú por escrito",
+              "descripcion": "Quién saca ideas, quién escribe guiones, quién graba, quién edita y quién pauta. Hoy todo recae en Mari.",
+              "responsable": "José"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Fija los días de la semana",
+              "descripcion": "Guiones el lunes, edición de lunes a jueves, y cada día pautas lo que vaya saliendo, sin esperar el lote completo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Grabación y edición esos tres días; los sábados el equipo revisa guiones.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Hoy corres casi todo directo a venta, así que le hablas a un público chiquito y urgido — por eso el CPA se dispara.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue y los conceptos que aplican a Splicito.",
+              "responsable": "José"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Deja confirmados tus ángulos, objeciones y puntos de conciencia",
+              "descripcion": "Los que quedan validados en la reunión, escritos en la plataforma para trabajar sobre ellos.",
+              "responsable": "José"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Guioniza la entrega 1 con los conceptos validados",
+              "descripcion": "Acuérdate de que te faltan los de confianza (bodega, cómo empacan, el equipo) y los UGC: hoy corres casi todo directo a venta.",
+              "responsable": "José"
+            },
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Pide 3 hooks por cada guion",
+              "descripcion": "Mismo cuerpo, cambian los primeros 3 segundos. Y pídelos sin música para editarlos ustedes.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Graba los videos de la entrega 1",
+              "descripcion": "Siguiendo los guiones ya aprobados por el equipo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Edita y publica la entrega 1",
+              "descripcion": "Montándolos en Facebook Ads a medida que van saliendo, sin esperar el lote completo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Sube a 20 contenidos por semana",
+              "descripcion": "Es el volumen que baja el CPA y te deja escalar. Hoy tienes 18 anuncios activos; tu competencia tiene 80-90.",
+              "responsable": "José"
+            },
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Anota en la parrilla lo publicado, lo gastado y lo vendido",
+              "descripcion": "Para que Mari sepa cuáles fueron los ganadores de la semana y saque más de esos.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Delega y arma tu equipo",
+          "tiempo": "~2 semanas",
+          "descripcion": "El cuello de botella hoy es que todo pasa por Mari.",
+          "a_futuro": false,
+          "color": "#AF52DE",
+          "pasos": [
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Saca a Mari de responder los DM",
+              "descripcion": "Automatizar las respuestas repetidas (precio, referencias, catálogo) y que solo atienda al que ya va a comprar. Su tiempo tiene que ir a guiones y piezas.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 18,
+              "id": "t18",
+              "accionable": "Busca creadoras UGC",
+              "descripcion": "Empezando por la que ya te grabó las Adizero: proponle dos pares al mes a cambio de una cantidad fija de videos, en vez de pagarle por pieza.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Ordena el tráfico y baja el CPA",
+          "tiempo": "~1 semana",
+          "descripcion": "Hoy el CPA está en 56-60 mil con un break-even de 30 mil: es la fuga más grande que tienes.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 19,
+              "id": "t19",
+              "accionable": "Habilita contraentrega cobrando el envío por adelantado",
+              "descripcion": "15-20 mil de envío anticipado: abres la brecha de los que la piden sin exponerte a las devoluciones.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 20,
+              "id": "t20",
+              "accionable": "Abre una campaña por nicho en ABO y empieza a probar ahí",
+              "descripcion": "No tienes que apagar lo que ya tienes andando: montas la estructura nueva en paralelo y vas moviendo lo que funcione.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 21,
+              "id": "t21",
+              "accionable": "Crea las métricas personalizadas que te pasó Deison",
+              "descripcion": "Hook rate (reproducciones de 3s ÷ impresiones, 30%+), hold rate (TruePlay ÷ reproducciones de 3s, 20%+), % de carga (visitas ÷ clics, 85%+), pagos iniciados (17%+) y conversión (compras ÷ pagos iniciados, 30%+).",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 22,
+              "id": "t22",
+              "accionable": "Bájale 20-30% al conjunto costoso antes de apagarlo",
+              "descripcion": "Y decide mirando la semana o el mes, no los últimos 3 días.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "n6",
+          "titulo": "Trabaja tu Instagram como marca",
+          "tiempo": "Continuo",
+          "descripcion": "Manejas 100% pago anticipado en la web: la confianza que construya tu perfil es la que te cierra las ventas.",
+          "a_futuro": false,
+          "color": "#AF52DE",
+          "pasos": [
+            {
+              "orden": 23,
+              "id": "t23",
+              "accionable": "Publica mínimo 4 veces por semana",
+              "descripcion": "Por debajo de eso la marca pierde recordación.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 24,
+              "id": "t24",
+              "accionable": "Arma la parrilla de orgánico a 15 días",
+              "descripcion": "Fecha, pilar, formato, referente y estado (grabado / editado / publicado). Se graba todo de una sentada.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 25,
+              "id": "t25",
+              "accionable": "Suma el pilar de comunidad, que es el que más te falta",
+              "descripcion": "Contar una asesoría real que le diste a un cliente, cómo es un día armando los guiones, cómo es un día de quien responde el WhatsApp.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 26,
+              "id": "t26",
+              "accionable": "Corre el sistema de investigación con IA de Nath",
+              "descripcion": "Las 4 fases: tu cuenta, 3 competidores, palabras clave y la síntesis con TOFU/MOFU/BOFU.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 7,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cosas que valen la pena para cuando ya esté rodando el sistema.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 27,
+              "id": "t27",
+              "accionable": "Prueba contraentrega con una landing de una sola referencia",
+              "descripcion": "Así manejas mejor las devoluciones: esa devolución la revendes fácil por ser una sola referencia.",
+              "responsable": "José"
+            },
+            {
+              "orden": 28,
+              "id": "t28",
+              "accionable": "Mejora la web con el contacto de José",
+              "descripcion": "Facilidades de pago tipo Addi, información del producto más clara y calificaciones visibles.",
+              "responsable": "José"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "yavora",
+      "marca": "Yavora",
+      "documento": "https://plan.josehuila.com/yavora/",
+      "total_fases": 6,
+      "total_pasos": 18,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Trackea bien tus ventas",
+          "tiempo": "~1 semana",
+          "descripcion": "Sin data confiable no sabes qué escalar.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Ponle la etiqueta “Compra” a cada chat que cierra en WhatsApp",
+              "descripcion": "Como WhatsApp es de Meta, Facebook lee esa etiqueta y te trackea las ventas directo en el administrador. Y de paso optimiza mejor, porque entiende quién es tu comprador real y busca más parecidos a los que ya te compraron. Súmale la columna de Compras en el Ads Manager y compárala con tu reporte propio, que hoy va en ~70% de precisión.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Arregla el tracking del CRM",
+              "descripcion": "Hoy los leads de Meta no se están reflejando bien, y sin eso no sabes qué campaña te trajo qué venta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema de trabajo semanal",
+          "tiempo": "~1 semana",
+          "descripcion": "Tu otro cuello de botella es la falta de orden.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Monta tu sistema de trabajo con el contenido pregrabado",
+              "descripcion": "Lo ves completo y replicas el sistema de carpetas para Yavora. Es el orden que te falta: guiones tal día, grabar en campo, subir a la carpeta correcta, el editor toma de ahí.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Reparte los roles de tu equipo dentro del sistema",
+              "descripcion": "Quién arma guiones, quién graba en campo, el editor, el ingeniero agrónomo que sale en los videos y tú en campañas. Cada quien sube a su carpeta, y todo cae en una tabla de seguimiento semana a semana.",
+              "responsable": "José"
+            },
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Grabación y edición esos tres días; los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Tu palanca número uno para escalar.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue completo y quedan confirmados tus ángulos de venta, tus objeciones y tus puntos de conciencia, repartidos por nivel de conciencia: TOFU para el que no conoce el problema, MOFU para el que lo conoce pero no sabe cuál es la mejor solución, y BOFU para el que ya está buscando cómo resolverlo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Entrena un chat de Claude con tu marca",
+              "descripcion": "Cargado con tus productos y la investigación de las 4 fases de Nath: análisis de tu cuenta, benchmark de 15 competidores (químicos y orgánicos, todo lo que te compita), 20 palabras clave con las que te buscan, y el informe maestro que junta todo. De ahí salen ángulos, temas y formatos nuevos para los guiones.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Arma el cronograma de qué producto levantas cada semana",
+              "descripcion": "Tienes 4 productos pautables y hoy salen a grabar de todo sin plan, así que siempre terminas levantando los mismos. Sin videos de los otros no los puedes testear.",
+              "responsable": "José"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Guioniza la entrega 1",
+              "descripcion": "Tus guiones ya están muy bien, así que aquí solo se reparten los conceptos por nivel de conciencia y se sostiene el PAS y el camino del héroe que ya usas. Cada guion sale con dos CTA escritos: uno de venta para pauta y otro de conversación para orgánico, así el mismo contenido te sirve para los dos lados.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Graba la entrega 1",
+              "descripcion": "Variando lo visual, que es donde está tu fatiga creativa: hoy casi todos arrancan igual, con una planta y hablando del problema. Suma frente a cámara, responder un comentario, darle personalidad al hongo o a la gotica, el POV del picudo contando cómo daña hasta que llega el héroe, y tomas de apoyo de destapar, mostrar la etiqueta y aplicar. Y el UGC solo con hombres de 30 a 50, porque entre el 82 y el 88% de tus compradores son hombres.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Edita la entrega 1",
+              "descripcion": "Cuatro ajustes concretos: baja la música de fondo que tapa el guion hablado, quita los silencios, sube los subtítulos porque hoy quedan fuera del área visible del feed, y aligera las transiciones que le roban atención al producto.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Monta los anuncios de la entrega 1",
+              "descripcion": "A medida que van saliendo, sin esperar el lote completo.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Agenda la reunión semanal de revisión",
+              "descripcion": "Para mirar qué ganó, qué no y por qué. Es justo lo que hoy no tienes: hacen muchos videos pero no hay cómo saber cuál funcionó ni cómo iterar lo que ya sirve.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Activa tu orgánico",
+          "tiempo": "Continuo",
+          "descripcion": "La gente ve tu anuncio y entra al perfil a confirmar si eres serio.",
+          "a_futuro": false,
+          "color": "#AF52DE",
+          "pasos": [
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Publica 3 o 4 veces por semana en Instagram y TikTok",
+              "descripcion": "Hoy el 90% es contenido de venta y el perfil está desatendido. El orgánico es enseñar: “3 señales de que tu cultivo tiene plagas”, “la diferencia entre un insecticida químico y uno bioorgánico”. El primer mes publica lo mismo en las dos redes y varía horarios (10am, 12, 6pm) para ver qué pega dónde, y después optimizas por red.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Ordena tu tráfico",
+          "tiempo": "~1-2 semanas",
+          "descripcion": "Tienes ~105 campañas creadas y cada una arranca desde cero.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Te recomendamos consolidar en una campaña por producto u oferta",
+              "descripcion": "Cada campaña nueva pierde el aprendizaje acumulado. Con 4 ofertas, 4 campañas, alimentadas cada semana con el contenido nuevo — los combos en su propia campaña, separados de los productos individuales. No reordenes lo viejo sobre la marcha: déjalo así y estructura de esta forma lo que entre de ahora en adelante. Adentro, de 3 a 5 creativos por conjunto, duplicas el conjunto para sumar contenido, apagas el “contenido multimedia relacionado” y numeras cada creativo con el mismo número en el Drive y en el administrador.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Crea las métricas de hook rate y frecuencia",
+              "descripcion": "El hook rate te dice cuál gancho engancha: cuando uno te dé entre 35 y 40%, exprímelo en otros formatos —otro modelo, pantalla verde, pantalla dividida, unboxing—. La frecuencia te dice a qué público le está llegando cada anuncio: entre 1 y 1.8 está abriendo audiencia fría, y de esos hay que hacer más volumen porque alimentan todo el embudo. Si apagas el que abre el frío, el de remarketing también deja de venderte.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Escala tipo surf scaling con presupuesto por conjunto",
+              "descripcion": "Pasas a ABO para decidir tú a cuál conjunto le subes. Arrancas entre $50 y $60 mil por conjunto con 3 videos, y cuando traiga buenos resultados le subes 20-30% cada 3 horas mientras el costo aguante; si se pone caro, le bajas ese mismo 20%. Diario. Así vas identificando en qué horarios tienes buen tráfico.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cuando el sistema ya esté rodando.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 18,
+              "id": "t18",
+              "accionable": "Suma TikTok como canal de campañas",
+              "descripcion": "Tu nicho es más de Facebook por la edad de la audiencia, pero puedes publicar el video en el perfil, dejarlo un día o día y medio como orgánico y después usarlo en campaña con “Existing Post” para que conserve los likes y las vistas. Ojo: en TikTok el contenido va más orgánico y con humor, que no se sienta venta.",
+              "responsable": "Deison"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cliente": "zone-drop",
+      "marca": "Zone Drop",
+      "documento": "https://plan.josehuila.com/zone-drop/",
+      "total_fases": 7,
+      "total_pasos": 26,
+      "fases": [
+        {
+          "orden": 1,
+          "id": "n1",
+          "titulo": "Retoma el testeo constante de productos",
+          "tiempo": "Continuo",
+          "descripcion": "El producto es tu mayor limitante de escala.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 1,
+              "id": "t1",
+              "accionable": "Vuelve a testear productos aunque tengas un ganador andando",
+              "descripcion": "Tu error fue parar cuando las cosas iban bien: llegaste a pasar 8 meses sin buscar. Es más fácil tener 5 ganadores que exprimir uno solo. Y acuérdate del patrón: el producto pega, el proveedor te sube el precio, la competencia lo tira baratísimo y toca apagar.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 2,
+          "id": "n2",
+          "titulo": "Monta tu sistema de trabajo semanal",
+          "tiempo": "~1 semana",
+          "descripcion": "Deja la maquinaria instalada antes de producir a full.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 2,
+              "id": "t2",
+              "accionable": "Ve completo el contenido pregrabado del sistema",
+              "descripcion": "Es el mapa de cómo se organiza el trabajo semana a semana: qué se hace cada día, quién hace qué y cómo fluye de la idea hasta el anuncio publicado.",
+              "responsable": "José"
+            },
+            {
+              "orden": 3,
+              "id": "t3",
+              "accionable": "Replica el sistema de carpetas para Zone Drop",
+              "descripcion": "Tu propia copia de toda la estructura, para que tú y Jorge trabajen sobre un solo lugar y deje de perderse material.",
+              "responsable": "José"
+            },
+            {
+              "orden": 4,
+              "id": "t4",
+              "accionable": "Reparte los roles entre Jorge y tú",
+              "descripcion": "Dejar por escrito quién saca ideas, quién guioniza, quién genera los videos, quién edita y quién pauta. Jorge entra fuerte en TikTok, así que ahí hay un reparto natural.",
+              "responsable": "José"
+            },
+            {
+              "orden": 5,
+              "id": "t5",
+              "accionable": "Mándanos la revisión los lunes, miércoles y viernes",
+              "descripcion": "Grabación y edición esos tres días; los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 3,
+          "id": "n3",
+          "titulo": "Ejecuta tu despliegue creativo",
+          "tiempo": "Continuo",
+          "descripcion": "Hoy corres un solo formato, así que le vendes solo a la tajada más urgida del público.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 6,
+              "id": "t6",
+              "accionable": "Ten la reunión de despliegue creativo con José",
+              "descripcion": "Ahí te entrega el despliegue completo y los conceptos que aplican a tu producto: qué formatos te faltan, cómo se reparten por nivel de conciencia y cuál ataca cada ángulo.",
+              "responsable": "José"
+            },
+            {
+              "orden": 7,
+              "id": "t7",
+              "accionable": "Deja confirmados tus ángulos, objeciones y puntos de conciencia",
+              "descripcion": "Escritos en la plataforma. Hoy tus tres videos ganadores atacan exactamente el mismo dolor; este es el mapa para dejar de hacer eso.",
+              "responsable": "José"
+            },
+            {
+              "orden": 8,
+              "id": "t8",
+              "accionable": "Complementa con el sistema de investigación con IA de Nath",
+              "descripcion": "Sobre el despliegue que ya tienes, este sistema te sirve para encontrar ángulos que todavía no has tocado y, sobre todo, para sacar de los comentarios del nicho el dolor real y las palabras exactas de tu cliente.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 9,
+              "id": "t9",
+              "accionable": "Define tu cadencia semanal de anuncios",
+              "descripcion": "Cuántos creativos vas a sacar por semana y en cuántas entregas, con un número que puedas cumplir sin bajarle a la calidad.",
+              "responsable": "José"
+            },
+            {
+              "orden": 10,
+              "id": "t10",
+              "accionable": "Guioniza la entrega 1",
+              "descripcion": "Repartiendo los conceptos validados entre los formatos que hoy no tienes: respondiendo un comentario, testimonio con voz IA, UGC hecho con IA, el producto con personalidad y el proceso día a día. Cada guion sale con 3 hooks —mismo cuerpo y mismo CTA, cambian solo los primeros 3 segundos—, que es lo que evita perder un video entero por un mal arranque.",
+              "responsable": "José"
+            },
+            {
+              "orden": 11,
+              "id": "t11",
+              "accionable": "Genera los videos de la entrega 1",
+              "descripcion": "Sosteniendo cada formato en vez de mezclarlos: hoy tus videos se parecen todos porque lo único que cambia es el entorno donde se muestra el producto.",
+              "responsable": "José"
+            },
+            {
+              "orden": 12,
+              "id": "t12",
+              "accionable": "Edita la entrega 1",
+              "descripcion": "Cuidando que el formato se refuerce y no se pierda cuando entran tomas distintas.",
+              "responsable": "Nath"
+            },
+            {
+              "orden": 13,
+              "id": "t13",
+              "accionable": "Monta los anuncios de la entrega 1",
+              "descripcion": "Subiéndolos a medida que van saliendo, sin esperar el lote completo.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 14,
+              "id": "t14",
+              "accionable": "Agenda la reunión semanal de revisión",
+              "descripcion": "Para mirar qué ganó, qué no y por qué, y con eso definir la siguiente entrega. Es lo que sube tu tasa de eficiencia entrega tras entrega en vez de crear a ciegas.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 4,
+          "id": "n4",
+          "titulo": "Ordena el tráfico",
+          "tiempo": "~1 semana",
+          "descripcion": "Hoy abres campaña nueva por cada creativo y ahí es donde pierdes la data.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 15,
+              "id": "t15",
+              "accionable": "Alimenta una sola campaña por producto en vez de abrir nuevas",
+              "descripcion": "Cada creativo nuevo entra como conjunto dentro de la misma campaña. Así acumula toda la data del público objetivo y se vuelve más estable; abriendo campañas nuevas terminas con 4 o 5 prendiendo y apagando, y esa data se pierde.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 16,
+              "id": "t16",
+              "accionable": "Trabaja en ABO con el reparto de presupuesto desactivado",
+              "descripcion": "En ABO tú decides a qué creativo le subes. Y si dejas activo el reparto del 20%, un conjunto deja de consumir para alimentar a otro y pierdes el control.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 17,
+              "id": "t17",
+              "accionable": "Crea las métricas de hook rate y hold rate",
+              "descripcion": "Hook: reproducciones de 3s ÷ impresiones (30%+). Hold: TruePlay ÷ reproducciones de 3s (20%+). Con eso dejas de decidir solo por el CPM y empiezas a ver qué falló exactamente en el video.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 18,
+              "id": "t18",
+              "accionable": "Escala 20-30% dentro de la misma campaña",
+              "descripcion": "Y si al subir se cae, lo devuelves al presupuesto donde estaba vendiendo. Nunca apagues el creativo que prospecta aunque gaste poco: es el que sostiene al que cierra.",
+              "responsable": "Deison"
+            }
+          ]
+        },
+        {
+          "orden": 5,
+          "id": "n5",
+          "titulo": "Baja las cancelaciones y sube la conversión",
+          "tiempo": "~1-2 semanas",
+          "descripcion": "El CPA se te ve bien pero la venta no se concreta: ahí se te está yendo la plata.",
+          "a_futuro": false,
+          "color": "#34C759",
+          "pasos": [
+            {
+              "orden": 19,
+              "id": "t19",
+              "accionable": "Excluye en Facebook Ads las zonas donde más se te cancela",
+              "descripcion": "San Andrés, municipios alejados y donde la transportadora no responde bien. Hoy te está llegando público al que no le puedes cumplir.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 20,
+              "id": "t20",
+              "accionable": "Manda el evento de compra a Meta",
+              "descripcion": "Como vendes por WhatsApp, Meta no está optimizando hacia quien realmente compra, sino hacia quien escribe.",
+              "responsable": "Deison"
+            },
+            {
+              "orden": 21,
+              "id": "t21",
+              "accionable": "Evalúa mover el flujo de WhatsApp a landing",
+              "descripcion": "La landing filtra mucho mejor que el WhatsApp y te baja las cancelaciones desde la raíz.",
+              "responsable": "José"
+            },
+            {
+              "orden": 22,
+              "id": "t22",
+              "accionable": "Pídele a José el contacto para mejorar la landing",
+              "descripcion": "Tiene un contacto con una IA que genera landings validadas. Hoy tu fuerte es ChateaPro, no la landing, así que cuando algo falla no sabes si es el producto o la página.",
+              "responsable": "José"
+            }
+          ]
+        },
+        {
+          "orden": 6,
+          "id": "n6",
+          "titulo": "Brandea tu ganador",
+          "tiempo": "~1 mes",
+          "descripcion": "La defensa contra el ciclo de las copias.",
+          "a_futuro": false,
+          "color": "#5E87F5",
+          "pasos": [
+            {
+              "orden": 23,
+              "id": "t23",
+              "accionable": "Escoge cuál de tus ganadores vas a convertir en marca",
+              "descripcion": "Con branding propio dejas de ser un producto que cualquiera copia y tira barato. Cuando te ves como marca de verdad, los dropshippers no te copian igual porque creen que vendes por la marca, no por el producto.",
+              "responsable": "José"
+            },
+            {
+              "orden": 24,
+              "id": "t24",
+              "accionable": "Cotiza con tus fabricantes la versión con marca propia de ese ganador",
+              "descripcion": "Ya los tienes contactados. Incluye cambiarle el vehículo si aplica (de crema a gotas, de polvo a cápsulas): eso te separa de todos los que están vendiendo lo mismo del catálogo público.",
+              "responsable": "José"
+            },
+            {
+              "orden": 25,
+              "id": "t25",
+              "accionable": "Monta el Instagram de esa marca",
+              "descripcion": "Con contenido orgánico que genere confianza. Es lo que te permite sostener el producto 8 o 12 meses en vez de quemarlo en uno.",
+              "responsable": "Nath"
+            }
+          ]
+        },
+        {
+          "orden": 7,
+          "id": "nf",
+          "titulo": "A futuro",
+          "tiempo": "Más adelante",
+          "descripcion": "Cuando el sistema ya esté rodando.",
+          "a_futuro": true,
+          "color": "#E0A000",
+          "pasos": [
+            {
+              "orden": 26,
+              "id": "t26",
+              "accionable": "Suma TikTok como segunda fuente con Jorge",
+              "descripcion": "Validas los conceptos en Facebook, que da data más confiable, y los pasas a TikTok. Pero con formato nativo, tipo comedia y parchado: en TikTok la audiencia detecta el anuncio de una y lo salta.",
+              "responsable": "Deison"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

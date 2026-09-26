@@ -1,0 +1,19 @@
+[Unit]
+Description=Inforce PostgreSQL REST API
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+User=inforce_data
+Group=inforce_data
+EnvironmentFile=/etc/inforce/postgrest.env
+ExecStart=/usr/local/bin/postgrest
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

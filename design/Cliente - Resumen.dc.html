@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  .sk { position: relative; overflow: hidden; background: var(--surface-2); border-radius: 8px; }
+  .sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(180,200,225,0.09), transparent); animation: skpass 1.25s linear infinite; }
+  @keyframes skpass { from { transform: translateX(-100%) } to { transform: translateX(100%) } }
+</style>
+</helmet>
+
+<div class="{{ themeClass }}" style="height: 100vh; display: grid; grid-template-columns: 244px minmax(0, 1fr); background: var(--bg);">
+
+  <!-- MARCO — lo aporta Shell Cliente, no esta pantalla -->
+  <aside data-shell="cliente" style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-solid); border-right: 1px solid var(--line); overflow: hidden;">
+    <div style="position: absolute; inset: 0; background: var(--glow); pointer-events: none;"></div>
+
+    <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 22px 20px 18px;">
+      <div style="width: 34px; height: 34px; border-radius: 11px; background: rgba(88,166,255,0.14); display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(95,222,240,0.30), 0 0 24px rgba(88,166,255,0.34);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 0 7px rgba(95,222,240,0.85));"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" fill="var(--neon)"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+        <div style="font-size: 15.5px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 18px rgba(95,222,240,0.40);">Natucer</div>
+        <div style="font-size: 11.5px; color: var(--neon); line-height: 1.1; text-shadow: 0 0 14px rgba(95,222,240,0.5);">Portal Inforce</div>
+      </div>
+      <button data-action="shell-cliente.toggle-tema" onClick="{{ toggleTheme }}" title="Cambiar tema" style="width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2); background: var(--hover);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ themeIcon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+
+    <div style="position: relative; padding: 0 14px 16px;">
+      <button data-action="new:buscador-cliente" onClick="{{ noop }}" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 13px; text-align: left;" style-hover="border-color: var(--line-2);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <span style="flex: 1;">Buscar</span>
+        <kbd style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); border: 1px solid var(--line); border-radius: 6px; padding: 2px 5px;">⌘K</kbd>
+      </button>
+    </div>
+
+    <nav style="position: relative; flex: 1; overflow-y: auto; min-height: 0; padding: 0 10px 14px; display: flex; flex-direction: column; gap: 18px;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--ink-4); padding: 5px 12px 7px;">{{ group.label }}</div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <a data-action="{{ item.action }}" href="#" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 11px; font-size: 13.5px; cursor: pointer; background: {{ item.bg }}; color: {{ item.fg }}; font-weight: {{ item.weight }};" style-hover="background: var(--hover); color: var(--ink);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="{{ item.icon }}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.label }}</span>
+              <sc-if value="{{ item.count }}" hint-placeholder-val="{{ true }}">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums;">{{ item.count }}</span>
+              </sc-if>
+            </a>
+          </sc-for>
+        </div>
+      </sc-for>
+
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 7px;">
+          <span style="font-size: 11px; font-weight: 600; color: var(--ink-4); flex: 1;">Espacios</span>
+          <button data-action="nav.nuevo-espacio" onClick="{{ noop }}" title="Nuevo espacio" style="width: 20px; height: 20px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; display: grid; place-items: center; border-radius: 6px; flex-shrink: 0;" style-hover="color: var(--ink-2); background: var(--hover);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+          </button>
+        </div>
+        <sc-for list="{{ spaces }}" as="sp" hint-placeholder-count="3">
+          <a data-action="nav.espacio" href="#" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 11px; padding: 8px 12px; border-radius: 11px; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-2); font-weight: 500;" style-hover="background: var(--hover); color: var(--ink);">
+            <span style="width: 7px; height: 7px; border-radius: 3px; flex-shrink: 0; background: {{ sp.color }};"></span>
+            <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ sp.name }}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums; flex-shrink: 0;">{{ sp.count }}</span>
+          </a>
+        </sc-for>
+      </div>
+    </nav>
+
+    <div style="position: relative; border-top: 1px solid var(--line); padding: 13px 16px; display: flex; align-items: center; gap: 11px;">
+      <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--purple); color: #FFFFFF; display: grid; place-items: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">M</div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Mariana Restrepo</div>
+        <div style="font-size: 11.5px; color: var(--ink-3);">{{ roleLabel }}</div>
+      </div>
+      <button data-action="shell-cliente.ajustes" onClick="{{ noop }}" title="Ajustes" style="width: 30px; height: 30px; border-radius: 9px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="background: var(--hover); color: var(--ink-2);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.3 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+      <button data-action="shell-cliente.salir" onClick="{{ noop }}" title="Salir" style="width: 30px; height: 30px; border-radius: 9px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="background: var(--hover); color: var(--ink-2);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main style="display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; position: relative; background-color: var(--bg); background-image: var(--ambient); background-attachment: local;">
+
+    <header data-shell="cliente" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 20px 28px 14px; flex-shrink: 0;">
+      <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-4);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span>Natucer</span>
+          <span style="opacity: .5;">/</span>
+          <span style="color: var(--ink-3);">Resumen</span>
+        </div>
+        <h1 style="font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1;">Resumen</h1>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 3px; padding: 4px; border-radius: 13px; background: var(--surface-2); border: 1px solid var(--line);">
+          <sc-for list="{{ periods }}" as="p" hint-placeholder-count="4">
+            <button data-action="resumen.cambiar-periodo" onClick="{{ p.select }}" style="padding: 7px 13px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 12.5px; white-space: nowrap; background: {{ p.bg }}; color: {{ p.fg }}; font-weight: {{ p.weight }}; box-shadow: {{ p.shadow }};">{{ p.label }}</button>
+          </sc-for>
+        </div>
+        <div data-action="resumen.ayuda-actualizado" title="{{ freshHint }}" style="display: flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); cursor: help;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ freshDot }}; animation: breathe 3s ease-in-out infinite;"></span>
+          <span style="font-size: 12px; color: var(--ink-2); white-space: nowrap;">{{ freshLabel }}</span>
+        </div>
+        <sc-if value="{{ canShare }}" hint-placeholder-val="{{ true }}">
+          <button data-action="resumen.compartir-link-cliente" onClick="{{ copyLink }}" title="{{ clientUrl }}" style="display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap; box-shadow: var(--shadow); border: 1px solid {{ shareBorder }}; background: {{ shareBg }}; color: {{ shareFg }};" style-hover="border-color: var(--line-2);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="{{ shareIcon }}" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            {{ shareLabel }}
+          </button>
+        </sc-if>
+        <button data-action="new:alertas-cliente" onClick="{{ noop }}" title="Alertas" style="position: relative; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2); color: var(--ink);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="position: absolute; top: 6px; right: 6px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--brand); color: #FFFFFF; font-size: 10px; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--surface-solid); box-shadow: 0 0 12px rgba(226,75,74,0.6);">4</span>
+        </button>
+      </div>
+    </header>
+
+    <div style="flex: 1; overflow-y: auto; min-height: 0; padding: 0 28px 44px; display: flex; flex-direction: column; gap: 16px;">
+
+      <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 13px; text-align: center; padding: 56px 32px; border-radius: 20px; border: 1px solid rgba(226,75,74,0.35); background: var(--surface); box-shadow: var(--shadow);">
+          <div style="width: 50px; height: 50px; border-radius: 16px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center;">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M10.3 3.9 2.5 17.5A1.7 1.7 0 0 0 4 20h16a1.7 1.7 0 0 0 1.5-2.5L13.7 3.9a1.7 1.7 0 0 0-3 0zM12 9v4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink);">No pudimos cargar el resumen</span>
+          <p style="font-size: 14px; line-height: 1.65; color: var(--ink-3); max-width: 50ch; text-wrap: pretty;">Falló la consulta de reportes, tareas y equipo de esta empresa. Los datos siguen guardados; solo hay que reintentar.</p>
+          <button data-action="new:resumen.reintentar" onClick="{{ noop }}" data-btn="primary" style="display: flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 12px; border: 1px solid rgba(111,184,255,0.42); background: linear-gradient(180deg, rgba(88,166,255,0.26), rgba(88,166,255,0.10)); color: #EAF4FF; cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 600;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Reintentar
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ roleNotice }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 11px; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2); font-size: 12.5px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0; color: var(--ink-3);"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8h.01M11 12h1v5h1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="text-wrap: pretty;">{{ roleNotice }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1.5px dashed var(--line-2); border-radius: 20px; padding: 60px 32px; display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+          <div style="width: 54px; height: 54px; border-radius: 17px; background: var(--surface-2); display: grid; place-items: center; color: var(--ink-4);">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink);">Todavía no hay datos para mostrar</span>
+          <p style="font-size: 14px; line-height: 1.65; color: var(--ink-3); max-width: 52ch; text-wrap: pretty;">En cuanto el equipo cargue el primer reporte y arranque la semana, acá vas a ver el rendimiento, las tareas y qué está haciendo cada persona.</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+
+          <!-- KPIs -->
+          <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="min-width: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: 15px 17px; display: flex; flex-direction: column; gap: 9px; box-shadow: var(--shadow);">
+                <div style="display: flex; align-items: center; gap: 9px;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: {{ k.color }}; box-shadow: 0 0 10px {{ k.color }};"></span>
+                  <span style="flex: 1; font-size: 12px; font-weight: 600; color: var(--ink-3); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ k.label }}</span>
+                  <span data-action="resumen.ayuda-kpi" title="{{ k.hint }}" style="flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--line-2); color: var(--ink-4); display: grid; place-items: center; font-size: 10px; font-weight: 700; cursor: help;" style-hover="color: var(--ink); border-color: var(--sel);">?</span>
+                </div>
+                <div style="font-size: 27px; font-weight: 700; letter-spacing: -0.035em; color: {{ k.valueColor }}; line-height: 1; font-variant-numeric: tabular-nums;">{{ k.value }}</div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: 11.5px; color: var(--ink-3);">{{ k.sub }}</span>
+                  <sc-if value="{{ k.delta }}" hint-placeholder-val="{{ true }}">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; white-space: nowrap; background: {{ k.deltaBg }}; color: {{ k.deltaColor }};">{{ k.delta }}</span>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- Equipo -->
+          <div style="display: flex; flex-direction: column; gap: 11px; min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 11px; flex-wrap: wrap;">
+              <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Tu equipo Inforce</span>
+              <span style="display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--green);">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green);"></span>
+                {{ liveCount }} trabajando ahora
+              </span>
+              <span style="flex: 1;"></span>
+              <button data-action="new:resumen.ver-equipo-completo" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 11px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                Ver todo el equipo
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+            </div>
+
+            <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 12px; min-width: 0; overflow: hidden;">
+                <sc-for list="{{ skeletons }}" as="sk" hint-placeholder-count="6">
+                  <div style="flex: 1 1 0; min-width: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: 15px; display: flex; flex-direction: column; gap: 12px; min-height: 140px;">
+                    <div style="display: flex; align-items: center; gap: 11px;">
+                      <div class="sk" style="width: 36px; height: 36px; border-radius: 50%;"></div>
+                      <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                        <div class="sk" style="height: 11px; width: 70%;"></div>
+                        <div class="sk" style="height: 9px; width: 46%;"></div>
+                      </div>
+                    </div>
+                    <div class="sk" style="height: 32px; width: 100%;"></div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ teamEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 22px 20px; border-radius: 18px; border: 1.5px dashed var(--line-2); background: var(--surface-2); color: var(--ink-3); font-size: 13px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span style="flex: 1; min-width: 200px;">Aún no hay personas asignadas a esta empresa.</span>
+                <sc-if value="{{ canManageTeam }}" hint-placeholder-val="{{ true }}">
+                  <button data-action="resumen.agregar-personas" onClick="{{ noop }}" style="border: none; background: transparent; color: var(--sel); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 700; padding: 2px 4px;">Agregar personas →</button>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ teamReady }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; gap: 12px; min-width: 0; overflow-x: auto; padding-bottom: 4px;">
+                <sc-for list="{{ team }}" as="p" hint-placeholder-count="6">
+                  <div data-action="resumen.abrir-perfil-miembro" onClick="{{ p.open }}" style="flex: 1 1 0; min-width: 196px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: 15px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; box-shadow: var(--shadow);">
+                    <div style="display: flex; align-items: center; gap: 11px;">
+                      <div style="position: relative; flex-shrink: 0;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: #FFFFFF; background: {{ p.color }};">{{ p.initial }}</div>
+                        <span style="position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 50%; border: 2.5px solid var(--surface-solid); background: {{ p.dot }};"></span>
+                      </div>
+                      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+                        <span style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                          <span style="font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ p.name }}</span>
+                          <sc-if value="{{ p.isOwner }}" hint-placeholder-val="{{ false }}">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0; color: var(--yellow);"><path d="M3 7l4.5 3.5L12 4l4.5 6.5L21 7l-1.7 11H4.7L3 7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+                          </sc-if>
+                        </span>
+                        <span style="font-size: 11.5px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ p.role }}</span>
+                      </div>
+                      <span data-action="new:resumen.scorecard-semana" title="{{ p.weekTitle }}" style="flex-shrink: 0; width: 9px; height: 9px; border-radius: 50%; cursor: help; background: {{ p.weekColor }}; box-shadow: 0 0 9px {{ p.weekColor }};"></span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                      <span style="font-size: 11px; font-weight: 600; color: var(--ink-4);">Trabajando en</span>
+                      <span style="font-size: 12.5px; line-height: 1.45; min-height: 36px; color: {{ p.taskColor }}; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: pretty;">{{ p.task }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- Tabs -->
+          <div style="display: flex; gap: 4px; padding: 4px; border-radius: 13px; background: var(--surface-2); border: 1px solid var(--line); width: fit-content;">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+              <button data-action="{{ t.action }}" onClick="{{ t.select }}" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 13px; white-space: nowrap; background: {{ t.bg }}; color: {{ t.fg }}; font-weight: {{ t.weight }}; box-shadow: {{ t.shadow }};">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ t.icon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                {{ t.label }}
+              </button>
+            </sc-for>
+          </div>
+
+          <!-- ═══ OPERACIÓN ═══ -->
+          <sc-if value="{{ showOperations }}" hint-placeholder-val="{{ true }}">
+            <div style="display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); gap: 14px; align-items: start;">
+
+              <!-- Tareas de la cuenta -->
+              <div style="min-width: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow);">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <span style="flex: 1; font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Tareas de la cuenta</span>
+                  <button data-action="resumen.filtro-tareas" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 11px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 5h18M6 12h12M10 19h4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>
+                    Filtro
+                  </button>
+                  <button data-action="resumen.nueva-tarea" data-btn="primary" onClick="{{ openNewTask }}" style="display: flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 11px; border: 1px solid rgba(111,184,255,0.42); background: linear-gradient(180deg, rgba(88,166,255,0.26), rgba(88,166,255,0.10)); color: #EAF4FF; cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>
+                    Nueva tarea
+                  </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: start;">
+                  <sc-for list="{{ columns }}" as="col" hint-placeholder-count="3">
+                    <div style="min-width: 0; display: flex; flex-direction: column; gap: 9px; padding: 11px; border-radius: 14px; background: transparent; border: 1px solid var(--line); min-height: 130px;">
+                      <div style="display: flex; align-items: center; gap: 8px; padding: 0 3px;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: {{ col.color }};"></span>
+                        <span style="flex: 1; min-width: 0; font-size: 12.5px; font-weight: 700; color: var(--ink-2); letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ col.label }}</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums;">{{ col.count }}</span>
+                        <button data-action="new:resumen.agregar-tarea-columna" onClick="{{ col.add }}" title="Agregar tarea" style="width: 22px; height: 22px; border-radius: 7px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="background: var(--hover); color: var(--ink);">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+                        </button>
+                      </div>
+                      <sc-for list="{{ col.tasks }}" as="t" hint-placeholder-count="2">
+                        <div data-action="resumen.abrir-tarea" onClick="{{ t.open }}" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 9px; padding: 12px 13px 12px 16px; border-radius: 14px; background: var(--surface); border: 1px solid {{ t.border }}; cursor: pointer; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2);">
+                          <span style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: {{ t.priorityColor }};"></span>
+                          <div style="display: flex; align-items: flex-start; gap: 9px;">
+                            <button data-action="resumen.cambiar-estado-tarea" onClick="{{ t.toggle }}" title="Cambiar estado" style="flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; margin-top: 1px; border: 1.8px solid {{ t.checkBorder }}; background: {{ t.checkBg }}; cursor: pointer; display: grid; place-items: center; padding: 0;">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" style="color: #FFFFFF; opacity: {{ t.checkOpacity }};"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                            </button>
+                            <span style="flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; color: {{ t.titleColor }}; text-decoration: {{ t.titleDecoration }}; text-wrap: pretty;">{{ t.title }}</span>
+                          </div>
+                          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            <span style="padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600; white-space: nowrap; background: {{ t.priorityBg }}; color: {{ t.priorityColor }};">{{ t.priorityLabel }}</span>
+                            <span style="padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600; white-space: nowrap; background: var(--chip); color: {{ t.dueColor }};">{{ t.due }}</span>
+                            <span style="flex: 1;"></span>
+                            <span style="width: 21px; height: 21px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #FFFFFF; background: {{ t.assigneeColor }};">{{ t.assignee }}</span>
+                          </div>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}">
+                        <button data-action="new:resumen.agregar-tarea-columna" onClick="{{ col.add }}" style="display: flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 8px; border-radius: 12px; border: 1.5px dashed var(--line); background: transparent; color: var(--ink-4); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600;" style-hover="border-color: var(--line-2); color: var(--ink-2);">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+                          Agregar tarea
+                        </button>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <!-- Columna derecha: actividad arriba, entregas abajo -->
+              <div style="min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+
+                <div style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow);">
+                  <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <span style="flex: 1; min-width: 0; font-size: 14.5px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Actividad reciente</span>
+                    <button data-action="new:resumen.ver-toda-actividad" onClick="{{ noop }}" style="border: none; background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; padding: 2px 4px; white-space: nowrap;" style-hover="color: var(--sel);">Ver todo →</button>
+                  </div>
+                  <sc-for list="{{ activity }}" as="ev" hint-placeholder-count="6">
+                    <div style="display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line);">
+                      <span style="width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 9.5px; font-weight: 700; color: #FFFFFF; flex-shrink: 0; background: {{ ev.color }};">{{ ev.initial }}</span>
+                      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-size: 12.5px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty;">{{ ev.text }}</span>
+                        <span style="font-size: 11px; color: var(--ink-4);">{{ ev.when }}</span>
+                      </span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ activityEmpty }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding: 24px 10px; text-align: center; font-size: 12.5px; color: var(--ink-4); border-top: 1px solid var(--line);">Sin movimientos en las últimas 24 horas.</div>
+                  </sc-if>
+                </div>
+
+                <div style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow);">
+                  <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <span style="flex: 1; min-width: 0; font-size: 14.5px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Próximas entregas</span>
+                    <button data-action="new:resumen.ver-todas-entregas" onClick="{{ noop }}" style="border: none; background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; padding: 2px 4px; white-space: nowrap;" style-hover="color: var(--sel);">Ver todas →</button>
+                  </div>
+                  <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="4">
+                    <div data-action="resumen.abrir-entrega" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); cursor: pointer;" style-hover="background: var(--hover);">
+                      <span style="width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: {{ u.color }};"></span>
+                      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-size: 12.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ u.title }}</span>
+                        <span style="font-size: 11px; color: var(--ink-4);">{{ u.who }} · {{ u.stage }}</span>
+                      </span>
+                      <span style="font-size: 11.5px; font-weight: 600; color: {{ u.dueColor }}; white-space: nowrap;">{{ u.due }}</span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ upcomingEmpty }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding: 24px 10px; text-align: center; font-size: 12.5px; color: var(--ink-4); border-top: 1px solid var(--line);">Sin entregas programadas.</div>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ═══ CONTENIDO ═══ -->
+          <sc-if value="{{ showContent }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0;">
+
+              <div style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 24px; align-items: center; box-shadow: var(--shadow);">
+                <sc-if value="{{ hasCadence }}" hint-placeholder-val="{{ true }}">
+                  <div style="min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: baseline; gap: 10px;">
+                      <span style="flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Cumplimiento semanal</span>
+                      <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: {{ compliancePctColor }}; font-variant-numeric: tabular-nums;">{{ compliancePct }}</span>
+                    </div>
+                    <div style="height: 6px; border-radius: 999px; background: var(--chip); overflow: hidden;">
+                      <div style="height: 100%; border-radius: 999px; width: {{ compliancePct }}; background: {{ compliancePctColor }};"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-3);">
+                      <span>{{ deliveredCount }} de {{ plannedCount }} creativos en campaña · semana 30</span>
+                      <sc-if value="{{ canManageTeam }}" hint-placeholder-val="{{ true }}">
+                        <button data-action="new:resumen.configurar-cadencia" onClick="{{ noop }}" style="border: none; background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 2px 4px;" style-hover="color: var(--sel);">Ajustar cadencia →</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ noCadence }}" hint-placeholder-val="{{ false }}">
+                  <div style="min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Sin meta semanal configurada</span>
+                    <span style="font-size: 12px; color: var(--ink-3); text-wrap: pretty;">Falta inversión semanal, ticket promedio y regla de corte para calcular la meta de creativos.</span>
+                  </div>
+                </sc-if>
+
+                <div style="min-width: 0; display: flex; flex-direction: column; gap: 9px;">
+                  <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <span style="flex: 1; min-width: 0; font-size: 12px; font-weight: 600; color: var(--ink-4);">Pipeline de la semana</span>
+                    <sc-if value="{{ canSeePipeline }}" hint-placeholder-val="{{ true }}">
+                      <button data-action="resumen.ver-pipeline" onClick="{{ noop }}" style="border: none; background: transparent; color: var(--sel); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; white-space: nowrap;">Ver pipeline →</button>
+                    </sc-if>
+                  </div>
+                  <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+                    <sc-for list="{{ pipeline }}" as="s" hint-placeholder-count="7">
+                      <button data-action="resumen.ir-estado-pipeline" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; white-space: nowrap;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                        <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ s.color }};"></span>
+                        {{ s.label }}
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: {{ s.valueColor }}; font-variant-numeric: tabular-nums;">{{ s.count }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow);">
+                <div style="display: flex; align-items: baseline; gap: 12px;">
+                  <span style="flex: 1; min-width: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Estrategia por embudo</span>
+                  <sc-if value="{{ canSeeCanvas }}" hint-placeholder-val="{{ true }}">
+                    <button data-action="resumen.ver-canvas" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 6px; border: none; background: transparent; color: var(--sel); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap;">
+                      Ver canvas
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </button>
+                  </sc-if>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;">
+                  <sc-for list="{{ funnelStages }}" as="s" hint-placeholder-count="3">
+                    <button data-action="resumen.ver-embudo" onClick="{{ noop }}" style="min-width: 0; padding: 15px 17px; border-radius: 14px; border: 1px solid {{ s.border }}; background: {{ s.bg }}; display: flex; flex-direction: column; gap: 3px; text-align: left; cursor: pointer; font-family: inherit;">
+                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.13em; color: {{ s.color }};">{{ s.label }}</span>
+                      <span style="font-size: 11px; color: var(--ink-4); margin-bottom: 5px;">{{ s.sub }}</span>
+                      <span style="display: flex; align-items: baseline; gap: 7px;">
+                        <span style="font-size: 23px; font-weight: 700; letter-spacing: -0.03em; color: {{ s.valueColor }}; line-height: 1; font-variant-numeric: tabular-nums;">{{ s.count }}</span>
+                        <span style="font-size: 11.5px; color: var(--ink-3);">conceptos</span>
+                      </span>
+                      <span style="font-size: 11px; color: var(--ink-4); margin-top: 6px;">{{ s.slots }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 13px;">
+                  <span>{{ conceptsTotal }} conceptos activos</span>
+                  <span style="color: var(--ink-4);">·</span>
+                  <span>{{ slotsTotal }} slots en el pipeline</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- ═══ Modal: ficha + tracker de la persona ═══ -->
+    <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeProfile }}" style="position: absolute; inset: 0; z-index: 60; background: rgba(8,8,14,0.62); backdrop-filter: blur(3px); display: flex; justify-content: center; padding: 56px 20px 20px; overflow-y: auto; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 100%; max-width: 820px; height: fit-content; border-radius: 20px; border: 1px solid var(--line-2); background: var(--surface-solid); box-shadow: var(--shadow-lg); overflow: hidden; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 18px 20px; border-bottom: 1px solid var(--line);">
+            <div style="position: relative; flex-shrink: 0;">
+              <div style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #FFFFFF; font-size: 16px; font-weight: 700; background: {{ profileColor }};">{{ profileInitial }}</div>
+              <span style="position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--surface-solid); background: {{ profileDot }};"></span>
+            </div>
+            <div style="flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 17px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink);">{{ profileName }}</span>
+              <span style="font-size: 12.5px; color: var(--ink-3);">{{ profileRole }}</span>
+            </div>
+            <div style="display: flex; gap: 3px; padding: 4px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line);">
+              <sc-for list="{{ scorecardTabs }}" as="st" hint-placeholder-count="2">
+                <button data-action="new:resumen.scorecard-periodo" onClick="{{ st.select }}" style="padding: 7px 14px; border-radius: 9px; border: none; cursor: pointer; font-family: inherit; font-size: 12.5px; white-space: nowrap; background: {{ st.bg }}; color: {{ st.fg }}; font-weight: {{ st.weight }}; box-shadow: {{ st.shadow }};">{{ st.label }}</button>
+              </sc-for>
+            </div>
+            <button data-action="resumen.cerrar-perfil" onClick="{{ closeProfile }}" title="Cerrar" style="width: 32px; height: 32px; border-radius: 10px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="background: var(--hover); color: var(--ink);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            </button>
+          </div>
+
+          <sc-if value="{{ showDay }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column; gap: 20px; padding: 20px;">
+
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                  <span style="flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Tareas de hoy</span>
+                  <span style="font-size: 11.5px; color: var(--ink-4);">{{ profileDayDate }}</span>
+                </div>
+                <sc-for list="{{ profileTasks }}" as="t" hint-placeholder-count="5">
+                  <div data-action="resumen.abrir-tarea" onClick="{{ noop }}" style="display: grid; grid-template-columns: 130px minmax(0, 1fr) 96px; gap: 12px; align-items: center; padding: 10px 4px; border-top: 1px solid var(--line); cursor: pointer;" style-hover="background: var(--hover);">
+                    <span style="justify-self: start; display: flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; background: {{ t.stateBg }}; color: {{ t.stateColor }}; white-space: nowrap;">
+                      <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ t.stateColor }};"></span>
+                      {{ t.stateLabel }}
+                    </span>
+                    <span style="min-width: 0; font-size: 13px; color: {{ t.titleColor }}; text-decoration: {{ t.titleDecoration }}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ t.title }}</span>
+                    <span style="font-size: 12px; color: var(--ink-3); text-align: right; white-space: nowrap;">{{ t.due }}</span>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ profileTasksEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding: 22px 10px; text-align: center; font-size: 12.5px; color: var(--ink-4); border-top: 1px solid var(--line);">Sin tareas asignadas hoy.</div>
+                </sc-if>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                  <span style="flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Scorecard · funciones del rol</span>
+                  <span style="font-size: 11.5px; color: var(--ink-4);">Se marca cumplió / no cumplió por día</span>
+                </div>
+                <div style="display: grid; grid-template-columns: minmax(0, 1fr) 80px 80px; gap: 12px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--line);">
+                  <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Función</span>
+                  <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4); text-align: center;">Ayer</span>
+                  <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4); text-align: center;">Hoy</span>
+                </div>
+                <sc-for list="{{ profileFunctions }}" as="f" hint-placeholder-count="4">
+                  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 80px 80px; gap: 12px; align-items: center; padding: 9px 4px; border-bottom: 1px solid var(--line);">
+                    <span style="min-width: 0; font-size: 13px; color: var(--ink-2); text-wrap: pretty;">{{ f.label }}</span>
+                    <span style="justify-self: center; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; background: {{ f.yBg }}; color: {{ f.yColor }};">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="{{ f.yIcon }}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </span>
+                    <span style="justify-self: center; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; background: {{ f.tBg }}; color: {{ f.tColor }};">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="{{ f.tIcon }}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </span>
+                  </div>
+                </sc-for>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 10px;">
+                  <span style="display: flex; align-items: center; gap: 9px; padding: 9px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line);">
+                    <span style="font-size: 11.5px; color: var(--ink-3);">Cumplimiento de hoy</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 500; color: {{ profileDayColor }}; font-variant-numeric: tabular-nums;">{{ profileDayLabel }}</span>
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 9px; padding: 9px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line);">
+                    <span style="font-size: 11.5px; color: var(--ink-3);">Promedio de la semana</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 500; color: {{ profileWeekColor }}; font-variant-numeric: tabular-nums;">{{ profileWeekLabel }}</span>
+                    <span style="padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; background: {{ profileGradeBg }}; color: {{ profileGradeColor }};">{{ profileGrade }}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showWeek }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px;">
+              <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                <span style="flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Semana 30 · 20 – 26 jul</span>
+                <span style="font-size: 11.5px; color: var(--ink-4);">Verde cumplió · rojo no cumplió · gris sin marcar</span>
+              </div>
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) repeat(7, 40px) 64px; gap: 8px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Función</span>
+                <sc-for list="{{ weekDays }}" as="dd" hint-placeholder-count="7">
+                  <span style="font-size: 11.5px; font-weight: 600; color: {{ dd.color }}; text-align: center;">{{ dd.label }}</span>
+                </sc-for>
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4); text-align: right;">Cumpl.</span>
+              </div>
+              <sc-for list="{{ weekMatrix }}" as="row" hint-placeholder-count="4">
+                <div style="display: grid; grid-template-columns: minmax(0, 1fr) repeat(7, 40px) 64px; gap: 8px; align-items: center; padding: 9px 4px; border-bottom: 1px solid var(--line);">
+                  <span style="min-width: 0; font-size: 13px; color: var(--ink-2); text-wrap: pretty;">{{ row.label }}</span>
+                  <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+                    <span title="{{ c.title }}" style="justify-self: center; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; background: {{ c.bg }}; color: {{ c.color }};">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="{{ c.icon }}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </span>
+                  </sc-for>
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums;">{{ row.pct }}</span>
+                </div>
+              </sc-for>
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) repeat(7, 40px) 64px; gap: 8px; align-items: center; padding: 10px 4px 0;">
+                <span style="font-size: 12px; font-weight: 700; color: var(--ink);">Cumplimiento del día</span>
+                <sc-for list="{{ weekDayScores }}" as="ds" hint-placeholder-count="7">
+                  <span style="justify-self: center; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 500; color: {{ ds.color }}; font-variant-numeric: tabular-nums;">{{ ds.label }}</span>
+                </sc-for>
+                <span style="display: flex; align-items: center; justify-content: flex-end; gap: 7px;">
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: {{ profileWeekColor }}; font-variant-numeric: tabular-nums;">{{ profileWeekLabel }}</span>
+                </span>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; align-items: center; gap: 10px; padding: 15px 20px; border-top: 1px solid var(--line); background: var(--surface-2);">
+            <span style="flex: 1; min-width: 0; font-size: 11.5px; color: var(--ink-4);">{{ profileFootNote }}</span>
+            <button data-action="resumen.cerrar-perfil" onClick="{{ closeProfile }}" style="padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;" style-hover="border-color: var(--line-2); color: var(--ink);">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ═══ Modal: tarea ═══ -->
+    <sc-if value="{{ taskOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeTask }}" style="position: absolute; inset: 0; z-index: 60; background: rgba(8,8,14,0.62); backdrop-filter: blur(3px); display: flex; justify-content: center; padding: 64px 20px 20px; overflow-y: auto; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 100%; max-width: 720px; height: fit-content; border-radius: 20px; border: 1px solid var(--line-2); background: var(--surface-solid); box-shadow: var(--shadow-lg); overflow: hidden; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--surface-2);">
+            <button data-action="resumen.tarea-contenedor" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600;" style-hover="border-color: var(--line-2); color: var(--ink);">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--blue);"></span>
+              Natucer
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            </button>
+            <span style="font-size: 12px; color: var(--ink-4);">Tarea de la cuenta</span>
+            <span style="flex: 1;"></span>
+            <button data-action="resumen.cerrar-tarea" onClick="{{ closeTask }}" title="Cerrar" style="width: 32px; height: 32px; border-radius: 10px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;" style-hover="background: var(--hover); color: var(--ink);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px; padding: 22px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-size: 25px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: {{ taskTitleColor }};">{{ taskTitle }}</span>
+              <span style="font-size: 13.5px; line-height: 1.6; color: var(--ink-3);">{{ taskDescription }}</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <sc-for list="{{ taskPills }}" as="p" hint-placeholder-count="6">
+                <button data-action="{{ p.action }}" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; white-space: nowrap;" style-hover="border-color: var(--line-2); color: var(--ink);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="color: {{ p.color }};"><path d="{{ p.icon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  {{ p.label }}
+                </button>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid var(--line);">
+              <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Actividad</span>
+              <sc-for list="{{ taskActivity }}" as="a" hint-placeholder-count="2">
+                <div style="display: flex; align-items: flex-start; gap: 10px;">
+                  <span style="flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #FFFFFF; background: {{ a.color }};">{{ a.initial }}</span>
+                  <span style="flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-2);">{{ a.text }} · <span style="color: var(--ink-4);">{{ a.when }}</span></span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 16px 22px; border-top: 1px solid var(--line); background: var(--surface-2);">
+            <button data-action="resumen.mover-tarea-papelera" onClick="{{ closeTask }}" style="padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(226,75,74,0.35); background: transparent; color: var(--brand); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;">Mover a papelera</button>
+            <span style="flex: 1;"></span>
+            <button data-action="resumen.cerrar-tarea" onClick="{{ closeTask }}" style="padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;" style-hover="border-color: var(--line-2); color: var(--ink);">Cancelar</button>
+            <button data-action="resumen.guardar-tarea" onClick="{{ closeTask }}" style="padding: 10px 18px; border-radius: 12px; border: none; background: var(--ink); color: var(--bg); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700;">{{ taskSaveLabel }}</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1512,&quot;height&quot;:950},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;listo&quot;,&quot;options&quot;:[&quot;listo&quot;,&quot;vacio&quot;,&quot;cargando&quot;,&quot;error&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Vista&quot;},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;owner&quot;,&quot;options&quot;:[&quot;owner&quot;,&quot;project_manager&quot;,&quot;trafficker&quot;,&quot;copywriter&quot;,&quot;content&quot;,&quot;editor&quot;,&quot;designer&quot;,&quot;sin_rol&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Permisos&quot;},&quot;isInforceAdmin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Permisos&quot;}}">
+// Resumen — CompanyHome (src/workspace/CompanyHome.jsx).
+// Estructura: KPIs (4) → equipo (tira que se desliza) → tabs Operación/Contenido
+// → Operación: tareas de la cuenta + columna derecha (actividad reciente arriba,
+// próximas entregas abajo) · Contenido: cumplimiento semanal + pipeline + embudo.
+// Todo fluido con grid/minmax para que ocupe el ancho real de la pantalla.
+// El sidebar y el topbar llevan data-shell="cliente": los aporta Shell Cliente.
+
+const V = {
+  green: "var(--green)", amber: "var(--amber)", blue: "var(--blue)", sel: "var(--sel)",
+  purple: "var(--purple)", pink: "var(--pink)", brand: "var(--brand)", yellow: "var(--yellow)",
+  neon: "var(--neon)",
+};
+const T = {
+  green: "rgba(52,192,138,0.13)", amber: "rgba(240,169,59,0.15)", brand: "var(--brand-soft)",
+  sel: "var(--sel-soft)", purple: "rgba(155,123,240,0.15)", chip: "var(--chip)",
+};
+
+const IC = {
+  gauge: "M22 12h-4l-3 9L9 3l-3 9H2",
+  chart: "M4 20V10M10 20V4M16 20v-7M22 20v-12",
+  clipboard: "M9 3h6v3H9zM7 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2M9 12h6M9 16h4",
+  film: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM3 9h18M3 15h18M8.5 3v18M15.5 3v18",
+  funnel: "M3 4h18l-7 8v8l-4-2v-6L3 4z",
+  grid: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+  check: "M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9",
+  users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  trash: "M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6",
+  moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
+  sun: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+  link: "M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1",
+  ops: "M9 3h6v3H9zM7 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2M9 12h6M9 16h4",
+  tick: "M20 6 9 17l-5-5",
+  cross: "M18 6 6 18M6 6l12 12",
+  dash: "M6 12h12",
+  circle: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z",
+  user: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  cal: "M7 3v3M17 3v3M4 6h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zM3 11h18",
+  flag: "M5 21V4h9l-1 3h6l-1.5 5H12l1 3H5",
+  dots: "M6 12h.01M12 12h.01M18 12h.01",
+  timer: "M12 22a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 8v5l3 2M9 2h6",
+};
+
+const ROLE_NAV = {
+  owner: ["home", "reportes", "plan", "pipeline", "despliegue", "control", "tareas", "equipo", "papelera"],
+  project_manager: ["home", "reportes", "plan", "pipeline", "despliegue", "control", "tareas", "equipo", "papelera"],
+  trafficker: ["home", "reportes", "plan", "despliegue", "control", "tareas", "equipo"],
+  copywriter: ["home", "plan", "pipeline", "tareas", "equipo"],
+  content: ["home", "plan", "pipeline", "tareas", "equipo"],
+  editor: ["home", "pipeline", "control", "tareas", "equipo"],
+  designer: ["home", "pipeline", "control", "tareas", "equipo"],
+  sin_rol: ["home", "tareas", "equipo"],
+};
+
+const NAV = [
+  { label: "Resumen", items: [
+    { key: "home", label: "Resumen", icon: IC.gauge, action: "nav.resumen" },
+    { key: "reportes", label: "Reportes", icon: IC.chart, count: 8, action: "nav.reportes" },
+  ]},
+  { label: "Creativos", items: [
+    { key: "despliegue", label: "Despliegue", icon: IC.funnel, action: "nav.despliegue" },
+    { key: "pipeline", label: "Content Pipeline", icon: IC.film, count: 9, action: "nav.content-pipeline" },
+    { key: "control", label: "Control Creativos", icon: IC.grid, action: "nav.control-creativos" },
+  ]},
+  { label: "Operación", items: [
+    { key: "plan", label: "Plan de implementación", icon: IC.clipboard, action: "nav.plan" },
+    { key: "tareas", label: "Tareas", icon: IC.check, count: 7, action: "nav.tareas" },
+    { key: "equipo", label: "Equipo", icon: IC.users, action: "nav.equipo" },
+    { key: "papelera", label: "Papelera", icon: IC.trash, action: "nav.papelera" },
+  ]},
+];
+
+const SPACES = [
+  { name: "Entregas semanales", color: V.blue, count: 12 },
+  { name: "Aprobaciones", color: V.amber, count: 5 },
+  { name: "Material de producto", color: V.green, count: 8 },
+];
+
+const ROLE_LABEL = {
+  owner: "Dueña", project_manager: "Project manager", trafficker: "Trafficker",
+  copywriter: "Copywriter", content: "Contenido", editor: "Editora",
+  designer: "Diseñador", sin_rol: "Colaborador",
+};
+
+const KPI_DATA = {
+  today: { ventas: "$2.1M", inv2: "$668k", dInv: "+3%", dVentas: "+6%", comprasSub: "33 compras", cpa: "$20.2k", roas: "3.6×", updated: "hace 25 min" },
+  "7d": { ventas: "$14.8M", inv2: "$4.1M", dInv: "+5%", dVentas: "+11%", comprasSub: "196 compras", cpa: "$20.9k", roas: "3.5×", updated: "hace 25 min" },
+  "30d": { ventas: "$62.4M", inv2: "$18.4M", dInv: "+7%", dVentas: "+18%", comprasSub: "864 compras", cpa: "$21.3k", roas: "3.4×", updated: "hace 25 min" },
+  "90d": { ventas: "$171.2M", inv2: "$52.8M", dInv: "+9%", dVentas: "+22%", comprasSub: "2.410 compras", cpa: "$21.9k", roas: "3.2×", updated: "hace 25 min" },
+};
+
+const TEAM = [
+  { id: "mari", name: "Mariana Restrepo", role: "Dueña · Natucer", initial: "M", color: V.purple, online: true, isOwner: true,
+    task: "Revisando los 6 creativos de la semana 30", pending: 2, doing: 1, done: 3, weekPct: 92,
+    funcs: ["Aprobar creativos del día", "Responder al equipo", "Revisar el reporte"],
+    tasks: [
+      { title: "Aprobar los 6 creativos de la semana 30", state: "doing", due: "Hoy" },
+      { title: "Confirmar el presupuesto de agosto", state: "pending", due: "30 jul" },
+      { title: "Enviar feedback de los guiones", state: "pending", due: "Mañana" },
+      { title: "Revisar el reporte de la semana 29", state: "done", due: "Hoy" },
+      { title: "Firmar la orden de producción", state: "done", due: "Hoy" },
+    ]},
+  { id: "jose", name: "José Huila", role: "Estratega · Inforce", initial: "J", color: V.brand, online: true, isOwner: false,
+    task: "Ajustando la estrategia de escala para agosto", pending: 1, doing: 1, done: 4, weekPct: 96,
+    funcs: ["Revisar métricas de la mañana", "Actualizar el plan de escala", "Reunión con el cliente"],
+    tasks: [
+      { title: "Ajustar la estrategia de escala de agosto", state: "doing", due: "Hoy" },
+      { title: "Armar la propuesta de presupuesto", state: "pending", due: "29 jul" },
+      { title: "Revisar métricas de la mañana", state: "done", due: "Hoy" },
+      { title: "Reunión de seguimiento con Natucer", state: "done", due: "Hoy" },
+    ]},
+  { id: "nath", name: "Nathalia", role: "Editora · Inforce", initial: "N", color: V.pink, online: true, isOwner: false,
+    task: "Editando 6 variaciones del testimonial de María", pending: 3, doing: 1, done: 2, weekPct: 88,
+    funcs: ["Editar 3 creativos", "Subir a Drive", "Cargar en Control Creativos"],
+    tasks: [
+      { title: "Editar 6 variaciones del testimonial", state: "doing", due: "Mañana" },
+      { title: "Subir los creativos a Drive", state: "pending", due: "Mañana" },
+      { title: "Cortar el hook de garantía", state: "pending", due: "28 jul" },
+      { title: "Cargar la entrega 12 en Control Creativos", state: "pending", due: "28 jul" },
+      { title: "Exportar los 3 estáticos BOFU", state: "done", due: "Hoy" },
+    ]},
+  { id: "deison", name: "Deison", role: "Media buyer · Inforce", initial: "D", color: V.blue, online: true, isOwner: false,
+    task: "Revisando el rendimiento de los TOFU de esta semana", pending: 2, doing: 2, done: 3, weekPct: 84,
+    funcs: ["Revisar CPA del día", "Apagar creativos que sangran", "Actualizar el reporte"],
+    tasks: [
+      { title: "Configurar el retargeting de 7 y 30 días", state: "doing", due: "Hoy" },
+      { title: "Revisar el rendimiento de los TOFU", state: "doing", due: "Hoy" },
+      { title: "Subir 3 estáticos BOFU al retargeting", state: "pending", due: "Vencida 24 jul" },
+      { title: "Apagar el A-138", state: "done", due: "Hoy" },
+    ]},
+  { id: "camila", name: "Camila", role: "Copywriter · Inforce", initial: "C", color: V.green, online: true, isOwner: false,
+    task: "Escribiendo los guiones del ángulo precio", pending: 2, doing: 1, done: 2, weekPct: 90,
+    funcs: ["Escribir 2 guiones", "Revisar hooks aprobados", "Pasar a producción"],
+    tasks: [
+      { title: "Escribir los guiones del ángulo precio", state: "doing", due: "1 ago" },
+      { title: "Variación del hook de garantía", state: "pending", due: "Hoy" },
+      { title: "Revisar los hooks aprobados", state: "done", due: "Hoy" },
+    ]},
+  { id: "andres", name: "Andrés", role: "Diseñador · Inforce", initial: "A", color: V.amber, online: false, isOwner: false,
+    task: "", pending: 3, doing: 0, done: 1, weekPct: 64,
+    funcs: ["Diseñar 2 estáticos", "Subir variaciones", "Revisar feedback"],
+    tasks: [
+      { title: "Diseñar 2 estáticos para BOFU", state: "pending", due: "31 jul" },
+      { title: "Enviar fotos del lote nuevo", state: "pending", due: "Vencida 23 jul" },
+      { title: "Subir variaciones del carrusel", state: "pending", due: "1 ago" },
+      { title: "Revisar feedback de la semana 29", state: "done", due: "Ayer" },
+    ]},
+];
+
+const TASK_STATE = {
+  pending: { label: "Pendiente", color: V.blue, bg: T.sel },
+  doing: { label: "Trabajando en", color: V.amber, bg: T.amber },
+  done: { label: "Completada", color: V.green, bg: T.green },
+};
+
+const COLUMNS = [
+  { key: "pendiente", label: "Pendiente", color: V.blue, tasks: [
+    { id: "t1", title: "Subir 3 estáticos BOFU al retargeting", priority: "urgente", due: "Vencida 24 jul", overdue: true, assignee: "D", assigneeColor: V.blue },
+    { id: "t2", title: "Guionar variación del hook de garantía", priority: "normal", due: "Vence hoy", overdue: false, assignee: "C", assigneeColor: V.green },
+    { id: "t3", title: "Enviar fotos del lote nuevo de producto", priority: "alta", due: "Vencida 23 jul", overdue: true, assignee: "A", assigneeColor: V.amber },
+  ]},
+  { key: "en_curso", label: "En curso", color: V.amber, tasks: [
+    { id: "t4", title: "Editar los 6 creativos de la semana 30", priority: "alta", due: "27 jul", overdue: false, assignee: "N", assigneeColor: V.pink },
+    { id: "t5", title: "Configurar el retargeting de 7 y 30 días", priority: "urgente", due: "Vence hoy", overdue: false, assignee: "D", assigneeColor: V.blue },
+  ]},
+  { key: "completado", label: "Completado", color: V.green, tasks: [
+    { id: "t6", title: "Entrega de creativos semana 29", priority: "alta", due: "20 jul", overdue: false, assignee: "N", assigneeColor: V.pink, done: true },
+    { id: "t7", title: "Revisar el reporte de junio", priority: "normal", due: "5 jul", overdue: false, assignee: "M", assigneeColor: V.purple, done: true },
+  ]},
+];
+
+const PRIORITY = {
+  urgente: { label: "Urgente", color: V.brand, bg: T.brand },
+  alta: { label: "Alta", color: V.amber, bg: T.amber },
+  normal: { label: "Normal", color: V.blue, bg: T.sel },
+  baja: { label: "Baja", color: "var(--ink-3)", bg: T.chip },
+};
+
+const UPCOMING = [
+  { title: "6 creativos de la semana 30", who: "Nathalia", stage: "Edición", due: "Mañana", color: V.amber, urgent: true },
+  { title: "Reporte semanal · semana 30", who: "Deison", stage: "Reporte", due: "28 jul", color: V.sel, urgent: false },
+  { title: "Grabación del testimonial", who: "Andrés", stage: "Grabación", due: "31 jul", color: V.green, urgent: false },
+  { title: "Guiones del ángulo precio", who: "Camila", stage: "Guion", due: "1 ago", color: V.purple, urgent: false },
+];
+
+const ACTIVITY = [
+  { initial: "N", color: V.pink, text: "Nathalia subió 6 variaciones del hook testimonial a Drive", when: "hace 25 min" },
+  { initial: "D", color: V.blue, text: "Deison apagó 2 creativos que estaban sobre el CPA techo", when: "hace 2 h" },
+  { initial: "C", color: V.green, text: "Camila terminó el guion del ángulo precio", when: "hace 4 h" },
+  { initial: "M", color: V.purple, text: "Mariana aprobó 4 de los 6 creativos de la semana", when: "hace 6 h" },
+  { initial: "J", color: V.brand, text: "José publicó el reporte de la semana 30", when: "ayer" },
+  { initial: "A", color: V.amber, text: "Andrés cargó los estáticos del carrusel", when: "ayer" },
+];
+
+const PIPELINE = [
+  { key: "idea", label: "Idea", color: "var(--ink-3)", count: 4 },
+  { key: "scripting", label: "Scripting", color: V.blue, count: 3 },
+  { key: "to_film", label: "To Film", color: V.brand, count: 2 },
+  { key: "to_edit", label: "To Edit", color: V.pink, count: 5 },
+  { key: "to_design", label: "To Design", color: V.purple, count: 1 },
+  { key: "in_campaign", label: "In Campaign", color: V.amber, count: 3 },
+  { key: "feedback", label: "Feedback", color: V.green, count: 2 },
+];
+
+const FUNNEL = [
+  { key: "tofu", label: "TOFU", sub: "Atraer", color: "#34C08A", count: 9, slots: "5 slots esta semana", border: "rgba(52,192,138,0.22)", bg: "rgba(52,192,138,0.06)" },
+  { key: "mofu", label: "MOFU", sub: "Considerar", color: "#F0A93B", count: 6, slots: "4 slots esta semana", border: "rgba(240,169,59,0.22)", bg: "rgba(240,169,59,0.06)" },
+  { key: "bofu", label: "BOFU", sub: "Convertir", color: "#E24B4A", count: 5, slots: "3 slots esta semana", border: "rgba(226,75,74,0.22)", bg: "rgba(226,75,74,0.06)" },
+];
+
+const DAYS = ["L", "M", "M", "J", "V", "S", "D"];
+const TODAY_INDEX = 4;
+
+function mark(memberIdx, funcIdx, dayIdx) {
+  if (dayIdx > TODAY_INDEX) return "none";
+  return (memberIdx + funcIdx * 3 + dayIdx * 2) % 7 === 0 ? "miss" : "done";
+}
+const MARK_STYLE = {
+  done: { icon: IC.tick, color: V.green, bg: "rgba(52,192,138,0.16)", title: "Cumplió" },
+  miss: { icon: IC.cross, color: V.brand, bg: "var(--brand-soft)", title: "No cumplió" },
+  none: { icon: IC.dash, color: "var(--ink-4)", bg: "var(--chip)", title: "Sin marcar" },
+};
+const scoreColor = (pct) => (pct >= 90 ? V.green : pct >= 70 ? V.amber : V.brand);
+const grade = (pct) => (pct >= 95 ? "A" : pct >= 85 ? "B+" : pct >= 75 ? "B" : pct >= 65 ? "C" : "D");
+
+class Component extends DCLogic {
+  state = { period: "30d", tab: "operations", theme: "dark", copied: false, profile: null, scope: "dia", task: null, taskIsNew: false };
+
+  componentDidMount() {
+    this._key = (e) => { if (e.key === "Escape") this.setState({ profile: null, task: null, taskIsNew: false }); };
+    window.addEventListener("keydown", this._key);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this._key);
+    if (this._t) clearTimeout(this._t);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const role = this.props.role ?? "owner";
+    const isAdmin = this.props.isInforceAdmin ?? false;
+    const estado = this.props.estado ?? "listo";
+    const isEmpty = estado === "vacio";
+    const isLoading = estado === "cargando";
+    const isError = estado === "error";
+    const hasData = !isEmpty && !isError;
+
+    const allowed = ROLE_NAV[role] || ROLE_NAV.sin_rol;
+    const canSeeMoney = isAdmin || allowed.includes("reportes");
+    const canSeePipeline = isAdmin || allowed.includes("pipeline");
+    const canSeeCanvas = isAdmin || allowed.includes("despliegue");
+    const canManageTeam = isAdmin || role === "owner" || role === "project_manager";
+    const canShare = isAdmin || role === "owner";
+
+    const ON = { bg: "var(--sel-soft)", fg: "var(--sel)", weight: 600 };
+    const OFF = { bg: "transparent", fg: "var(--ink-2)", weight: 500 };
+    const navGroups = NAV
+      .map((g) => ({ label: g.label, items: g.items.filter((i) => allowed.includes(i.key))
+        .map((it) => ({ ...it, count: it.count || "", ...(it.key === "home" ? ON : OFF) })) }))
+      .filter((g) => g.items.length > 0);
+
+    const d = KPI_DATA[s.period];
+    const dash = { value: "—", valueColor: "var(--ink-3)", sub: "sin datos", delta: "" };
+    const kpis = canSeeMoney ? [
+      { label: "Ventas atribuidas", color: V.green, hint: "Total facturado en el período según los reportes cargados.",
+        ...(hasData ? { value: d.ventas, valueColor: "var(--ink)", sub: d.comprasSub, delta: d.dVentas, deltaColor: V.green, deltaBg: T.green } : dash) },
+      { label: "Inversión", color: V.sel, hint: "Cuánto se invirtió en pauta en el período.",
+        ...(hasData ? { value: d.inv2, valueColor: "var(--ink)", sub: "en pauta", delta: d.dInv, deltaColor: V.green, deltaBg: T.green } : dash) },
+      { label: "Costo por compra", color: V.amber, hint: "Cuánto costó en pauta conseguir cada compra (inversión ÷ compras). Más bajo es mejor; el techo de la cuenta es $28k.",
+        ...(hasData ? { value: d.cpa, valueColor: "var(--ink)", sub: "techo $28k", delta: "−9%", deltaColor: V.green, deltaBg: T.green } : dash) },
+      { label: "ROAS", color: V.purple, hint: "Por cada $1 invertido, cuántos $ vuelven en ventas. El objetivo de la cuenta es 3.0×.",
+        ...(hasData ? { value: d.roas, valueColor: "var(--ink)", sub: "objetivo 3.0×", delta: "cumplido", deltaColor: V.green, deltaBg: T.green } : dash) },
+    ] : [
+      { label: "Creativos en campaña", color: V.amber, hint: "Creativos que ya salieron a campaña esta semana sobre la meta de la cadencia.",
+        ...(hasData ? { value: "5 / 7", valueColor: "var(--ink)", sub: "semana 30", delta: "" } : dash) },
+      { label: "Piezas en el pipeline", color: V.blue, hint: "Slots del pipeline de contenido activos esta semana.",
+        ...(hasData ? { value: "20", valueColor: "var(--ink)", sub: "en 7 estados", delta: "" } : dash) },
+      { label: "Tus tareas abiertas", color: V.purple, hint: "Tareas asignadas a vos que siguen sin completar.",
+        ...(hasData ? { value: "4", valueColor: "var(--ink)", sub: "1 vencida", delta: "" } : dash) },
+    ];
+
+    const dayPctOf = (mi, m) => {
+      const done = m.funcs.filter((_, fi) => mark(mi, fi, TODAY_INDEX) === "done").length;
+      return Math.round((done / m.funcs.length) * 100);
+    };
+    const team = TEAM.map((m, mi) => ({ ...m,
+      dot: m.online ? V.green : "var(--line-2)",
+      task: m.task || "Sin tareas activas",
+      taskColor: m.task ? "var(--ink-2)" : "var(--ink-4)",
+      weekColor: scoreColor(m.weekPct),
+      weekTitle: "Semana: " + m.weekPct + "% — " +
+        (m.weekPct >= 90 ? "va bien" : m.weekPct >= 70 ? "va regular" : "va mal") + ". Abrí la ficha para el detalle.",
+      open: () => this.setState({ profile: m.id, scope: "dia" }),
+    }));
+    const liveCount = TEAM.filter((p) => p.online).length;
+
+    const columns = COLUMNS.map((c) => ({
+      key: c.key, label: c.label, color: c.color,
+      count: isEmpty ? 0 : c.tasks.length,
+      empty: isEmpty || c.tasks.length === 0,
+      add: () => this.setState({ task: null, taskIsNew: true }),
+      tasks: isEmpty ? [] : c.tasks.map((t) => {
+        const p = PRIORITY[t.priority];
+        return { ...t,
+          priorityLabel: p.label, priorityColor: p.color, priorityBg: p.bg,
+          border: t.overdue ? "rgba(226,75,74,0.4)" : "var(--line)",
+          dueColor: t.overdue ? V.brand : "var(--ink-3)",
+          titleColor: t.done ? "var(--ink-3)" : "var(--ink)",
+          titleDecoration: t.done ? "line-through" : "none",
+          checkBorder: t.done ? V.green : "var(--line-2)",
+          checkBg: t.done ? V.green : "transparent",
+          checkOpacity: t.done ? 1 : 0,
+          open: () => this.setState({ task: t.id, taskIsNew: false }),
+          toggle: (e) => e.stopPropagation() };
+      }),
+    }));
+
+    const pmIdx = Math.max(0, TEAM.findIndex((p) => p.id === s.profile));
+    const pm = TEAM[pmIdx];
+    const pmDayPct = dayPctOf(pmIdx, pm);
+    const weekMatrix = pm.funcs.map((label, fi) => {
+      const cells = DAYS.map((dl, di) => {
+        const st = MARK_STYLE[mark(pmIdx, fi, di)];
+        return { icon: st.icon, color: st.color, bg: st.bg, title: dl + " · " + st.title };
+      });
+      const done = DAYS.filter((_, di) => mark(pmIdx, fi, di) === "done").length;
+      return { label, cells, pct: Math.round((done / (TODAY_INDEX + 1)) * 100) + "%" };
+    });
+    const weekDayScores = DAYS.map((dl, di) => {
+      if (di > TODAY_INDEX) return { label: "—", color: "var(--ink-4)" };
+      const done = pm.funcs.filter((_, fi) => mark(pmIdx, fi, di) === "done").length;
+      const p = Math.round((done / pm.funcs.length) * 100);
+      return { label: p + "%", color: scoreColor(p) };
+    });
+
+    const spend = isEmpty ? 0 : 12000000;
+    const aov = isEmpty ? 0 : 220000;
+    const planned = aov > 0 ? Math.floor((spend * 0.4) / (aov * 3)) : 0;
+    const delivered = isEmpty ? 0 : 5;
+    const pct = planned > 0 ? Math.round((delivered / planned) * 100) : 0;
+
+    const activeTask = COLUMNS.flatMap((c) => c.tasks).find((t) => t.id === s.task);
+
+    return {
+      themeClass: s.theme === "light" ? "theme-light" : "",
+      themeIcon: s.theme === "light" ? IC.sun : IC.moon,
+      toggleTheme: () => this.setState((st) => ({ theme: st.theme === "light" ? "dark" : "light" })),
+      navGroups, spaces: SPACES, roleLabel: ROLE_LABEL[role] || "Colaborador",
+
+      isError, isLoading, isEmpty: isEmpty && !isLoading, hasData: hasData && !isLoading,
+
+      roleNotice: canSeeMoney ? "" :
+        "Tu rol (" + (ROLE_LABEL[role] || "Colaborador") + ") no tiene acceso a reportes, así que las métricas de ventas y ROAS no se muestran acá. En su lugar ves el avance de producción y tus tareas.",
+
+      periods: [
+        { key: "today", label: "Hoy" }, { key: "7d", label: "7 días" },
+        { key: "30d", label: "30 días" }, { key: "90d", label: "3 meses" },
+      ].map((p) => ({ label: p.label,
+        bg: p.key === s.period ? "var(--surface)" : "transparent",
+        fg: p.key === s.period ? "var(--ink)" : "var(--ink-3)",
+        weight: p.key === s.period ? 600 : 500,
+        shadow: p.key === s.period ? "var(--shadow)" : "none",
+        select: () => this.setState({ period: p.key }) })),
+
+      freshLabel: isEmpty ? "Sin reportes aún" : isLoading ? "Cargando…" : "Actualizado " + d.updated,
+      freshDot: isEmpty ? "var(--ink-4)" : V.green,
+      freshHint: isEmpty ? "Aún no hay reportes cargados para esta empresa" : "Los datos son tan frescos como el último reporte cargado — no es tiempo real",
+
+      canShare, clientUrl: "https://portal.inforce.co/cliente/natucer",
+      shareLabel: s.copied ? "Link copiado" : "Compartir link cliente",
+      shareIcon: s.copied ? IC.tick : IC.link,
+      shareBg: s.copied ? "rgba(52,192,138,0.14)" : "var(--surface)",
+      shareFg: s.copied ? V.green : "var(--ink-2)",
+      shareBorder: s.copied ? "rgba(52,192,138,0.45)" : "var(--line)",
+      copyLink: () => {
+        this.setState({ copied: true });
+        if (this._t) clearTimeout(this._t);
+        this._t = setTimeout(() => this.setState({ copied: false }), 2200);
+      },
+
+      kpis,
+
+      tabs: [
+        { label: "Operación", icon: IC.ops, action: "resumen.tab-operations",
+          bg: s.tab === "operations" ? "var(--surface)" : "transparent",
+          fg: s.tab === "operations" ? "var(--ink)" : "var(--ink-3)",
+          weight: s.tab === "operations" ? 600 : 500,
+          shadow: s.tab === "operations" ? "var(--shadow)" : "none",
+          select: () => this.setState({ tab: "operations" }) },
+        { label: "Contenido", icon: IC.film, action: "resumen.tab-content",
+          bg: s.tab === "content" ? "var(--surface)" : "transparent",
+          fg: s.tab === "content" ? "var(--ink)" : "var(--ink-3)",
+          weight: s.tab === "content" ? 600 : 500,
+          shadow: s.tab === "content" ? "var(--shadow)" : "none",
+          select: () => this.setState({ tab: "content" }) },
+      ],
+      showOperations: s.tab === "operations" && !isLoading,
+      showContent: s.tab === "content" && !isLoading,
+
+      columns,
+      openNewTask: () => this.setState({ task: null, taskIsNew: true }),
+
+      team, liveCount, canManageTeam,
+      teamEmpty: isEmpty && !isLoading,
+      teamReady: !isEmpty && !isLoading,
+      skeletons: [1, 2, 3, 4, 5, 6],
+
+      activity: isEmpty ? [] : ACTIVITY,
+      activityEmpty: isEmpty,
+      upcoming: isEmpty ? [] : UPCOMING.map((u) => ({ ...u, dueColor: u.urgent ? V.amber : "var(--ink-2)" })),
+      upcomingEmpty: isEmpty,
+
+      hasCadence: planned > 0,
+      noCadence: planned === 0,
+      deliveredCount: delivered, plannedCount: planned,
+      compliancePct: pct + "%",
+      compliancePctColor: pct >= 90 ? V.green : pct >= 70 ? V.amber : V.brand,
+
+      canSeePipeline,
+      pipeline: PIPELINE.map((p) => ({ label: p.label, color: p.color,
+        count: isEmpty ? 0 : p.count, valueColor: isEmpty ? "var(--ink-4)" : "var(--ink)" })),
+
+      canSeeCanvas,
+      funnelStages: FUNNEL.map((f) => ({ ...f,
+        count: isEmpty ? 0 : f.count,
+        slots: isEmpty ? "sin slots" : f.slots,
+        valueColor: isEmpty ? "var(--ink-4)" : "var(--ink)" })),
+      conceptsTotal: isEmpty ? 0 : FUNNEL.reduce((n, f) => n + f.count, 0),
+      slotsTotal: isEmpty ? 0 : PIPELINE.reduce((n, p) => n + p.count, 0),
+
+      profileOpen: !!s.profile,
+      profileName: pm.name, profileInitial: pm.initial, profileColor: pm.color,
+      profileDot: pm.online ? V.green : "var(--line-2)",
+      profileRole: pm.online ? pm.role + " · en línea" : pm.role + " · fuera de línea",
+      profileDayDate: "Viernes 24 de julio · semana 30",
+      scorecardTabs: [
+        { key: "dia", label: "Hoy" }, { key: "semana", label: "Semana" },
+      ].map((t) => ({ label: t.label,
+        bg: s.scope === t.key ? "var(--surface)" : "transparent",
+        fg: s.scope === t.key ? "var(--ink)" : "var(--ink-3)",
+        weight: s.scope === t.key ? 600 : 500,
+        shadow: s.scope === t.key ? "var(--shadow)" : "none",
+        select: () => this.setState({ scope: t.key }) })),
+      showDay: s.scope === "dia",
+      showWeek: s.scope === "semana",
+      profileTasks: pm.tasks.map((t) => {
+        const st = TASK_STATE[t.state];
+        return { title: t.title, due: t.due, stateLabel: st.label, stateColor: st.color, stateBg: st.bg,
+          titleColor: t.state === "done" ? "var(--ink-3)" : "var(--ink)",
+          titleDecoration: t.state === "done" ? "line-through" : "none" };
+      }),
+      profileTasksEmpty: pm.tasks.length === 0,
+      profileFunctions: pm.funcs.map((label, fi) => {
+        const y = MARK_STYLE[mark(pmIdx, fi, TODAY_INDEX - 1)];
+        const t = MARK_STYLE[mark(pmIdx, fi, TODAY_INDEX)];
+        return { label, yIcon: y.icon, yColor: y.color, yBg: y.bg, tIcon: t.icon, tColor: t.color, tBg: t.bg };
+      }),
+      profileDayLabel: pmDayPct + "%", profileDayColor: scoreColor(pmDayPct),
+      profileWeekLabel: pm.weekPct + "%", profileWeekColor: scoreColor(pm.weekPct),
+      profileGrade: grade(pm.weekPct),
+      profileGradeColor: scoreColor(pm.weekPct),
+      profileGradeBg: pm.weekPct >= 90 ? T.green : pm.weekPct >= 70 ? T.amber : T.brand,
+      profileFootNote: pm.pending + " pendientes · " + pm.doing + " en curso · " + pm.done + " completadas hoy",
+      weekDays: DAYS.map((label, di) => ({ label, color: di === TODAY_INDEX ? "var(--sel)" : "var(--ink-4)" })),
+      weekMatrix, weekDayScores,
+      closeProfile: () => this.setState({ profile: null }),
+
+      taskOpen: !!s.task || s.taskIsNew,
+      taskTitle: activeTask ? activeTask.title : "Nueva tarea",
+      taskTitleColor: activeTask ? "var(--ink)" : "var(--ink-4)",
+      taskDescription: "Añade una descripción o escribe con ✧ IA",
+      taskSaveLabel: activeTask ? "Guardar cambios" : "Crear tarea",
+      taskPills: [
+        { label: activeTask ? "En curso" : "Pendiente", icon: IC.circle, color: V.blue, action: "resumen.tarea-estado" },
+        { label: activeTask ? activeTask.assignee : "Sin asignar", icon: IC.user, color: V.purple, action: "resumen.tarea-asignados" },
+        { label: activeTask ? activeTask.due : "Sin fecha", icon: IC.cal, color: V.green, action: "resumen.tarea-fecha" },
+        { label: activeTask ? activeTask.priorityLabel : "Prioridad", icon: IC.flag, color: V.brand, action: "resumen.tarea-prioridad" },
+        { label: "Opciones", icon: IC.dots, color: "var(--ink-3)", action: "resumen.tarea-opciones" },
+        { label: "00:00", icon: IC.timer, color: V.amber, action: "resumen.tarea-timer" },
+      ],
+      taskActivity: activeTask ? [
+        { initial: "D", color: V.blue, text: "Deison cambió el estado a En curso", when: "hace 12 min" },
+        { initial: "M", color: V.purple, text: "Mariana creó la tarea", when: "hace 2 días" },
+      ] : [],
+      closeTask: () => this.setState({ task: null, taskIsNew: false }),
+
+      stop: (e) => e.stopPropagation(),
+      noop: () => {},
+    };
+  }
+}
+
+</script>
+</body>
+</html>

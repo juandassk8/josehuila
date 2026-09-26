@@ -1,0 +1,26 @@
+[Unit]
+Description=Inforce API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=inforce
+Group=inforce
+WorkingDirectory=/opt/inforce/current
+Environment=NODE_ENV=production
+Environment=PORT=3001
+EnvironmentFile=/etc/inforce/api.env
+ExecStart=/usr/local/bin/node deploy/vps/server.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=35
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/inforce/uploads
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

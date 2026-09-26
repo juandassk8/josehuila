@@ -1,0 +1,11 @@
+.adlib {
+  --adlib-soft: color-mix(in srgb, var(--adlib-accent) 7%, var(--adlib-surface));
+  --adlib-selected: color-mix(in srgb, var(--adlib-accent) 13%, var(--adlib-surface));
+  --adlib-success-soft: color-mix(in srgb, var(--adlib-success) 16%, var(--adlib-surface));
+  --adlib-radius: 12px;
+  --adlib-small-radius: 8px;
+  --adlib-gap: 16px;
+  --adlib-space: 24px;
+  --adlib-ink-on-accent: #fff;
+  --adlib-backdrop: rgba(0, 0, 0, .64);
+}

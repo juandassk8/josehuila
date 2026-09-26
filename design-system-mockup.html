@@ -1,0 +1,250 @@
+<title>Inforce · Sistema de diseño premium</title>
+<style>
+  :root{
+    --bg:#08080B; --bg-side:#0B0B0F; --surface:#111116; --surface-2:#16161D;
+    --glass:rgba(255,255,255,0.025);
+    --border:rgba(255,255,255,0.08); --border-strong:rgba(255,255,255,0.15); --hairline:rgba(255,255,255,0.06);
+    --text:#ECECEF; --text-2:rgba(236,236,239,0.62); --text-3:rgba(236,236,239,0.40); --text-hint:rgba(236,236,239,0.24);
+    --accent:#6E62F0; --accent-2:#8B7DFF; --accent-soft:rgba(110,98,240,0.15); --accent-border:rgba(110,98,240,0.42);
+    --green:#2FBF87; --amber:#E0A03A; --red:#E5564E; --blue:#4C8DF0;
+    --r-sm:8px; --r:12px; --r-lg:16px;
+    --shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 12px 34px rgba(0,0,0,0.55);
+    --shadow-sm:0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.4);
+    --font:ui-sans-serif,-apple-system,"SF Pro Display","Inter",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0}
+  .page{
+    background:
+      radial-gradient(1100px 620px at 12% -8%, rgba(110,98,240,0.10), transparent 60%),
+      radial-gradient(900px 560px at 100% 0%, rgba(76,141,240,0.06), transparent 55%),
+      var(--bg);
+    color:var(--text); font-family:var(--font); min-height:100vh;
+    -webkit-font-smoothing:antialiased; letter-spacing:-0.011em;
+    padding:56px 32px 80px;
+  }
+  .wrap{max-width:1080px; margin:0 auto}
+  .eyebrow{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); font-weight:600}
+  h1{font-size:40px; line-height:1.05; font-weight:700; letter-spacing:-0.03em; margin:12px 0 10px; text-wrap:balance}
+  .lede{font-size:15px; color:var(--text-2); max-width:60ch; line-height:1.6; margin:0}
+  .sec{margin-top:56px}
+  .sec-h{display:flex; align-items:baseline; gap:12px; margin-bottom:18px}
+  .sec-h h2{font-size:15px; font-weight:650; letter-spacing:-0.01em; margin:0}
+  .sec-h .n{font-size:11px; color:var(--text-hint); font-variant-numeric:tabular-nums; font-weight:600}
+  .rule{flex:1; height:1px; background:var(--hairline)}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:14px}
+
+  /* swatches */
+  .swatches{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .sw{border:1px solid var(--border); border-radius:var(--r); overflow:hidden; background:var(--surface)}
+  .sw .chip{height:66px}
+  .sw .meta{padding:10px 12px; display:flex; flex-direction:column; gap:2px}
+  .sw .name{font-size:12px; font-weight:600}
+  .sw .hex{font-size:11px; color:var(--text-3); font-variant-numeric:tabular-nums; font-family:ui-monospace,monospace}
+
+  /* type scale */
+  .type .row{display:flex; align-items:baseline; gap:18px; padding:12px 0; border-bottom:1px solid var(--hairline)}
+  .type .row:last-child{border-bottom:none}
+  .type .tag{font-size:11px; color:var(--text-3); width:120px; flex-shrink:0; font-variant-numeric:tabular-nums}
+  .d1{font-size:34px; font-weight:700; letter-spacing:-0.03em}
+  .d2{font-size:22px; font-weight:650; letter-spacing:-0.02em}
+  .d3{font-size:15px; font-weight:600}
+  .b1{font-size:14px; color:var(--text-2); line-height:1.6}
+  .lbl{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3); font-weight:600}
+
+  /* buttons */
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .btn{font-family:var(--font); font-size:13px; font-weight:650; padding:9px 18px; border-radius:999px; cursor:pointer; border:1px solid transparent; letter-spacing:-0.01em; transition:.16s ease}
+  .btn-primary{background:linear-gradient(180deg,var(--accent-2),var(--accent)); color:#fff; box-shadow:0 1px 0 rgba(255,255,255,0.18) inset, 0 6px 18px rgba(110,98,240,0.35)}
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-ghost{background:var(--glass); border-color:var(--border-strong); color:var(--text)}
+  .btn-ghost:hover{background:rgba(255,255,255,0.05)}
+  .btn-quiet{background:transparent; border-color:var(--border); color:var(--text-2)}
+  .btn-quiet:hover{color:var(--text); border-color:var(--border-strong)}
+  .btn-danger{background:transparent; border-color:rgba(229,86,78,0.4); color:var(--red)}
+
+  /* chips */
+  .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .chip-lbl{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px; border:1px solid}
+  .dot{width:6px; height:6px; border-radius:50%}
+  .c-marca{color:var(--accent-2); border-color:var(--accent-border); background:var(--accent-soft)}
+  .c-marca .dot{background:var(--accent-2)}
+  .c-nicho{color:#7FB0F5; border-color:rgba(76,141,240,0.4); background:rgba(76,141,240,0.13)}
+  .c-nicho .dot{background:#7FB0F5}
+  .c-angulo{color:#EBBB63; border-color:rgba(224,160,58,0.4); background:rgba(224,160,58,0.13)}
+  .c-angulo .dot{background:#EBBB63}
+  .c-formato{color:#54CB9B; border-color:rgba(47,191,135,0.4); background:rgba(47,191,135,0.13)}
+  .c-formato .dot{background:#54CB9B}
+  .stage{font-size:10px; font-weight:700; letter-spacing:0.06em; padding:3px 9px; border-radius:999px}
+  .st-tofu{color:#7FB0F5; background:rgba(76,141,240,0.14); border:1px solid rgba(76,141,240,0.35)}
+
+  /* input */
+  .input{width:100%; background:var(--glass); border:1px solid var(--border); border-radius:var(--r-sm); padding:11px 13px; color:var(--text); font-family:var(--font); font-size:14px; outline:none; transition:.16s}
+  .input:focus{border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft)}
+  .input::placeholder{color:var(--text-hint)}
+
+  /* context: reference modal */
+  .modal{display:grid; grid-template-columns:minmax(0,300px) 1fr; overflow:hidden}
+  .modal .media{background:#0A0A0D; display:flex; align-items:center; justify-content:center; min-height:340px; position:relative; border-right:1px solid var(--hairline)}
+  .poster{position:absolute; inset:0; background:linear-gradient(160deg,#2a2340,#141026 60%,#0c0a16); }
+  .play{position:relative; width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.25); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; cursor:pointer}
+  .play:hover{background:rgba(255,255,255,0.18)}
+  .info{display:flex; flex-direction:column; min-width:0}
+  .info-h{padding:18px 22px 14px; border-bottom:1px solid var(--hairline)}
+  .info-b{padding:16px 22px; display:flex; flex-direction:column; gap:16px}
+  .field .lbl{margin-bottom:6px; display:block}
+  .field .val{font-size:13.5px; color:var(--text-2); line-height:1.65}
+  .link{color:var(--accent-2); text-decoration:none; font-size:13px; font-weight:600}
+  .script{background:var(--surface-2); border:1px solid var(--hairline); border-radius:var(--r-sm); padding:12px 14px; font-size:13px; line-height:1.7; color:var(--text-2); max-height:120px; overflow:auto}
+  .info-f{padding:12px 22px; border-top:1px solid var(--hairline); display:flex; justify-content:flex-end}
+
+  /* funnel panel */
+  .panel{padding:18px; max-width:340px}
+  .seg{display:inline-flex; background:var(--surface-2); border:1px solid var(--hairline); border-radius:999px; padding:3px; gap:2px; margin-bottom:16px}
+  .seg span{font-size:12px; font-weight:600; padding:6px 14px; border-radius:999px; color:var(--text-3); cursor:pointer}
+  .seg span.on{background:var(--accent-soft); color:var(--accent-2); box-shadow:inset 0 0 0 1px var(--accent-border)}
+  .stat{display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--hairline)}
+  .stat:last-child{border:none}
+  .stat .k{font-size:13px; font-weight:600}
+  .stat .v{font-size:13px; color:var(--text-3); font-variant-numeric:tabular-nums; font-weight:600}
+  .bar{height:5px; border-radius:999px; background:rgba(255,255,255,0.06); overflow:hidden; margin-top:14px}
+  .bar > i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:820px){ .modal{grid-template-columns:1fr} .modal .media{border-right:none; border-bottom:1px solid var(--hairline)} .two{grid-template-columns:1fr} }
+  .note{font-size:12.5px; color:var(--text-3); margin-top:10px; line-height:1.6}
+  .kbd{font-family:ui-monospace,monospace; font-size:12px; color:var(--text-2); background:var(--surface-2); border:1px solid var(--hairline); border-radius:6px; padding:1px 6px}
+</style>
+
+<div class="page">
+  <div class="wrap">
+    <div class="eyebrow">Inforce · propuesta de sistema</div>
+    <h1>Oscuro premium</h1>
+    <p class="lede">Un refinamiento del sistema actual hacia un dark elegante tipo Linear/Vercel: superficies con profundidad real, bordes hairline, un solo acento (violeta-índigo) y los colores semánticos reservados para estado. La misma app, con más aire y jerarquía.</p>
+
+    <!-- Fundamentos -->
+    <div class="sec">
+      <div class="sec-h"><span class="n">01</span><h2>Superficies</h2><div class="rule"></div></div>
+      <div class="grid swatches">
+        <div class="sw"><div class="chip" style="background:#08080B"></div><div class="meta"><span class="name">Fondo</span><span class="hex">#08080B</span></div></div>
+        <div class="sw"><div class="chip" style="background:#0B0B0F"></div><div class="meta"><span class="name">Sidebar</span><span class="hex">#0B0B0F</span></div></div>
+        <div class="sw"><div class="chip" style="background:#111116"></div><div class="meta"><span class="name">Tarjeta</span><span class="hex">#111116</span></div></div>
+        <div class="sw"><div class="chip" style="background:#16161D"></div><div class="meta"><span class="name">Elevado</span><span class="hex">#16161D</span></div></div>
+        <div class="sw"><div class="chip" style="background:linear-gradient(#111,#111) padding-box,rgba(255,255,255,0.08);border:0" ></div><div class="meta"><span class="name">Borde</span><span class="hex">wht 8%</span></div></div>
+      </div>
+    </div>
+
+    <!-- Acento + semánticos -->
+    <div class="sec">
+      <div class="sec-h"><span class="n">02</span><h2>Acento y estado</h2><div class="rule"></div></div>
+      <div class="two">
+        <div class="card" style="padding:18px">
+          <span class="lbl">Acento — un solo protagonista</span>
+          <div class="grid swatches" style="margin-top:12px;grid-template-columns:1fr 1fr">
+            <div class="sw"><div class="chip" style="background:#6E62F0"></div><div class="meta"><span class="name">Acento</span><span class="hex">#6E62F0</span></div></div>
+            <div class="sw"><div class="chip" style="background:#8B7DFF"></div><div class="meta"><span class="name">Acento claro</span><span class="hex">#8B7DFF</span></div></div>
+          </div>
+        </div>
+        <div class="card" style="padding:18px">
+          <span class="lbl">Semánticos — solo para estado</span>
+          <div class="grid swatches" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr">
+            <div class="sw"><div class="chip" style="background:#2FBF87"></div><div class="meta"><span class="name">Éxito</span><span class="hex">#2FBF87</span></div></div>
+            <div class="sw"><div class="chip" style="background:#E0A03A"></div><div class="meta"><span class="name">Aviso</span><span class="hex">#E0A03A</span></div></div>
+            <div class="sw"><div class="chip" style="background:#E5564E"></div><div class="meta"><span class="name">Crítico</span><span class="hex">#E5564E</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tipografía -->
+    <div class="sec">
+      <div class="sec-h"><span class="n">03</span><h2>Tipografía</h2><div class="rule"></div></div>
+      <div class="card type" style="padding:8px 22px">
+        <div class="row"><span class="tag">Display / 34</span><span class="d1">Despliegue creativo</span></div>
+        <div class="row"><span class="tag">Título / 22</span><span class="d2">Formato: Diálogo</span></div>
+        <div class="row"><span class="tag">Subtítulo / 15</span><span class="d3">Nombre · hook de la referencia</span></div>
+        <div class="row"><span class="tag">Cuerpo / 14</span><span class="b1">Conversación espontánea entre dos personas donde el producto aparece como solución orgánica — simula una recomendación boca a boca.</span></div>
+        <div class="row"><span class="tag">Etiqueta / 11</span><span class="lbl">Guion · transcripción</span></div>
+      </div>
+    </div>
+
+    <!-- Componentes -->
+    <div class="sec">
+      <div class="sec-h"><span class="n">04</span><h2>Componentes</h2><div class="rule"></div></div>
+      <div class="card" style="padding:22px; display:flex; flex-direction:column; gap:22px">
+        <div><span class="lbl" style="display:block;margin-bottom:12px">Botones</span>
+          <div class="btnrow">
+            <button class="btn btn-primary">Cargar al banco</button>
+            <button class="btn btn-ghost">☁ Respaldar</button>
+            <button class="btn btn-quiet">🔄 Sincronizar</button>
+            <button class="btn btn-danger">Eliminar</button>
+          </div>
+        </div>
+        <div><span class="lbl" style="display:block;margin-bottom:12px">Etiquetas (marca · nicho · ángulo · formato)</span>
+          <div class="chips">
+            <span class="chip-lbl c-marca"><i class="dot"></i>Cymbiotika</span>
+            <span class="chip-lbl c-nicho"><i class="dot"></i>Salud</span>
+            <span class="chip-lbl c-angulo"><i class="dot"></i>Energía</span>
+            <span class="chip-lbl c-formato"><i class="dot"></i>Diálogo</span>
+            <span class="stage st-tofu">TOFU</span>
+          </div>
+        </div>
+        <div><span class="lbl" style="display:block;margin-bottom:12px">Campo</span>
+          <input class="input" placeholder="Buscar referencias, marcas, ángulos…" />
+        </div>
+      </div>
+    </div>
+
+    <!-- En contexto -->
+    <div class="sec">
+      <div class="sec-h"><span class="n">05</span><h2>En contexto</h2><div class="rule"></div></div>
+      <div class="grid" style="gap:16px">
+        <div class="card modal">
+          <div class="media"><div class="poster"></div><button class="play">▶</button></div>
+          <div class="info">
+            <div class="info-h">
+              <div class="lbl" style="margin-bottom:6px">Diálogo · <span style="color:var(--text-2)">R8474</span></div>
+              <div style="font-size:18px;font-weight:700;letter-spacing:-0.01em">Amiga, ¿eso es extensión? No, es colágeno</div>
+            </div>
+            <div class="info-b">
+              <div class="chips"><a class="link" href="#">↗ Ver en Meta</a><a class="link" href="#">⬇ Descargar video</a></div>
+              <div class="field"><span class="lbl">Notas · cómo está hecho</span><div class="val">Abre con dos amigas en una cocina y una pregunta sorprendida — gancho por curiosidad. Desarrolla los beneficios como respuestas naturales. Cierra pidiendo el link (urgencia social).</div></div>
+              <div class="field"><span class="lbl">Guion · transcripción</span><div class="script">— ¿Eso es extensión? — No, amiga, es colágeno. — ¿Nunca has tomado colágeno? Este tiene 20 gramos por scoop, para el cabello, la piel, las uñas…</div></div>
+              <div class="field"><span class="lbl">Etiquetas</span><div class="chips" style="margin-top:2px">
+                <span class="chip-lbl c-marca"><i class="dot"></i>Neocell</span>
+                <span class="chip-lbl c-nicho"><i class="dot"></i>Belleza</span>
+                <span class="chip-lbl c-formato"><i class="dot"></i>Diálogo</span>
+              </div></div>
+            </div>
+            <div class="info-f"><button class="btn btn-primary">✏️ Editar</button></div>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="card panel">
+            <div class="lbl" style="margin-bottom:12px">Despliegue · @Splicito</div>
+            <div class="seg"><span class="on">Anuncios</span><span>Orgánico</span></div>
+            <div class="stat"><span class="k" style="color:#7FB0F5">Top of Funnel</span><span class="v">6 / 9</span></div>
+            <div class="stat"><span class="k" style="color:#EBBB63">Middle of Funnel</span><span class="v">1 / 3</span></div>
+            <div class="stat"><span class="k" style="color:#E88">Bottom of Funnel</span><span class="v">2 / 6</span></div>
+            <div class="bar"><i style="width:50%"></i></div>
+            <div class="note">Cumplimiento semanal · <b style="color:var(--text-2)">9 / 18</b></div>
+          </div>
+          <div class="card panel" style="max-width:none">
+            <div class="lbl" style="margin-bottom:12px">Qué cambia</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="stat"><span class="k">Superficies con profundidad</span><span class="v" style="color:var(--green)">nuevo</span></div>
+              <div class="stat"><span class="k">Un acento, no cinco</span><span class="v" style="color:var(--green)">nuevo</span></div>
+              <div class="stat"><span class="k">Bordes hairline + sombras suaves</span><span class="v" style="color:var(--green)">nuevo</span></div>
+              <div class="stat"><span class="k">Foco visible en teclado</span><span class="v" style="color:var(--green)">a11y</span></div>
+              <div class="stat"><span class="k">Números tabulares</span><span class="v" style="color:var(--green)">nuevo</span></div>
+            </div>
+            <div class="note">Todo esto vive en <span class="kbd">lib/design.js</span> → mejora cada pantalla de una.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:40px;max-width:60ch">Esto es solo la dirección. Si te gusta, lo aplico a los tokens reales (<span class="kbd">design.js</span>) y ajustamos los componentes uno por uno — banco, despliegue del cliente, reportes.</p>
+  </div>
+</div>

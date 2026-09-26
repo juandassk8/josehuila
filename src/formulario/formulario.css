@@ -1,0 +1,442 @@
+/* Formulario de onboarding (`/inicio/<token>`).
+
+   Branding de inforceconsulting.com: la ESCENA OSCURA con la constelación de puntos.
+   Sistema documentado en /Users/josemanuelhuila/inforce-auditoria/BRANDING.md; los
+   valores de acá son los de su `src/app/globals.css` (tokens, .zona-oscura, .escena,
+   .isla-vidrio, .btn, .campo, .opcion, .rotulo, .progreso, .t-hero, .t-seccion,
+   .cifra-l, .ficha, .cta-crecer), copiados y metidos bajo `.obf` para no tocar ni
+   heredar nada del portal. NO es la estética blanca de los planes.
+
+   Reglas que mandan: la profundidad viene del borde de 1px, no de la sombra · un
+   solo acento por pantalla (azul); verde, ámbar y dorado solo con significado ·
+   botones y chips en píldora · todo movimiento lento, suave y una sola vez, y quieto
+   con prefers-reduced-motion · celular primero. */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+.obf {
+  /* marca */
+  --blue: #5e87f5; --blue-deep: #3f6bdb;
+  --blue-soft: rgba(94, 135, 245, 0.16); --blue-softer: rgba(94, 135, 245, 0.08); --blue-line: rgba(94, 135, 245, 0.38);
+  --tinta: #08080c;
+  --green: #34c759; --amber: #ff9500;
+  --oro: #e9bc55; --oro-claro: #f6dc9a; --oro-hondo: #c9922c;
+  /* neutros — zona oscura */
+  --bg: #0d0d11; --bg-soft: #16161c; --surface: #131319;
+  --ink: #f6f6f8; --ink-2: #cbcbd4; --ink-3: #9b9ba7; --ink-4: #71717e;
+  --line: rgba(255, 255, 255, 0.1); --line-soft: rgba(255, 255, 255, 0.07);
+  /* forma */
+  --r-bloque: 14px; --r-pildora: 100px; --r-ficha: 26px;
+  --casa: cubic-bezier(0.22, 1, 0.36, 1);
+  --pad-lateral: 24px;
+
+  position: fixed; inset: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+  isolation: isolate; background: var(--tinta); color: var(--ink);
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px; line-height: 1.6; letter-spacing: -0.011em; -webkit-font-smoothing: antialiased;
+  display: flex; flex-direction: column;
+}
+@media (min-width: 721px) { .obf { --pad-lateral: 48px; } }
+
+/* El reset va con :where() → especificidad CERO. Así cualquier clase le gana sin
+   importar en qué orden cargue el CSS. En producción este archivo puede cargar DESPUÉS
+   de estandar.css (van en chunks distintos), y un `.obf * { padding: 0 }` normal le
+   borraba los rellenos y los espacios a toda la pantalla de onboarding del equipo. */
+:where(.obf) *, :where(.obf) *::before, :where(.obf) *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:where(.obf) button { touch-action: manipulation; font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:where(.obf) input, :where(.obf) textarea { font: inherit; color: inherit; }
+.obf ::selection { background: rgba(94, 135, 245, 0.3); color: #fff; }
+.obf :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+/* ── La escena: retícula tenue, resplandor azul desde arriba, y la constelación ──
+   Va fija detrás: el formulario se desliza por encima y el cielo se queda quieto. */
+.obf-fondo { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.obf-fondo::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 76px 76px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 8%, #000 10%, transparent 82%);
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 8%, #000 10%, transparent 82%);
+}
+.obf-fondo::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 46% at 50% -8%, rgba(94, 135, 245, 0.2), transparent 70%);
+}
+.obf-cielo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.obf-top, .obf-main, .obf-centro { position: relative; z-index: 1; }
+
+/* ── Arriba: marca, dónde va, y la barra de los seis bloques ─────────────── */
+.obf-top { flex-shrink: 0; padding: max(18px, env(safe-area-inset-top)) var(--pad-lateral) 0; }
+.obf-top-in { max-width: 1180px; margin: 0 auto; }
+.obf-top-row { display: flex; align-items: center; gap: 10px; min-height: 34px; }
+/* «Atrás» con su palabra: una flecha sola arriba a la izquierda no se veía. */
+.obf .obf-back {
+  display: inline-flex; align-items: center; gap: 4px; height: 34px; margin-left: -10px; padding: 0 14px 0 8px; border-radius: var(--r-pildora);
+  border: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: var(--ink-2); transition: color 0.16s ease, border-color 0.16s ease;
+}
+.obf .obf-back:hover { color: var(--ink); border-color: var(--ink-3); }
+.obf-back svg, .obf-ic svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.obf-marca { font-size: 17px; font-weight: 800; letter-spacing: -0.035em; color: var(--ink); }
+.obf-guardado { font-size: 12px; font-weight: 600; color: var(--ink-4); margin-left: 6px; transition: opacity 0.3s ease; }
+.obf-donde { margin-left: auto; }
+
+/* .progreso de la casa (2px, azul), partida en los seis bloques. El área que se
+   toca es más alta que la raya: en celular 2px no se le atinan. */
+.obf-bloques { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 12px; }
+.obf .obf-bloque { height: 18px; display: flex; align-items: center; cursor: default; }
+.obf .obf-bloque[data-nav="1"] { cursor: pointer; }
+.obf-bloque i { display: block; width: 100%; height: 2px; border-radius: var(--r-pildora); background: var(--line); overflow: hidden; position: relative; }
+.obf-bloque i::after {
+  content: ""; position: absolute; inset: 0; background: var(--blue); border-radius: inherit;
+  transform-origin: left; transform: scaleX(var(--f, 0)); transition: transform 0.35s var(--casa);
+}
+
+/* ── La pantalla ─────────────────────────────────────────────────────────── */
+.obf-main { flex: 1; display: flex; padding: clamp(22px, 5vw, 56px) var(--pad-lateral) calc(44px + env(safe-area-inset-bottom)); }
+.obf-pantalla {
+  width: 100%; max-width: 640px; display: flex; flex-direction: column;
+  animation: obf-entra 0.5s var(--casa) both;
+}
+.obf-pantalla[data-centro="1"] { max-width: 860px; }
+@keyframes obf-entra { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* Todo centrado (pedido de José, 2026-09-20): la pantalla va en la mitad del alto
+   disponible y el titular, la instrucción y el rótulo centrados, en una sola
+   columna también en escritorio. Una pregunta sola arriba a la izquierda dejaba
+   media pantalla vacía. `margin: auto` y no `align-items: center`: si la pantalla
+   es más alta que el celular (socios, equipo), así no se le corta la cabeza. */
+.obf-pantalla { margin: auto; }
+.obf-cabeza, .obf-pantalla[data-centro="1"] { text-align: center; }
+.obf-cabeza .obf-instr, .obf-pantalla[data-centro="1"] .obf-texto { margin-inline: auto; }
+.obf-pantalla[data-centro="1"] { align-items: center; }
+.obf-pantalla[data-centro="1"] .obf-acciones { width: 100%; justify-content: center; }
+.obf-pantalla[data-centro="1"] .obf-chulos { text-align: left; }
+.obf-pantalla[data-ancha="1"] { text-align: center; align-items: center; }
+.obf-pantalla[data-ancha="1"] .obf-numeros, .obf-pantalla[data-ancha="1"] .obf-acciones { width: 100%; }
+.obf-pantalla[data-ancha="1"] .obf-numero, .obf-pantalla[data-ancha="1"] .obf-linea { text-align: left; }
+@media (min-width: 721px) { .obf-pantalla[data-ancha="1"] .obf-acciones { max-width: 360px; } }
+
+/* Rótulo: el único sitio donde el texto es una etiqueta y no una frase. */
+.obf-rotulo {
+  display: inline-flex; align-items: center; gap: 9px; font-size: 11.5px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-4); font-variant-numeric: tabular-nums;
+}
+.obf-rotulo::before { content: ""; width: 22px; height: 1px; background: currentColor; }
+.obf-top .obf-rotulo::before { display: none; }
+
+/* Titulares enormes, apretados y cortos. La segunda mitad va en azul. */
+.obf-titulo { font-size: clamp(30px, 4.6vw, 56px); font-weight: 700; line-height: 1.02; letter-spacing: -0.04em; color: var(--ink); text-wrap: balance; }
+.obf-rotulo + .obf-titulo { margin-top: 22px; }
+.obf-titulo-xl { font-size: clamp(38px, 7.2vw, 88px); font-weight: 800; line-height: 0.98; letter-spacing: -0.05em; }
+.obf-titulo-largo { font-size: clamp(26px, 3.6vw, 44px); line-height: 1.06; letter-spacing: -0.035em; }
+.obf-azul { color: var(--blue); }
+.obf-texto { font-size: clamp(16px, 2vw, 21px); font-weight: 400; color: var(--ink-2); line-height: 1.5; margin-top: 22px; max-width: 46ch; text-wrap: pretty; }
+
+/* La instrucción: debajo de la pregunta, en gris, un punto más pequeña, siempre
+   visible. Las rutas de menú van en negrilla para pescarlas de una ojeada. */
+.obf-instr { font-size: 15px; line-height: 1.55; color: var(--ink-3); margin-top: 16px; max-width: 52ch; text-wrap: pretty; }
+.obf-instr b { color: var(--ink); font-weight: 700; }
+
+/* ── La isla de vidrio: donde vive el campo ──────────────────────────────── */
+.obf-isla {
+  --surface: rgba(255, 255, 255, 0.055); --line: rgba(255, 255, 255, 0.11); --line-soft: rgba(255, 255, 255, 0.07);
+  position: relative; margin-top: 26px; padding: clamp(18px, 3vw, 36px); border-radius: var(--r-ficha);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Debajo del vidrio va una capa de tinta casi opaca: acá la persona ESCRIBE, y un
+     punto de la constelación encendido detrás de lo que teclea estorba. El cielo
+     se sigue adivinando en los bordes, no debajo de las letras. */
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.022) 46%, rgba(255, 255, 255, 0.03)),
+    rgba(10, 10, 15, 0.9);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2); backdrop-filter: blur(22px) saturate(1.2);
+}
+/* Un filo de luz arriba, como el borde de una lámina de vidrio real. */
+.obf-isla::before {
+  content: ""; position: absolute; inset-inline: 12%; top: -1px; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(160, 190, 255, 0.55), transparent);
+}
+.obf-acciones { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.obf-pantalla[data-centro="1"] .obf-acciones { margin-top: 36px; }
+
+/* ── Botones: píldora. En celular, a todo el ancho ───────────────────────── */
+.obf .obf-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+  border-radius: var(--r-pildora); border: 1px solid transparent; padding: 17px 30px; min-height: 54px;
+  font-size: 16px; font-weight: 600; letter-spacing: -0.014em; line-height: 1;
+  background: var(--blue); color: #fff;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+.obf .obf-btn:hover:not(:disabled) { background: var(--blue-deep); }
+.obf .obf-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.obf .obf-btn-sec { background: var(--surface); color: var(--ink); border-color: var(--line); }
+.obf .obf-btn-sec:hover:not(:disabled) { background: var(--surface); border-color: var(--ink-3); }
+.obf .obf-btn-link { background: transparent; color: var(--ink-3); min-height: 44px; padding-block: 12px; font-size: 14.5px; }
+.obf .obf-btn-link:hover:not(:disabled) { background: transparent; color: var(--ink); }
+@media (min-width: 721px) {
+  .obf-pantalla[data-centro="1"] .obf-acciones { flex-direction: row; }
+  .obf-pantalla[data-centro="1"] .obf-btn { width: auto; }
+}
+
+/* El dorado es premium, no adorno: solo en «Entrar al portal». El destello cruza
+   cada 4,5 s — cada tanto y no siempre, o a los diez segundos ya es parte del fondo. */
+.obf .obf-btn-oro {
+  position: relative; overflow: hidden; border: 0; font-weight: 700; color: #241a05;
+  background: linear-gradient(135deg, var(--oro-claro), var(--oro) 46%, var(--oro-hondo));
+  box-shadow: 0 10px 34px rgba(201, 146, 44, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.2s var(--casa), box-shadow 0.2s ease;
+}
+.obf .obf-btn-oro:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--oro-claro), var(--oro) 46%, var(--oro-hondo));
+  transform: translateY(-3px); box-shadow: 0 16px 44px rgba(201, 146, 44, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.obf .obf-btn-oro::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.62) 50%, transparent 62%);
+  background-size: 260% 100%; animation: obf-brillo-oro 4.5s ease-in-out infinite;
+}
+@keyframes obf-brillo-oro { 0%, 62% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+
+.obf-enter { font-size: 12.5px; color: var(--ink-4); text-align: center; font-weight: 500; display: none; }
+@media (hover: hover) and (min-width: 721px) { .obf-enter { display: block; } }
+.obf-spin { width: 17px; height: 17px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: obf-gira 0.7s linear infinite; }
+@keyframes obf-gira { to { transform: rotate(360deg); } }
+
+/* ── Campos: un paso más claros que la isla que los contiene ─────────────── */
+.obf-input {
+  width: 100%; min-height: 56px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-bloque);
+  padding: 16px 18px; font-size: 17px; font-weight: 500; letter-spacing: -0.014em; color: var(--ink); outline: none;
+  transition: border-color 0.16s ease, background 0.16s ease; -webkit-appearance: none; appearance: none;
+}
+.obf-input::placeholder { color: var(--ink-4); font-weight: 400; }
+.obf-input:focus, .obf-input:focus-visible { outline: none; border-color: var(--blue-line); background: var(--blue-softer); }
+.obf-input[disabled] { opacity: 0.4; }
+.obf-input-grande { min-height: 66px; font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.obf-con-prefijo { position: relative; }
+.obf-con-prefijo > span { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: clamp(22px, 3vw, 28px); font-weight: 700; color: var(--ink-4); pointer-events: none; }
+.obf-con-prefijo > span.der { left: auto; right: 18px; }
+.obf-con-prefijo.izq .obf-input { padding-left: 42px; }
+.obf-con-prefijo.der .obf-input { padding-right: 48px; }
+.obf-con-prefijo.chico > span { font-size: 17px; font-weight: 500; }
+.obf-con-prefijo.chico.izq .obf-input { padding-left: 34px; }
+.obf-palabras { min-height: 22px; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--blue); }
+.obf-palabras.chica { min-height: 0; margin-top: 7px; font-size: 13px; }
+.obf-label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 7px 2px; }
+
+/* Opción de selección única (.opcion de la casa). */
+.obf-tarjetas { display: grid; gap: 10px; }
+.obf-tarjetas.dos { grid-template-columns: 1fr 1fr; }
+.obf .obf-tarjeta {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-bloque); padding: 20px 22px;
+  font-size: 17px; font-weight: 500; letter-spacing: -0.016em; line-height: 1.35; color: var(--ink);
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.obf .obf-tarjeta:hover { border-color: var(--blue-line); background: var(--blue-softer); }
+.obf .obf-tarjeta[aria-pressed="true"] { border-color: var(--blue-line); background: var(--blue-soft); }
+.obf-tarjeta .punto { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--ink-4); flex-shrink: 0; display: grid; place-items: center; transition: background 0.14s ease, border-color 0.14s ease; }
+.obf-tarjeta[aria-pressed="true"] .punto { border-color: var(--blue); background: var(--blue); }
+.obf-tarjeta[aria-pressed="true"] .punto::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+.obf-tarjetas.dos .obf-tarjeta { justify-content: center; text-align: center; min-height: 64px; font-weight: 600; }
+.obf-tarjetas.dos .punto { display: none; }
+.obf-chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.obf .obf-chips .obf-tarjeta { justify-content: center; padding: 16px 6px; border-radius: var(--r-pildora); font-weight: 700; font-variant-numeric: tabular-nums; }
+.obf-chips .punto { display: none; }
+
+/* Bloques repetibles: fichas de borde fino dentro de la isla. */
+.obf-filas { display: grid; gap: 12px; }
+.obf-fila { border: 1px solid var(--line-soft); background: rgba(255, 255, 255, 0.025); border-radius: 18px; padding: 16px; display: grid; gap: 10px; }
+.obf-fila .obf-input { min-height: 52px; font-size: 16.5px; }
+.obf-fila-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 22px; }
+.obf-fila-nombre { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.obf-fila-sub { font-size: 12px; font-weight: 700; color: var(--ink-4); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+/* Chip de la casa: píldora, punto de 6px, fondo el mismo color al 16%. */
+.obf-tu { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: var(--blue); background: var(--blue-soft); padding: 4px 11px 4px 9px; border-radius: var(--r-pildora); }
+.obf-tu::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.obf .obf-quitar { font-size: 13px; font-weight: 600; color: var(--ink-3); padding: 4px 8px; border-radius: var(--r-pildora); transition: color 0.16s ease; }
+.obf .obf-quitar:hover { color: var(--ink); }
+/* «Agregar otro…» se tiene que VER: mucha gente no notaba que podía sumar más. */
+.obf .obf-agregar {
+  width: 100%; min-height: 56px; border-radius: var(--r-pildora); border: 1px solid var(--blue-line); background: var(--blue-softer); color: var(--ink);
+  font-size: 15.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 9px;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.obf .obf-agregar .obf-ic { color: var(--blue); display: inline-grid; }
+.obf .obf-agregar small { font-size: 12px; font-weight: 600; color: var(--ink-3); margin-left: 2px; }
+.obf .obf-agregar:hover { border-color: var(--blue); background: var(--blue-soft); }
+.obf-seg { display: inline-grid; grid-template-columns: 1fr 1fr; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line-soft); border-radius: var(--r-pildora); padding: 3px; }
+.obf .obf-seg button { padding: 6px 14px; border-radius: var(--r-pildora); font-size: 13px; font-weight: 600; color: var(--ink-3); transition: background 0.16s ease, color 0.16s ease; }
+.obf .obf-seg button[aria-pressed="true"] { background: var(--blue-soft); color: var(--ink); }
+
+.obf .obf-check { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 500; color: var(--ink-2); padding: 10px 2px 2px; text-align: left; }
+.obf-check .caja { width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--line); background: var(--surface); display: grid; place-items: center; flex-shrink: 0; transition: background 0.14s ease, border-color 0.14s ease; }
+.obf-check[aria-pressed="true"] .caja { background: var(--blue); border-color: var(--blue); color: #fff; }
+.obf-check .caja svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.obf-check[aria-pressed="true"] .caja svg { opacity: 1; }
+
+/* El reparto de la 3.9: dos números que siempre suman 100. */
+.obf-reparto-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.obf-reparto-num { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; }
+.obf-reparto-num b { display: block; font-size: clamp(40px, 6vw, 68px); font-weight: 800; letter-spacing: -0.045em; line-height: 0.9; color: var(--ink); font-variant-numeric: tabular-nums; }
+.obf-reparto-num span { display: block; margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--ink-3); }
+.obf-range { width: 100%; height: 38px; -webkit-appearance: none; appearance: none; background: transparent; outline: none; }
+.obf-range::-webkit-slider-runnable-track { height: 6px; border-radius: 100px; background: linear-gradient(to right, var(--blue) var(--p), rgba(255, 255, 255, 0.1) var(--p)); }
+.obf-range::-moz-range-track { height: 6px; border-radius: 100px; background: rgba(255, 255, 255, 0.1); }
+.obf-range::-moz-range-progress { height: 6px; border-radius: 100px; background: var(--blue); }
+.obf-range::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0 0 5px rgba(94, 135, 245, 0.22); margin-top: -12px; }
+.obf-range::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0 0 5px rgba(94, 135, 245, 0.22); }
+
+/* El error es atención, no castigo: ámbar, como el .campo-error de la casa. */
+.obf-error { margin-top: 14px; padding: 12px 16px; border-radius: var(--r-bloque); background: rgba(255, 149, 0, 0.07); border: 1px solid rgba(255, 149, 0, 0.32); color: #ffb454; font-size: 14.5px; font-weight: 500; line-height: 1.45; }
+
+/* ── Recompensas: fichas con la cifra contando ───────────────────────────── */
+.obf-numeros { display: grid; gap: 12px; margin-top: 28px; }
+@media (min-width: 860px) { .obf-numeros { grid-template-columns: repeat(3, 1fr); } .obf-pantalla[data-ancha="1"] { max-width: 1180px; } }
+.obf-numero { height: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-ficha); padding: clamp(20px, 2.6vw, 34px); }
+.obf-numero h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; color: var(--ink-2); text-wrap: balance; }
+.obf-numero h3 .obf-cifra { display: block; margin: 12px 0 2px; font-size: clamp(40px, 6vw, 68px); font-weight: 800; line-height: 0.9; letter-spacing: -0.045em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.obf-numero p { font-size: 14.5px; color: var(--ink-3); margin-top: 14px; line-height: 1.5; }
+.obf-linea { margin-top: 12px; padding: 16px 20px; border-radius: 18px; background: rgba(255, 149, 0, 0.07); border: 1px solid rgba(255, 149, 0, 0.32); color: #ffb454; font-size: 15.5px; font-weight: 600; line-height: 1.45; }
+.obf-resultado { margin-top: 14px; padding: 16px 20px; border-radius: var(--r-bloque); background: rgba(94, 135, 245, 0.14); border: 1px solid rgba(94, 135, 245, 0.32); font-size: 17px; font-weight: 600; letter-spacing: -0.016em; line-height: 1.4; color: var(--ink); animation: obf-entra 0.5s var(--casa) both; }
+
+/* Las credenciales que genera el portal: se tienen que poder leer y copiar a mano. */
+.obf-mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; letter-spacing: 0.02em; }
+.obf-clave-lista { display: flex; align-items: center; user-select: all; -webkit-user-select: all; font-size: 15.5px; font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.obf-clave-lista.obf-mono { font-size: 18px; letter-spacing: 0.02em; }
+/* En chiquito: una ficha baja, dato a la izquierda y un solo «Copiar» a la derecha.
+   En la pantalla final va DEBAJO del botón: ahí lo importante es entrar. */
+.obf-credenciales {
+  position: relative; display: flex; align-items: center; gap: 14px; width: 100%; max-width: 440px; margin-top: 22px; padding: 14px 14px 14px 18px;
+  text-align: left; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line-soft); border-radius: 18px;
+}
+.obf-isla .obf-credenciales { margin-top: 0; max-width: none; }
+.obf-credenciales dl { flex: 1; min-width: 0; display: grid; gap: 8px; }
+.obf-credenciales dt { font-size: 11.5px; font-weight: 600; color: var(--ink-4); line-height: 1.3; }
+.obf-credenciales dd { font-size: 13.5px; letter-spacing: -0.02em; font-weight: 600; color: var(--ink-2); line-height: 1.35; overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; }
+.obf-credenciales dd.obf-mono { font-size: 14.5px; color: var(--ink); }
+.obf .obf-copiar {
+  /* Abajo a la derecha, a la altura de la contraseña (que es corta): así el usuario,
+     que es largo, tiene todo el ancho de la ficha y no se parte en dos renglones. */
+  position: absolute; right: 12px; bottom: 12px; background: var(--tinta);
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: var(--r-pildora);
+  border: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: var(--ink-2); transition: border-color 0.16s ease, color 0.16s ease;
+}
+.obf .obf-copiar:hover { border-color: var(--ink-3); color: var(--ink); }
+.obf .obf-copiar[data-ok] { color: var(--green); border-color: rgba(52, 199, 89, 0.4); }
+.obf-copiar .obf-ic svg { width: 15px; height: 15px; }
+
+/* ── La pantalla final: misma gramática de la bienvenida ─────────────────── */
+.obf-seccion-ic[data-ok="1"] { color: var(--green); border-color: rgba(52, 199, 89, 0.4); background: radial-gradient(circle at 50% 0%, rgba(52, 199, 89, 0.26), rgba(52, 199, 89, 0.05) 70%); box-shadow: 0 0 60px rgba(52, 199, 89, 0.16); }
+.obf-ancho { width: 100%; max-width: 440px; }
+.obf-trio { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; max-width: 440px; margin-top: 26px; }
+.obf-trio li { height: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 8px; text-align: center; font-size: 13.5px; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; color: var(--ink); background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line-soft); border-radius: 18px; }
+.obf-acceso { margin-top: 12px; padding: 18px; text-align: left; }
+.obf-acceso .obf-rotulo { margin-bottom: 12px; }
+.obf-acceso .obf-credenciales { margin: 0; max-width: none; padding: 0; border: 0; background: none; }
+.obf-acceso .obf-credenciales dd { font-size: 15px; color: var(--ink); }
+.obf-acceso .obf-copiar { right: 0; bottom: 0; }
+.obf-siguiente { margin-top: 12px; text-align: left; border-color: var(--blue-line); background: var(--blue-softer); }
+.obf-siguiente b { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.obf-pantalla[data-tipo="final"] .obf-acciones { max-width: 440px; margin-top: 18px; }
+.obf-pantalla[data-tipo="final"] .obf-btn { width: 100%; }
+
+/* ── 2.1: el ejemplo dibujado, lado a lado ───────────────────────────────── */
+.obf-ejemplo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; text-align: left; }
+.obf-ejemplo-lado { display: flex; flex-direction: column; gap: 8px; padding: 14px 12px; border-radius: 18px; border: 1px solid var(--line-soft); background: rgba(255, 255, 255, 0.03); }
+.obf-ejemplo-rotulo { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); }
+.obf-ejemplo-lado[data-lado="si"] .obf-ejemplo-rotulo { color: var(--blue); }
+.obf-ejemplo-lado > b { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.obf-ejemplo-grupo { display: flex; flex-wrap: wrap; gap: 5px; padding: 9px; border-radius: 12px; border: 1px dashed var(--line); }
+.obf-ejemplo-lado[data-lado="si"] .obf-ejemplo-grupo { border-color: var(--blue-line); background: var(--blue-softer); }
+.obf-ejemplo-grupo i { flex-basis: 100%; font-style: normal; font-size: 11px; font-weight: 700; color: var(--ink-3); }
+.obf-ejemplo-grupo span { font-size: 11.5px; font-weight: 500; line-height: 1.2; padding: 4px 8px; border-radius: 100px; background: rgba(255, 255, 255, 0.07); color: var(--ink-2); }
+.obf-ejemplo-lado small { margin-top: auto; font-size: 12px; font-weight: 600; line-height: 1.3; color: var(--ink-3); }
+
+/* ── 4.2: la fórmula como fracción ───────────────────────────────────────── */
+.obf-formula { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 20px; padding: 18px 16px; border-radius: 18px; border: 1px solid var(--blue-line); background: var(--blue-softer); }
+.obf-fraccion { display: grid; gap: 8px; text-align: center; font-size: 14.5px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; color: var(--ink); }
+.obf-fraccion i { display: block; height: 1px; background: var(--ink-3); }
+.obf-formula > b { font-size: 17px; font-weight: 700; color: var(--blue); white-space: nowrap; }
+
+/* De dónde sale el CPA máximo: la cuenta, en letra chica. */
+.obf-de-donde { margin-top: 12px !important; padding-top: 12px; border-top: 1px solid var(--line-soft); font-size: 12.5px !important; line-height: 1.5 !important; color: var(--ink-4) !important; font-variant-numeric: tabular-nums; }
+
+/* Con qué datos se armó cada número, y «Corregir» al lado. */
+.obf-datos { list-style: none; display: grid; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.obf-datos li { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.obf-datos span { font-size: 12.5px; color: var(--ink-3); line-height: 1.3; }
+.obf-datos b { display: block; font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; margin-top: 1px; }
+.obf .obf-corregir { flex-shrink: 0; padding: 8px 14px; border-radius: var(--r-pildora); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink-2); transition: border-color 0.16s ease, color 0.16s ease; }
+.obf .obf-corregir:hover { border-color: var(--blue-line); color: var(--ink); }
+.obf-de-donde { border-top: 0 !important; padding-top: 0 !important; }
+
+/* ── 5.1: «cada [3] [días|meses|años]» ───────────────────────────────────── */
+.obf-cada { display: grid; grid-template-columns: auto 84px 1fr; align-items: center; gap: 10px; }
+.obf-cada > span { font-size: 16px; font-weight: 600; color: var(--ink-2); }
+.obf-cada .obf-input { min-height: 52px; text-align: center; padding-inline: 8px; }
+.obf-cada[data-off="1"] { opacity: 0.4; }
+.obf-seg-3 { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+.obf .obf-seg-3 button { padding: 12px 4px; font-size: 14px; }
+
+/* ── 6.1: roles seleccionables, varios por persona ───────────────────────── */
+.obf-roles { display: flex; flex-wrap: wrap; gap: 6px; }
+.obf .obf-rol { padding: 9px 13px; border-radius: var(--r-pildora); border: 1px solid var(--line); background: var(--surface); font-size: 13.5px; font-weight: 500; line-height: 1.1; color: var(--ink-2); transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease; }
+.obf .obf-rol:hover { border-color: var(--blue-line); }
+.obf .obf-rol[aria-pressed="true"] { border-color: var(--blue-line); background: var(--blue-soft); color: var(--ink); font-weight: 600; }
+.obf-label small { font-weight: 400; color: var(--ink-4); }
+
+/* «¿Estás seguro?»: pregunta, no regaña. */
+.obf-aviso { margin-top: 14px; padding: 14px 16px; border-radius: var(--r-bloque); background: rgba(255, 149, 0, 0.07); border: 1px solid rgba(255, 149, 0, 0.32); color: #ffc477; font-size: 15px; font-weight: 500; line-height: 1.45; animation: obf-entra 0.5s var(--casa) both; }
+
+/* ── La bienvenida: tres bloquecitos en vez de un párrafo ────────────────── */
+.obf-pantalla[data-tipo="bienvenida"] .obf-titulo-xl { font-size: clamp(42px, 8vw, 96px); }
+.obf-puntos { list-style: none; display: grid; gap: 10px; width: 100%; max-width: 440px; margin-top: 28px; text-align: left; }
+@media (min-width: 860px) { .obf-puntos { grid-template-columns: repeat(3, 1fr); max-width: 860px; } .obf-punto { flex-direction: column; align-items: flex-start; padding: 22px; } }
+.obf-punto { height: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line-soft); border-radius: 18px; }
+.obf-punto-ic { width: 40px; height: 40px; flex-shrink: 0; border-radius: 11px; display: grid; place-items: center; background: var(--blue-soft); color: var(--blue); }
+.obf-punto-ic svg, .obf-seccion-ic svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.obf-punto b { display: block; font-size: 16px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; color: var(--ink); }
+.obf-punto div span { display: block; font-size: 13.5px; color: var(--ink-3); line-height: 1.35; margin-top: 2px; }
+
+/* ── Cambio de sección: gráfico, «Parte N de 6», título, bajada, cuántas preguntas ── */
+.obf-seccion-ic {
+  position: relative; width: 84px; height: 84px; margin-bottom: 26px; border-radius: 26px; display: grid; place-items: center; color: var(--blue);
+  border: 1px solid var(--blue-line); background: radial-gradient(circle at 50% 0%, rgba(94, 135, 245, 0.28), rgba(94, 135, 245, 0.06) 70%);
+  box-shadow: 0 0 60px rgba(94, 135, 245, 0.18);
+}
+.obf .obf-seccion-ic svg { width: 40px; height: 40px; stroke-width: 1.5; }
+.obf-seccion-ic i { position: absolute; right: -8px; bottom: -8px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 100px; display: grid; place-items: center; background: var(--blue); color: #fff; font-style: normal; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; border: 3px solid var(--tinta); }
+.obf-pastilla { margin-top: 22px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px 7px 11px; border-radius: var(--r-pildora); background: var(--blue-soft); color: var(--blue); font-size: 12.5px; font-weight: 700; }
+.obf-pastilla::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.obf-pantalla[data-tipo="respiro"] .obf-acciones { margin-top: 28px; }
+
+/* El ejemplo dentro de la tarjeta de opción. */
+.obf-tarjeta-txt { display: block; font-weight: 600; }
+.obf-tarjeta-txt small { display: block; margin-top: 6px; font-size: 13.5px; font-weight: 400; line-height: 1.4; color: var(--ink-3); letter-spacing: -0.005em; }
+.obf-tarjeta-txt small i { font-style: normal; font-weight: 700; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-right: 7px; }
+.obf .obf-tarjeta[aria-pressed="true"] .obf-tarjeta-txt small { color: var(--ink-2); }
+
+/* Chulo de validación: para promesas cortas, en vez de párrafos. */
+.obf-chulos { display: grid; gap: 12px; margin-top: 24px; list-style: none; }
+@media (min-width: 721px) { .obf-chulos { display: flex; gap: 28px; justify-content: center; } }
+.obf-chulo { display: flex; align-items: center; gap: 12px; font-size: clamp(16px, 1.9vw, 19px); font-weight: 600; line-height: 1.3; letter-spacing: -0.015em; }
+.obf-chulo > span { width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: #04210c; display: inline-grid; place-items: center; flex-shrink: 0; }
+.obf-chulo svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Entradas al hacer scroll (Revelar): una sola vez, subir 14px + aparecer. */
+.obf .revelar { opacity: 0; transform: translateY(14px); transition: opacity 0.5s var(--casa), transform 0.5s var(--casa); }
+.obf .revelar-visible { opacity: 1; transform: none; }
+
+.obf-centro { flex: 1; display: grid; place-items: center; text-align: center; padding: 40px var(--pad-lateral); color: var(--ink-3); }
+.obf-centro h1 { font-size: clamp(30px, 4.6vw, 56px); font-weight: 700; line-height: 1.02; letter-spacing: -0.04em; color: var(--ink); margin-bottom: 14px; }
+
+/* Con movimiento reducido se ve el estado final, quieto. */
+@media (prefers-reduced-motion: reduce) {
+  .obf-pantalla, .obf-resultado { animation: none; }
+  .obf-bloque i::after { transition: none; }
+  .obf .revelar { opacity: 1; transform: none; transition: none; }
+  .obf .obf-btn-oro::after { animation: none; opacity: 0; }
+  .obf .obf-btn-oro:hover:not(:disabled) { transform: none; }
+}

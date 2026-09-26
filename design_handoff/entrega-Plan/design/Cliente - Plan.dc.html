@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+/* El riel del documento se encoge y, si no hay espacio, baja a una sola columna. */
+@media (max-width: 1250px) {
+  [data-plan-cols] { grid-template-columns: minmax(0,1fr) !important; }
+  [data-plan-rail] { position: static !important; }
+}
+</style>
+</helmet>
+
+<div class="{{ themeClass }}" style="height: 100vh; display: grid; grid-template-columns: 252px 1fr; background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
+
+  <!-- MARCO — lo aporta Shell Cliente, no esta pantalla -->
+  <aside data-shell="cliente" style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-solid); border-right: 1px solid var(--line); overflow: hidden;">
+    <div style="position: absolute; inset: 0; background: var(--glow); pointer-events: none;"></div>
+    <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 20px 18px 14px;">
+      <div style="width: 34px; height: 34px; border-radius: 11px; background: rgba(88,166,255,0.14); display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(95,222,240,0.30), 0 0 24px rgba(88,166,255,0.34);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 0 7px rgba(95,222,240,0.85));"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" fill="var(--neon)"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+        <div style="font-size: 15.5px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ marca }}</div>
+        <div style="font-size: 11.5px; color: var(--neon); line-height: 1.1;">Portal Inforce</div>
+      </div>
+      <button data-action="shell-cliente.toggle-tema" onClick="{{ toggleTheme }}" title="Cambiar tema" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2); background: var(--hover);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ themeIcon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+    <div style="position: relative; padding: 0 12px 12px;">
+      <button data-action="new:buscador-cliente" onClick="{{ noop }}" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 13px; text-align: left; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <span style="flex: 1;">Buscar</span>
+        <kbd style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); border: 1px solid var(--line); border-radius: 6px; padding: 2px 5px;">⌘K</kbd>
+      </button>
+    </div>
+    <nav style="position: relative; flex: 1; overflow-y: auto; min-height: 0; padding: 0 10px 12px; display: flex; flex-direction: column; gap: 14px;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--ink-4); padding: 5px 12px 7px;">{{ group.label }}</div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <a data-action="{{ item.action }}" href="#" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 11px; font-size: 13.5px; cursor: pointer; background: {{ item.bg }}; color: {{ item.fg }}; font-weight: {{ item.weight }};" style-hover="background: var(--hover); color: var(--ink);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="{{ item.icon }}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.label }}</span>
+            </a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="position: relative; border-top: 1px solid var(--line); padding: 12px; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--purple); color: #FFFFFF; display: grid; place-items: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">M</div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Mariana Restrepo</div>
+        <div style="font-size: 11.5px; color: var(--ink-3);">Dueña</div>
+      </div>
+      <button data-action="shell-cliente.salir" onClick="{{ noop }}" title="Cerrar sesión" style="width: 30px; height: 30px; border-radius: 9px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="background: var(--hover); color: var(--ink-2);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main style="display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; position: relative; background-color: var(--bg); background-image: var(--ambient); background-attachment: local;">
+
+    <header data-shell="cliente" style="display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 20px 30px 14px; flex-shrink: 0;">
+      <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-4);">
+          <span>{{ marca }}</span><span style="opacity: .5;">/</span><span style="color: var(--ink-3);">Plan</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 13px; flex-wrap: wrap;">
+          <h1 style="font-size: 30px; font-weight: 700; letter-spacing: -0.032em; color: var(--ink); line-height: 1.1;">Plan de implementación</h1>
+          <span style="font-size: 13.5px; color: var(--ink-3);">{{ subtitulo }}</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+        <button data-action="new:alertas-cliente" onClick="{{ noop }}" title="Alertas" style="position: relative; width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2); color: var(--ink);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+        <button data-action="plan.abrir-documento" data-btn="primary" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 8px; padding: 11px 17px; border-radius: 12px; border: 1px solid rgba(111,184,255,0.42); background: linear-gradient(180deg, rgba(88,166,255,0.26), rgba(88,166,255,0.10)); color: #EAF4FF; cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 600; white-space: nowrap;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M14 3h7v7M21 3l-9 9M18 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          Abrir el documento
+        </button>
+      </div>
+    </header>
+
+    <div style="flex: 1; overflow-y: auto; min-height: 0; padding: 0 30px 44px; display: flex; flex-direction: column; gap: 14px;">
+
+      <!-- CARGANDO -->
+      <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); padding: 22px 24px; display: flex; flex-direction: column; gap: 16px;">
+            <div style="height: 13px; width: 220px; border-radius: 7px; background: var(--chip); animation: breathe 1.4s ease-in-out infinite;"></div>
+            <div style="height: 16px; border-radius: 999px; background: var(--chip); animation: breathe 1.4s ease-in-out .12s infinite;"></div>
+          </div>
+          <sc-for list="{{ skeletons }}" as="s" hint-placeholder-count="3">
+            <div style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px;">
+              <div style="height: 15px; width: 44%; border-radius: 7px; background: var(--chip); animation: breathe 1.4s ease-in-out infinite;"></div>
+              <div style="height: 11px; width: 70%; border-radius: 6px; background: var(--chip); animation: breathe 1.4s ease-in-out .15s infinite;"></div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ERROR -->
+      <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1px solid rgba(226,75,74,0.35); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); padding: 44px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center;">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M12 9v5M12 17.5h.01M10.3 3.9 2.5 17.4A1.9 1.9 0 0 0 4.2 20.3h15.6a1.9 1.9 0 0 0 1.7-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">No pudimos cargar tu plan</span>
+          <p style="font-size: 13.5px; line-height: 1.6; color: var(--ink-3); max-width: 46ch; text-wrap: pretty;">El archivo de accionables no respondió. Tus marcas están guardadas: no se pierde nada al reintentar.</p>
+          <div style="display: flex; gap: 10px; padding-top: 4px;">
+            <button data-action="new:plan.reintentar" data-btn="primary" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 8px; padding: 10px 17px; border-radius: 12px; border: 1px solid rgba(111,184,255,0.42); background: linear-gradient(180deg, rgba(88,166,255,0.26), rgba(88,166,255,0.10)); color: #EAF4FF; cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 600; white-space: nowrap;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              Reintentar
+            </button>
+            <button data-action="new:plan.contactar-equipo" onClick="{{ noop }}" style="padding: 10px 17px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 500; white-space: nowrap; box-shadow: var(--shadow);">Escribirle al equipo</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- SIN PLAN -->
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1.5px dashed var(--line-2); border-radius: 20px; padding: 56px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+          <div style="width: 46px; height: 46px; border-radius: 14px; background: var(--surface-2); color: var(--ink-4); display: grid; place-items: center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 3h6v3H9zM7 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Tu plan todavía no está publicado</span>
+          <p style="font-size: 13.5px; line-height: 1.6; color: var(--ink-3); max-width: 48ch; text-wrap: pretty;">Sale de tus tres llamadas de consultoría. Cuando el equipo lo cierre, aparece acá con tus fases y tus accionables.</p>
+          <button data-action="new:plan.contactar-equipo" onClick="{{ noop }}" style="margin-top: 4px; padding: 10px 17px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 500; box-shadow: var(--shadow);">Escribirle al equipo</button>
+        </div>
+      </sc-if>
+
+      <!-- ===== PLAN RESUELTO ===== -->
+      <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+
+        <!-- AVANCE DEL ACOMPAÑAMIENTO: la barra grande, con una sección por fase -->
+        <section style="border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); padding: 20px 24px 18px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: baseline; gap: 14px; min-width: 0;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 46px; font-weight: 500; letter-spacing: -0.04em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1;">{{ pct }}<span style="font-size: 22px; color: var(--ink-3);">%</span></span>
+              <div style="display: flex; flex-direction: column; gap: 3px;">
+                <span style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Avance del acompañamiento</span>
+                <span style="font-size: 12.5px; color: var(--ink-3); white-space: nowrap;"><span style="font-family: 'JetBrains Mono', monospace; color: var(--ink-2); font-variant-numeric: tabular-nums;">{{ hechos }}</span> de <span style="font-family: 'JetBrains Mono', monospace; color: var(--ink-2); font-variant-numeric: tabular-nums;">{{ cuentan }}</span> accionables · {{ fasesHechas }}</span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="display: flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; background: rgba(52,192,138,0.13); color: var(--green); font-size: 11.5px; font-weight: 600; white-space: nowrap;"><span style="width: 7px; height: 7px; border-radius: 50%; background: currentColor;"></span>{{ legendDone }}</span>
+              <span style="display: flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; background: var(--sel-soft); color: var(--sel); font-size: 11.5px; font-weight: 600; white-space: nowrap;"><span style="width: 7px; height: 7px; border-radius: 50%; background: currentColor;"></span>{{ legendCurso }}</span>
+            </div>
+          </div>
+
+          <!-- La barra: cada tramo es una fase; el ancho sale de sus accionables -->
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <div style="display: grid; grid-template-columns: {{ trackCols }}; gap: 4px; align-items: stretch;">
+              <sc-for list="{{ tramos }}" as="t" hint-placeholder-count="6">
+                <button data-action="new:plan.ir-a-fase" onClick="{{ t.select }}" title="{{ t.title }}" style="display: flex; flex-direction: column; gap: 7px; border: none; background: transparent; padding: 0; cursor: pointer; font-family: inherit; text-align: left; min-width: 0;">
+                  <div style="height: 16px; border-radius: 6px; overflow: hidden; background: {{ t.trackBg }}; border: {{ t.trackBorder }};">
+                    <div style="height: 100%; width: {{ t.fill }}; background: {{ t.fillColor }}; box-shadow: {{ t.fillGlow }}; transition: width .3s ease;"></div>
+                  </div>
+                  <div style="display: flex; align-items: baseline; gap: 6px; min-width: 0;">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: {{ t.numFg }}; font-variant-numeric: tabular-nums;">{{ t.num }}</span>
+                    <span style="font-size: 11.5px; font-weight: 500; color: {{ t.labelFg }}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ t.corto }}</span>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dos columnas: el plan a la izquierda, el documento fijo a la derecha -->
+        <div data-plan-cols="" style="display: grid; grid-template-columns: minmax(440px,1fr) minmax(304px,424px); gap: 14px; align-items: start;">
+
+          <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <sc-for list="{{ filtros }}" as="f" hint-placeholder-count="4">
+                <button data-action="new:plan.filtrar" onClick="{{ f.select }}" style="display: flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 12.5px; white-space: nowrap; font-weight: {{ f.weight }}; border: 1px solid {{ f.border }}; background: {{ f.bg }}; color: {{ f.fg }};">
+                  {{ f.label }}
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: .75; font-variant-numeric: tabular-nums;">{{ f.count }}</span>
+                </button>
+              </sc-for>
+              <div style="flex: 1;"></div>
+              <button data-action="new:plan.colapsar-todo" onClick="{{ collapseAll }}" style="display: flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 500; white-space: nowrap; box-shadow: var(--shadow);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M8 4h13M8 12h13M8 20h13M3 4h.01M3 12h.01M3 20h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
+                {{ collapseLabel }}
+              </button>
+            </div>
+
+            <sc-for list="{{ fases }}" as="fase" hint-placeholder-count="4">
+              <section data-screen-label="{{ fase.screenLabel }}" style="position: relative; border: {{ fase.border }}; border-radius: 18px; background: {{ fase.bg }}; box-shadow: {{ fase.shadow }}; opacity: {{ fase.opacity }}; overflow: hidden;">
+                <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: {{ fase.railColor }};"></div>
+
+                <div style="display: grid; grid-template-columns: 36px minmax(0,1fr) auto; gap: 13px; align-items: start; padding: 16px 20px 15px 22px;">
+                  <div style="width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: {{ fase.numBg }}; color: {{ fase.numFg }}; border: 1px solid {{ fase.numBorder }};">
+                    <sc-if value="{{ fase.isDone }}" hint-placeholder-val="{{ false }}">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </sc-if>
+                    <sc-if value="{{ fase.showNum }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 500; font-variant-numeric: tabular-nums;">{{ fase.orden }}</span>
+                    </sc-if>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 9px; flex-wrap: wrap;">
+                      <h3 style="font-size: 15.5px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); line-height: 1.3; text-wrap: pretty;">{{ fase.titulo }}</h3>
+                      <span style="padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; background: {{ fase.estadoBg }}; color: {{ fase.estadoFg }};">{{ fase.estado }}</span>
+                    </div>
+                    <p style="font-size: 12.5px; line-height: 1.55; color: var(--ink-3); text-wrap: pretty;">{{ fase.descripcion }}</p>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 11px;">
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                      <span style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-4); white-space: nowrap;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7.5V12l3 2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        {{ fase.tiempo }}
+                      </span>
+                      <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums;">{{ fase.ratio }}</span>
+                        <div style="width: 52px; height: 5px; border-radius: 999px; background: var(--chip); overflow: hidden;">
+                          <div style="height: 100%; width: {{ fase.barWidth }}; border-radius: 999px; background: {{ fase.barColor }};"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <button data-action="new:plan.colapsar-fase" onClick="{{ fase.toggle }}" title="{{ fase.toggleTitle }}" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2); background: var(--hover);">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="transform: {{ fase.chevron }}; transition: transform .18s ease;"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <sc-if value="{{ fase.open }}" hint-placeholder-val="{{ true }}">
+                  <div style="border-top: 1px solid var(--line);">
+                    <sc-for list="{{ fase.pasos }}" as="paso" hint-placeholder-count="3">
+                      <div style="border-bottom: 1px solid var(--line); background: {{ paso.rowBg }};">
+                        <div style="display: grid; grid-template-columns: 22px minmax(0,1fr) 128px 116px 24px; gap: 11px; align-items: center; padding: 12px 20px 12px 22px;">
+                          <button data-action="new:plan.marcar-paso" onClick="{{ paso.toggleDone }}" title="{{ paso.checkTitle }}" style="width: 20px; height: 20px; border-radius: 6px; cursor: pointer; display: grid; place-items: center; border: 1.6px solid {{ paso.checkBorder }}; background: {{ paso.checkBg }}; color: {{ paso.checkFg }};" style-hover="border-color: var(--sel);">
+                            <sc-if value="{{ paso.done }}" hint-placeholder-val="{{ false }}">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                            </sc-if>
+                          </button>
+
+                          <button data-action="new:plan.expandir-paso" onClick="{{ paso.toggleOpen }}" style="border: none; background: transparent; padding: 0; cursor: pointer; font-family: inherit; text-align: left; min-width: 0; display: flex; align-items: center; gap: 9px;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums; flex-shrink: 0;">{{ paso.num }}</span>
+                            <span style="font-size: 13.5px; font-weight: 600; line-height: 1.45; color: {{ paso.titleFg }}; text-decoration: {{ paso.titleDeco }}; text-wrap: pretty;">{{ paso.accionable }}</span>
+                          </button>
+
+                          <span style="display: flex; align-items: center; gap: 7px; justify-self: start; padding: 4px 10px 4px 5px; border-radius: 999px; background: {{ paso.respTint }}; color: {{ paso.respColor }}; font-size: 11.5px; font-weight: 600; max-width: 100%; overflow: hidden;">
+                            <span style="width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #FFFFFF; background: {{ paso.respColor }}; flex-shrink: 0;">{{ paso.respInitial }}</span>
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ paso.responsable }}</span>
+                          </span>
+
+                          <a data-action="plan.ver-contexto" href="{{ paso.contextoHref }}" onClick="{{ paso.verContexto }}" title="{{ paso.contextoTitle }}" style="display: flex; align-items: center; gap: 6px; justify-self: start; font-size: 12px; font-weight: 600; color: var(--sel); white-space: nowrap;" style-hover="color: var(--neon);">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10l2 2h6.5A1.5 1.5 0 0 1 20 7.5v10A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-12z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+                            ver el contexto
+                          </a>
+
+                          <button data-action="new:plan.expandir-paso" onClick="{{ paso.toggleOpen }}" title="{{ paso.openTitle }}" style="width: 24px; height: 24px; border-radius: 7px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; display: grid; place-items: center; justify-self: end;" style-hover="background: var(--hover); color: var(--ink-2);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="transform: {{ paso.chevron }}; transition: transform .18s ease;"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                          </button>
+                        </div>
+
+                        <sc-if value="{{ paso.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 11px; padding: 0 20px 16px 22px; animation: fadeIn .16s ease;">
+                            <div></div>
+                            <div style="display: flex; flex-direction: column; gap: 13px; border-left: 2px solid var(--line-2); padding-left: 15px;">
+                              <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <span style="font-size: 11.5px; font-weight: 600; color: var(--ink-4);">Por qué</span>
+                                <p style="font-size: 13.5px; line-height: 1.68; color: var(--ink-2); text-wrap: pretty;">{{ paso.descripcion }}</p>
+                              </div>
+                              <div style="display: flex; align-items: center; gap: 9px; flex-wrap: wrap;">
+                                <button data-action="new:plan.crear-tarea" onClick="{{ noop }}" title="Crea la tarea en tu espacio: ahí le pones fecha y responsable" style="display: flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 11px; border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap; flex-shrink: 0;" style-hover="border-color: var(--sel); color: var(--sel);">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+                                  Crear tarea
+                                </button>
+                                <sc-if value="{{ paso.tieneTarea }}" hint-placeholder-val="{{ false }}">
+                                  <a data-action="new:plan.agendar-paso" href="#" onClick="{{ noop }}" title="Abrir la tarea" style="display: flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 11px; background: var(--sel-soft); color: var(--sel); font-size: 12.5px; font-weight: 600; white-space: nowrap; flex-shrink: 0;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 10h16M9 3v4M15 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    {{ paso.tareaLabel }}
+                                  </a>
+                                </sc-if>
+                                <a data-action="plan.ver-contexto" href="{{ paso.contextoHref }}" onClick="{{ paso.verContexto }}" style="display: flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 11px; background: var(--sel-soft); color: var(--sel); font-size: 12.5px; font-weight: 600; white-space: nowrap; flex-shrink: 0;">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                  {{ paso.contextoLabel }}
+                                </a>
+                              </div>
+                              <sc-if value="{{ paso.doneMeta }}" hint-placeholder-val="{{ false }}">
+                                <span style="display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--green);">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                  {{ paso.doneMeta }}
+                                </span>
+                              </sc-if>
+                            </div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+
+                    <sc-if value="{{ fase.futuroNota }}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; align-items: center; gap: 9px; padding: 12px 20px 12px 22px; color: var(--amber); font-size: 12px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 8v4l2.5 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        <span style="text-wrap: pretty;">{{ fase.futuroNota }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </section>
+            </sc-for>
+
+            <sc-if value="{{ sinMatch }}" hint-placeholder-val="{{ false }}">
+              <div style="border: 1.5px dashed var(--line-2); border-radius: 18px; padding: 34px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                <span style="font-size: 14px; font-weight: 700; color: var(--ink);">{{ sinMatch }}</span>
+                <button data-action="new:plan.filtrar" onClick="{{ resetFilter }}" style="padding: 8px 14px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 500;">Ver todas las fases</button>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- Riel derecho: el documento de las tres llamadas, fijo -->
+          <aside data-plan-rail="" style="position: sticky; top: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+            <section style="border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px;">
+                <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+                  <span style="font-size: 13.5px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Tus tres llamadas</span>
+                  <span style="font-size: 11.5px; color: var(--ink-3);">Solo lectura · lo que se marca vive en el plan</span>
+                </div>
+                <button data-action="plan.abrir-documento" onClick="{{ noop }}" title="Abrir en una pestaña nueva" style="width: 30px; height: 30px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 3h7v7M21 3l-9 9M18 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 4px; padding: 0 12px 12px;">
+                <sc-for list="{{ secciones }}" as="sec" hint-placeholder-count="4">
+                  <button data-action="new:plan.ir-a-seccion" onClick="{{ sec.select }}" title="{{ sec.title }}" style="display: flex; flex-direction: column; gap: 4px; padding: 8px 9px; border-radius: 11px; cursor: pointer; font-family: inherit; text-align: left; border: 1px solid {{ sec.border }}; background: {{ sec.bg }}; min-width: 0;">
+                    <span style="width: 100%; height: 3px; border-radius: 999px; background: {{ sec.dot }};"></span>
+                    <span style="font-size: 11.5px; font-weight: {{ sec.weight }}; color: {{ sec.fg }}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ sec.label }}</span>
+                    <span style="font-size: 10.5px; color: var(--ink-4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ sec.quien }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="height: 560px; border-top: 1px solid var(--line); background: var(--surface-solid); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 20px; text-align: center; background-image: repeating-linear-gradient(135deg, transparent 0 9px, {{ stripe }} 9px 10px);">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ink-3); word-break: break-all;">iframe · {{ documento }}</span>
+                <span style="font-size: 11.5px; color: var(--ink-4); line-height: 1.5; text-wrap: pretty;">scrolling="no" · alto por inforce-height · inforce-goto → <span style="font-family: 'JetBrains Mono', monospace;">{{ seccionActiva }}</span></span>
+              </div>
+            </section>
+
+            <section style="border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); padding: 14px 16px; display: flex; flex-direction: column; gap: 11px;">
+              <span style="font-size: 12px; font-weight: 600; color: var(--ink-4);">Quién responde por qué</span>
+              <sc-for list="{{ responsables }}" as="r" hint-placeholder-count="3">
+                <button data-action="new:plan.filtrar-responsable" onClick="{{ r.select }}" style="display: grid; grid-template-columns: 24px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 7px 9px; border-radius: 11px; cursor: pointer; font-family: inherit; text-align: left; border: 1px solid {{ r.border }}; background: {{ r.bg }};">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #FFFFFF; background: {{ r.color }};">{{ r.initial }}</span>
+                  <span style="display: flex; flex-direction: column; gap: 1px; min-width: 0;">
+                    <span style="font-size: 12.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.nombre }}</span>
+                    <span style="font-size: 11px; color: var(--ink-4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.tema }}</span>
+                  </span>
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap;">{{ r.ratio }}</span>
+                </button>
+              </sc-for>
+            </section>
+          </aside>
+        </div>
+
+      </div>
+      </sc-if>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1512,&quot;height&quot;:950},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;dark&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;listo&quot;,&quot;options&quot;:[&quot;listo&quot;,&quot;cargando&quot;,&quot;error&quot;,&quot;sin-plan&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+// Cliente — Plan de implementación. Espeja src/workspace/PlanView.jsx (hoy solo
+// embebe el iframe): fases, accionables, avance y estado son NUEVOS.
+// Data: https://plan.josehuila.com/planes-accionables.json (solo lectura).
+// El portal solo persiste (cliente, paso_id, completado, completado_en,
+// agendado_para, asignado_a). Nada de textos en la base.
+// El sidebar y el topbar llevan data-shell="cliente": los aporta Shell Cliente.
+const RESP = {
+  "José":   { color: "var(--blue)",   tint: "rgba(74,144,226,0.13)",  seccion: "llamada-1", corta: "llamada 1", tema: "Estrategia" },
+  "Nath":   { color: "var(--purple)", tint: "rgba(155,123,240,0.15)", seccion: "llamada-2", corta: "llamada 2", tema: "Creativo y copy" },
+  "Deison": { color: "var(--green)",  tint: "rgba(52,192,138,0.13)",  seccion: "llamada-3", corta: "llamada 3", tema: "Tráfico y pauta" },
+};
+
+const SECCIONES = [
+  { id: "llamada-1", label: "Llamada 1", quien: "José", dot: "var(--blue)" },
+  { id: "llamada-2", label: "Llamada 2", quien: "Nath", dot: "var(--purple)" },
+  { id: "llamada-3", label: "Llamada 3", quien: "Deison", dot: "var(--green)" },
+  { id: "estrategia", label: "Estrategia", quien: "Ángulos y objeciones", dot: "var(--neon)" },
+];
+
+const IC = {
+  gauge: "M22 12h-4l-3 9L9 3l-3 9H2",
+  chart: "M4 20V10M10 20V4M16 20v-7M22 20v-12",
+  clipboard: "M9 3h6v3H9zM7 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2M9 12h6M9 16h4",
+  film: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM3 9h18M3 15h18M8.5 3v18M15.5 3v18",
+  funnel: "M3 4h18l-7 8v8l-4-2v-6L3 4z",
+  grid: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+  check: "M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9",
+  users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  trash: "M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6",
+  gear: "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.3 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z",
+  moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
+  sun: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+};
+
+const NAV = [
+  { label: "Resumen", items: [
+    { key: "home", label: "Resumen", icon: IC.gauge, action: "nav.resumen" },
+    { key: "reportes", label: "Reportes", icon: IC.chart, action: "nav.reportes" },
+  ]},
+  { label: "Creativos", items: [
+    { key: "despliegue", label: "Despliegue", icon: IC.funnel, action: "nav.despliegue" },
+    { key: "pipeline", label: "Content Pipeline", icon: IC.film, action: "nav.content-pipeline" },
+    { key: "control", label: "Control Creativos", icon: IC.grid, action: "nav.control-creativos" },
+  ]},
+  { label: "Operación", items: [
+    { key: "plan", label: "Plan de implementación", icon: IC.clipboard, action: "nav.plan" },
+    { key: "tareas", label: "Tareas", icon: IC.check, action: "nav.tareas" },
+    { key: "equipo", label: "Equipo", icon: IC.users, action: "nav.equipo" },
+    { key: "papelera", label: "Papelera", icon: IC.trash, action: "nav.papelera" },
+    { key: "ajustes", label: "Ajustes", icon: IC.gear, action: "nav.ajustes", stub: true },
+  ]},
+];
+
+// Muestra real del JSON: artilleria-fox (6 fases / 16 pasos, la última a_futuro).
+const PLAN = {
+  cliente: "artilleria-fox", marca: "Artillería Fox",
+  documento: "https://plan.josehuila.com/artilleria-fox/",
+  fases: [
+    { orden: 1, id: "n1", titulo: "Deja de perder los mensajes que ya estás pagando", corto: "Atención", tiempo: "~1-2 semanas",
+      descripcion: "Tu fuga más grande hoy está en la atención, no en la pauta.", a_futuro: false, pasos: [
+      { orden: 1, id: "t1", responsable: "Deison", accionable: "Automatiza la atención de WhatsApp con ChateaPro o Dropi",
+        descripcion: "Hoy respondes manual y muchos mensajes quedan sin contestar; cuando alcanzas a responder, la persona ya perdió el impulso de compra. Armas filtros: casi todos llegan preguntando lo mismo (precio y referencias), eso lo resuelve la plataforma con el catálogo y los precios, y tú solo atiendes manual al que llega al tercer filtro, ya caliente. Se monta de a poco para no arriesgar el número." },
+    ]},
+    { orden: 2, id: "n2", titulo: "Monta tu sistema de trabajo", corto: "Sistema", tiempo: "~1 semana",
+      descripcion: "Deja la maquinaria instalada antes de producir a full.", a_futuro: false, pasos: [
+      { orden: 2, id: "t2", responsable: "José", accionable: "Monta tu sistema de trabajo con el contenido pregrabado",
+        descripcion: "Lo ves completo y replicas el sistema de carpetas para Artillería Fox. Es el mapa de qué se hace cada día, quién hace qué y cómo fluye de la idea hasta el anuncio publicado." },
+      { orden: 3, id: "t3", responsable: "José", accionable: "Consigue quien te ayude a grabar",
+        descripcion: "Ya lo identificaste tú mismo en la llamada. Mientras llega, arrancas solo con trípode al cerrar el local: en una noche te salen dos o tres videos." },
+      { orden: 4, id: "t4", responsable: "José", accionable: "Mándanos la revisión los lunes, miércoles y viernes",
+        descripcion: "Grabación y edición esos tres días; los sábados el equipo revisa guiones. Así el material se corrige antes de que le gastes plata en pauta." },
+    ]},
+    { orden: 3, id: "n3", titulo: "Ejecuta tu despliegue creativo", corto: "Despliegue", tiempo: "Continuo",
+      descripcion: "Tienes alcance, pero no viene por la ropa. El problema es de formatos.", a_futuro: false, pasos: [
+      { orden: 5, id: "t5", responsable: "José", accionable: "Ten la reunión de despliegue creativo con José",
+        descripcion: "Ahí te entrega el despliegue completo y quedan confirmados tus ángulos de venta, tus objeciones y tus puntos de conciencia. Hoy tu contenido atrae por el hook y no por la ropa; esto es lo que lo endereza." },
+      { orden: 6, id: "t6", responsable: "Nath", accionable: "Entrena un chat de Claude con tu marca",
+        descripcion: "Cargado con tu producto, tus dolores y la investigación de las 4 fases de Nath, que corres una vez al mes y guardas en tu Drive. Después le dices “adapta este guion a Artillería Fox mostrando el jogger” y te lo reescribe con tu producto. Tus referentes son Imperio Stories y Big Focus." },
+      { orden: 7, id: "t7", responsable: "Nath", accionable: "Guioniza la entrega 1",
+        descripcion: "Repartida entre los cuatro formatos que sí venden ropa: “esta es la tienda” (el que más jala, con su versión mayorista), variedad de prendas con música pegada, el outfit completo modelado, y la confianza detrás de la marca — paquetes saliendo, el chequeo antes de empacar, las asesoras respondiendo, tu local físico. El producto siempre protagonista y con situación." },
+      { orden: 8, id: "t8", responsable: "José", accionable: "Graba la entrega 1",
+        descripcion: "Trípode, buena luz y producto en uso. Nada de catálogo: la gente no entra a Instagram a ver catálogos, entra a ver cómo se ve la ropa puesta." },
+      { orden: 9, id: "t9", responsable: "Nath", accionable: "Edita la entrega 1",
+        descripcion: "Cuidando que cada formato se sostenga y no se mezclen entre sí." },
+      { orden: 10, id: "t10", responsable: "Deison", accionable: "Monta los anuncios de la entrega 1",
+        descripcion: "Usando “publicación existente” y jalando el reel desde Instagram, para que el anuncio conserve los likes y los comentarios que ya trae." },
+      { orden: 11, id: "t11", responsable: "José", accionable: "Agenda la reunión semanal de revisión",
+        descripcion: "Para mirar qué ganó, qué no y por qué, y con eso definir la siguiente entrega. Es lo que sube tu eficiencia entrega tras entrega en vez de crear a ciegas." },
+    ]},
+    { orden: 4, id: "n4", titulo: "Arregla las bases de tu Instagram", corto: "Instagram", tiempo: "~1 semana",
+      descripcion: "La cuenta es tu vitrina: hoy le estás hundiendo el alcance solo.", a_futuro: false, pasos: [
+      { orden: 12, id: "t12", responsable: "José", accionable: "Reemplaza las fotos del proveedor por fotos tuyas",
+        descripcion: "Esa misma foto del proveedor ya la subió otro emprendedor y otra tienda; Instagram detecta que fue publicada antes y le baja muchísimo el alcance a todo lo que montes. Y entre mejor calidad y mejor espacio, mejor se ve la prenda y mejor funciona." },
+      { orden: 13, id: "t13", responsable: "Nath", accionable: "Publica lo mismo en TikTok y compártelo a Facebook",
+        descripcion: "Al arranque el mismo contenido va a las tres plataformas; más adelante se separan las estrategias. La pauta en TikTok la ves a fondo con Deison." },
+    ]},
+    { orden: 5, id: "n5", titulo: "Ordena tu tráfico", corto: "Tráfico", tiempo: "~1 semana",
+      descripcion: "Ya sabes montarlas tú: ahora es sostenerlas y leerlas bien.", a_futuro: false, pasos: [
+      { orden: 14, id: "t14", responsable: "Deison", accionable: "Deja corriendo dos campañas, una por evento",
+        descripcion: "Ventas a WhatsApp y Tráfico al perfil de Instagram, 50 y 50. Las tuyas venían a 34 pesos por clic al perfil y entre 400 y 700 por conversación, muy buenos números — solo estaban pausadas por el pago pendiente. La configuración: catálogo desactivado, presupuesto a nivel de conjunto (mínimo 50 mil), público Colombia 18+, y de 3 a 5 videos por conjunto." },
+      { orden: 15, id: "t15", responsable: "Deison", accionable: "Te recomendamos pautar solo lo que ya jaló en orgánico",
+        descripcion: "Sacas los videos, miras cuáles funcionan solos y esos son los que llevas a pauta. Para leerlas te bastan dos métricas: resultados y costo por resultado." },
+    ]},
+    { orden: 6, id: "nf", titulo: "A futuro", corto: "Adelante", tiempo: "Más adelante",
+      descripcion: "Cuando el sistema ya esté rodando.", a_futuro: true, pasos: [
+      { orden: 16, id: "t16", responsable: "Nath", accionable: "Suma UGC para diversificar sin depender de ti",
+        descripcion: "Le mandas 3 joggers a un creador, te hace 4 videos, entre 80 y 90 mil cada uno (100 mil si te lo pasa editado). Así tienes contenido fresco todo el tiempo sin que tengas que grabarlo tú." },
+    ]},
+  ],
+};
+
+// Estado que sí vive en el portal, por (cliente, paso_id).
+const ESTADO = {
+  t1:  { completado: true,  completado_en: "18 jul" },
+  t2:  { completado: true,  completado_en: "19 jul" },
+  t3:  { completado: true,  completado_en: "21 jul" },
+  t4:  { completado: true,  completado_en: "22 jul" },
+  t5:  { completado: true,  completado_en: "24 jul" },
+  t6:  { agendado_para: "29 jul", asignado_a: "Mariana" },
+  t7:  { agendado_para: "31 jul" },
+  t99: { completado: true }, // paso huérfano: ya no existe en el JSON → se ignora
+};
+
+const FILTROS = [
+  { key: "todas", label: "Todo el plan" },
+  { key: "pendientes", label: "Pendientes" },
+  { key: "hechos", label: "Completados" },
+  { key: "futuro", label: "Adelante" },
+];
+
+class Component extends DCLogic {
+  state = {
+    theme: null,
+    done: Object.keys(ESTADO).filter((k) => ESTADO[k].completado),
+    openPaso: "t6",
+    closedFases: [],
+    filtro: "todas",
+    responsable: null,
+    seccion: "llamada-2",
+  };
+
+  isDone(id) { return this.state.done.includes(id); }
+
+  toggleDone(id) {
+    return () => this.setState((s) => ({
+      done: s.done.includes(id) ? s.done.filter((x) => x !== id) : [...s.done, id],
+    }));
+  }
+  toggleOpen(id) { return () => this.setState((s) => ({ openPaso: s.openPaso === id ? null : id })); }
+  toggleFase(id) {
+    return () => this.setState((s) => ({
+      closedFases: s.closedFases.includes(id) ? s.closedFases.filter((x) => x !== id) : [...s.closedFases, id],
+    }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const estado = this.props.estado ?? "listo";
+    const theme = s.theme ?? this.props.theme ?? "dark";
+
+    const cuentanIds = PLAN.fases.filter((f) => !f.a_futuro).flatMap((f) => f.pasos.map((p) => p.id));
+    const hechos = cuentanIds.filter((id) => this.isDone(id)).length;
+    const pct = cuentanIds.length ? Math.round((hechos / cuentanIds.length) * 100) : 0;
+    const fasesCuentan = PLAN.fases.filter((f) => !f.a_futuro);
+    const nDone = fasesCuentan.filter((f) => f.pasos.every((p) => this.isDone(p.id))).length;
+    const nCurso = fasesCuentan.filter((f) => f.pasos.some((p) => this.isDone(p.id)) && !f.pasos.every((p) => this.isDone(p.id))).length;
+    const nPend = fasesCuentan.length - nDone - nCurso;
+    const nFuturoPasos = PLAN.fases.filter((f) => f.a_futuro).reduce((a, f) => a + f.pasos.length, 0);
+    const nFuturoFases = PLAN.fases.filter((f) => f.a_futuro).length;
+
+    // Tramos de la barra grande: un tramo por fase, ancho ∝ sus accionables.
+    const tramos = PLAN.fases.map((f) => {
+      const total = f.pasos.length;
+      const hf = f.pasos.filter((p) => this.isDone(p.id)).length;
+      const done = hf === total, curso = hf > 0 && !done;
+      return {
+        num: String(f.orden).padStart(2, "0"), corto: f.corto,
+        title: `${f.titulo} — ${hf} de ${total}`,
+        fill: `${Math.round((hf / total) * 100)}%`,
+        fillColor: f.a_futuro ? "var(--amber)" : done ? "var(--green)" : "var(--sel)",
+        fillGlow: f.a_futuro ? "none" : done ? "0 0 14px rgba(52,192,138,0.35)" : "0 0 14px rgba(88,166,255,0.4)",
+        trackBg: f.a_futuro ? "transparent" : "var(--chip)",
+        trackBorder: f.a_futuro ? "1.5px dashed var(--line-2)" : "1px solid transparent",
+        numFg: f.a_futuro ? "var(--amber)" : "var(--ink-4)",
+        labelFg: f.a_futuro ? "var(--amber)" : done ? "var(--ink-2)" : curso ? "var(--ink)" : "var(--ink-3)",
+        weight: total,
+        select: () => this.setState({ filtro: "todas", closedFases: [] }),
+      };
+    });
+
+    const visibles = PLAN.fases.filter((f) => {
+      if (s.responsable && !f.pasos.some((p) => p.responsable === s.responsable)) return false;
+      if (s.filtro === "futuro") return f.a_futuro;
+      if (s.filtro === "pendientes") return f.pasos.some((p) => !this.isDone(p.id));
+      if (s.filtro === "hechos") return f.pasos.some((p) => this.isDone(p.id));
+      return true;
+    });
+
+    const allIds = PLAN.fases.flatMap((f) => f.pasos.map((p) => p.id));
+    const countFor = (k) => {
+      if (k === "todas") return allIds.length;
+      if (k === "futuro") return nFuturoPasos;
+      return k === "hechos" ? allIds.filter((id) => this.isDone(id)).length : allIds.filter((id) => !this.isDone(id)).length;
+    };
+
+    const fases = visibles.map((f) => {
+      const total = f.pasos.length;
+      const hechosF = f.pasos.filter((p) => this.isDone(p.id)).length;
+      const isDone = hechosF === total;
+      const enCurso = hechosF > 0 && !isDone;
+      const open = !s.closedFases.includes(f.id);
+
+      const chip = f.a_futuro
+        ? { label: "Adelante", bg: "rgba(240,169,59,0.15)", fg: "var(--amber)" }
+        : isDone ? { label: "Completada", bg: "rgba(52,192,138,0.13)", fg: "var(--green)" }
+        : enCurso ? { label: "En curso", bg: "var(--sel-soft)", fg: "var(--sel)" }
+        : { label: "Pendiente", bg: "var(--chip)", fg: "var(--ink-3)" };
+
+      const pasos = f.pasos
+        .filter((p) => (s.responsable ? p.responsable === s.responsable : true))
+        .filter((p) => (s.filtro === "pendientes" ? !this.isDone(p.id) : s.filtro === "hechos" ? this.isDone(p.id) : true))
+        .map((p) => {
+          const done = this.isDone(p.id);
+          const r = RESP[p.responsable] || RESP["José"];
+          const st = ESTADO[p.id] || {};
+          const isOpen = s.openPaso === p.id;
+          return {
+            ...p,
+            num: String(p.orden).padStart(2, "0"),
+            done, open: isOpen,
+            // En claro el --hover es un azul fuerte: el expandido va casi blanco.
+            rowBg: isOpen ? (theme === "light" ? "rgba(30,82,170,0.035)" : "var(--hover)") : "transparent",
+            checkTitle: done ? "Desmarcar accionable" : "Marcar como hecho",
+            checkBorder: done ? "transparent" : "var(--line-2)",
+            checkBg: done ? "var(--green)" : "transparent",
+            checkFg: done ? "#FFFFFF" : "transparent",
+            titleFg: done ? "var(--ink-4)" : "var(--ink)",
+            titleDeco: done ? "line-through" : "none",
+            respInitial: p.responsable.charAt(0),
+            respColor: r.color, respTint: r.tint,
+            contextoHref: `/documento?section=${r.seccion}`,
+            contextoTitle: `Abrir el documento en la ${r.corta} · ${r.tema}`,
+            contextoLabel: `Ver el contexto en la ${r.corta}`,
+            verContexto: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ seccion: r.seccion }); },
+            chevron: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            openTitle: isOpen ? "Cerrar el detalle" : "Ver la descripción completa",
+            // La tarea del portal ya trae fecha y responsable: acá solo se muestra.
+            tieneTarea: !!(st.agendado_para || st.asignado_a),
+            tareaLabel: [st.agendado_para ? st.agendado_para : "", st.asignado_a ? `· ${st.asignado_a}` : ""].join(" ").trim(),
+            doneMeta: done && st.completado_en ? `Completado el ${st.completado_en}` : "",
+            toggleDone: this.toggleDone(p.id),
+            toggleOpen: this.toggleOpen(p.id),
+          };
+        });
+
+      return {
+        ...f, pasos, open, isDone: isDone && !f.a_futuro,
+        showNum: !(isDone && !f.a_futuro),
+        screenLabel: `Fase ${f.orden}`,
+        estado: chip.label, estadoBg: chip.bg, estadoFg: chip.fg,
+        border: f.a_futuro ? "1.5px dashed var(--line-2)" : "1px solid var(--line)",
+        bg: f.a_futuro ? "transparent" : "var(--surface)",
+        shadow: f.a_futuro ? "none" : "var(--shadow)",
+        opacity: f.a_futuro ? 0.78 : 1,
+        railColor: f.a_futuro ? "transparent" : isDone ? "var(--green)" : enCurso ? "var(--sel)" : "var(--line)",
+        numBg: f.a_futuro ? "transparent" : isDone ? "rgba(52,192,138,0.13)" : enCurso ? "var(--sel-soft)" : "var(--chip)",
+        numFg: f.a_futuro ? "var(--amber)" : isDone ? "var(--green)" : enCurso ? "var(--sel)" : "var(--ink-3)",
+        numBorder: f.a_futuro ? "var(--line-2)" : "transparent",
+        ratio: f.a_futuro ? "—" : `${hechosF}/${total}`,
+        barWidth: `${Math.round((hechosF / total) * 100)}%`,
+        barColor: f.a_futuro ? "var(--amber)" : isDone ? "var(--green)" : "var(--sel)",
+        chevron: open ? "rotate(0deg)" : "rotate(-90deg)",
+        toggleTitle: open ? "Cerrar la fase" : "Abrir la fase",
+        toggle: this.toggleFase(f.id),
+        futuroNota: f.a_futuro ? "Opcional: no cuenta para tu porcentaje de avance." : "",
+      };
+    });
+
+    const ON = { bg: "var(--sel-soft)", fg: "var(--sel)", weight: 600 };
+    const OFF = { bg: "transparent", fg: "var(--ink-2)", weight: 500 };
+
+    return {
+      themeClass: theme === "light" ? "theme-light" : "",
+      themeIcon: theme === "light" ? IC.sun : IC.moon,
+      toggleTheme: () => this.setState({ theme: theme === "light" ? "dark" : "light" }),
+
+      stripe: theme === "light" ? "rgba(30,82,170,0.05)" : "var(--hover)",
+      isLoading: estado === "cargando", isError: estado === "error",
+      isEmpty: estado === "sin-plan", isReady: estado === "listo",
+      skeletons: [1, 2, 3],
+
+      marca: PLAN.marca, documento: PLAN.documento,
+      subtitulo: `${PLAN.fases.length} fases · ${allIds.length} accionables`,
+
+      navGroups: NAV.map((g) => ({
+        label: g.label,
+        items: g.items.map((it) => ({ ...it,
+          ...(it.key === "plan" ? ON : it.stub ? { bg: "transparent", fg: "var(--ink-4)", weight: 500 } : OFF) })),
+      })),
+
+      pct, hechos, cuentan: cuentanIds.length,
+      fasesHechas: `${nDone} de ${fasesCuentan.length} fases cerradas`,
+      legendDone: `${nDone} completadas`, legendCurso: `${nCurso} en curso`,
+      legendPend: `${nPend} pendientes`, legendFuturo: `${nFuturoFases} más adelante`,
+      tramos, trackCols: tramos.map((t) => `${t.weight}fr`).join(" "),
+
+      filtros: FILTROS.map((f) => ({
+        ...f, count: countFor(f.key),
+        select: () => this.setState({ filtro: f.key }),
+        bg: s.filtro === f.key ? "var(--sel-soft)" : "var(--surface)",
+        fg: s.filtro === f.key ? "var(--sel)" : "var(--ink-3)",
+        border: s.filtro === f.key ? "transparent" : "var(--line)",
+        weight: s.filtro === f.key ? 600 : 500,
+      })),
+      collapseLabel: s.closedFases.length ? "Abrir todo" : "Cerrar todo",
+      collapseAll: () => this.setState((st) => ({
+        closedFases: st.closedFases.length ? [] : PLAN.fases.map((f) => f.id),
+      })),
+      resetFilter: () => this.setState({ filtro: "todas", responsable: null }),
+      sinMatch: fases.length === 0 ? "Ningún accionable con este filtro" : "",
+
+      seccionActiva: s.seccion,
+      secciones: SECCIONES.map((x) => ({
+        ...x, title: `Ir a ${x.label} del documento`,
+        select: () => this.setState({ seccion: x.id }),
+        bg: s.seccion === x.id ? "var(--sel-soft)" : "transparent",
+        border: s.seccion === x.id ? "transparent" : "var(--line)",
+        fg: s.seccion === x.id ? "var(--sel)" : "var(--ink-2)",
+        weight: s.seccion === x.id ? 700 : 500,
+      })),
+
+      responsables: Object.keys(RESP).map((n) => {
+        const ids = PLAN.fases.flatMap((f) => f.pasos.filter((p) => p.responsable === n).map((p) => p.id));
+        const activo = s.responsable === n;
+        return {
+          nombre: n, initial: n.charAt(0), tema: RESP[n].tema, color: RESP[n].color,
+          ratio: `${ids.filter((id) => this.isDone(id)).length}/${ids.length}`,
+          bg: activo ? "var(--sel-soft)" : "transparent",
+          border: activo ? "transparent" : "var(--line)",
+          select: () => this.setState({ responsable: activo ? null : n }),
+        };
+      }),
+
+      fases,
+      noop: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

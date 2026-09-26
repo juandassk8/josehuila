@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+</helmet>
+
+<div class="{{ themeClass }}" style="height: 100vh; display: grid; grid-template-columns: {{ sidebarWidth }} 1fr; background: var(--bg); transition: grid-template-columns .2s ease;">
+
+  <aside style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-solid); border-right: 1px solid var(--line); overflow: hidden;">
+    <div style="position: absolute; inset: 0; background: var(--glow); pointer-events: none;"></div>
+
+    <!-- Marca de la empresa -->
+    <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 20px 18px 14px;">
+      <div style="width: 34px; height: 34px; border-radius: 11px; background: rgba(88,166,255,0.14); display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(95,222,240,0.30), 0 0 24px rgba(88,166,255,0.34);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 0 7px rgba(95,222,240,0.85));"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" fill="var(--neon)"></path></svg>
+      </div>
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+          <div style="font-size: 15.5px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 18px rgba(95,222,240,0.40);">{{ companyLabel }}</div>
+          <div style="font-size: 11.5px; color: var(--neon); line-height: 1.1; text-shadow: 0 0 14px rgba(95,222,240,0.5);">Portal Inforce</div>
+        </div>
+        <button data-action="shell-cliente.toggle-tema" onClick="{{ toggleTheme }}" title="Cambiar tema" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2); background: var(--hover);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ themeIcon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+      </sc-if>
+      <button data-action="shell-cliente.colapsar-sidebar" onClick="{{ toggleSidebar }}" title="{{ collapseTitle }}" style="width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;" style-hover="border-color: var(--line-2); color: var(--ink-2); background: var(--hover);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="transform: {{ collapseIcon }};"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+
+    <!-- Buscador -->
+    <div style="position: relative; padding: 0 12px 14px;">
+      <button data-action="new:buscador-cliente" onClick="{{ openSearch }}" title="Buscar" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 13px; text-align: left; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <span style="flex: 1;">Buscar</span>
+          <kbd style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); border: 1px solid var(--line); border-radius: 6px; padding: 2px 5px;">⌘K</kbd>
+        </sc-if>
+      </button>
+    </div>
+
+    <!-- Nav gateado por rol -->
+    <nav style="position: relative; flex: 1; overflow-y: auto; min-height: 0; padding: 0 10px 12px; display: flex; flex-direction: column; gap: 16px;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <sc-if value="{{ group.showLabel }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size: 11px; font-weight: 600; color: var(--ink-4); padding: 5px 12px 7px;">{{ group.label }}</div>
+          </sc-if>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <a data-action="{{ item.action }}" href="#" onClick="{{ item.select }}" title="{{ item.label }}" style="display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 11px; font-size: 13.5px; cursor: pointer; background: {{ item.bg }}; color: {{ item.fg }}; font-weight: {{ item.weight }};" style-hover="background: var(--hover); color: var(--ink);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="{{ item.icon }}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+                <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.label }}</span>
+                <sc-if value="{{ item.count }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums;">{{ item.count }}</span>
+                </sc-if>
+              </sc-if>
+            </a>
+          </sc-for>
+        </div>
+      </sc-for>
+
+      <!-- Cambiar de empresa: solo admin de Inforce o cliente con varias -->
+      <sc-if value="{{ showCompanies }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 7px;">
+            <span style="font-size: 11px; font-weight: 600; color: var(--ink-4); flex: 1;">Empresas</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-4);">{{ companyCount }}</span>
+          </div>
+          <sc-for list="{{ companies }}" as="c" hint-placeholder-count="3">
+            <a data-action="shell-cliente.cambiar-empresa" href="#" onClick="{{ c.select }}" style="display: flex; align-items: center; gap: 11px; padding: 8px 12px; border-radius: 11px; font-size: 13px; cursor: pointer; background: {{ c.bg }}; color: {{ c.fg }}; font-weight: {{ c.weight }};" style-hover="background: var(--hover); color: var(--ink);">
+              <span style="width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #FFFFFF; flex-shrink: 0; background: {{ c.color }};">{{ c.initial }}</span>
+              <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ c.name }}</span>
+            </a>
+          </sc-for>
+          <button data-action="shell-cliente.empresas-archivadas" onClick="{{ toggleArchived }}" style="display: flex; align-items: center; gap: 11px; padding: 8px 12px; border-radius: 11px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 12.5px; text-align: left; width: 100%;" style-hover="background: var(--hover); color: var(--ink-2);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0; opacity: .85;"><path d="M3 5h18v4H3zM5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M9.5 13h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+            <span style="flex: 1;">{{ archivedLabel }}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-4);">{{ archivedCount }}</span>
+          </button>
+        </div>
+      </sc-if>
+    </nav>
+
+    <!-- Utilidades -->
+    <div style="position: relative; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px;">
+      <button data-action="shell-cliente.censurar" onClick="{{ toggleCensor }}" title="Censurar nombres para demos" style="width: 100%; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 11px; cursor: pointer; font-family: inherit; font-size: 12.5px; border: 1px solid {{ censorBorder }}; background: {{ censorBg }}; color: {{ censorFg }};">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M17.9 17.9A10 10 0 0 1 12 20c-7 0-10-8-10-8a18 18 0 0 1 5.1-5.9M1 1l22 22M9.9 4.2A10 10 0 0 1 12 4c7 0 10 8 10 8a18 18 0 0 1-2.2 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <span>{{ censorLabel }}</span>
+        </sc-if>
+      </button>
+      <button data-action="shell-cliente.tutoriales" onClick="{{ noop }}" title="Ver tutoriales" style="width: 100%; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 11px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 12.5px;" style-hover="border-color: var(--line-2); color: var(--ink-2);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 1 1 4.5 2.6c-.9.5-1.6 1.2-1.6 2.2v.3M12 17.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <span>Ver tutoriales</span>
+        </sc-if>
+      </button>
+      <sc-if value="{{ isInforceAdmin }}" hint-placeholder-val="{{ false }}">
+        <button data-action="shell-cliente.panel-general" onClick="{{ noop }}" title="Volver al panel general de Inforce" style="width: 100%; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 11px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-size: 12.5px;" style-hover="border-color: var(--line-2); color: var(--ink-2);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+            <span>Panel general</span>
+          </sc-if>
+        </button>
+      </sc-if>
+    </div>
+
+    <!-- Colaborador -->
+    <div style="position: relative; border-top: 1px solid var(--line); padding: 12px; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--purple); color: #FFFFFF; display: grid; place-items: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">{{ userInitial }}</div>
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ userName }}</div>
+          <div style="font-size: 11.5px; color: var(--ink-3);">{{ roleLabel }}</div>
+        </div>
+        <button data-action="shell-cliente.salir" onClick="{{ noop }}" title="Cerrar sesión" style="width: 30px; height: 30px; border-radius: 9px; border: none; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; flex-shrink: 0;" style-hover="background: var(--hover); color: var(--ink-2);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+      </sc-if>
+    </div>
+  </aside>
+
+  <main style="display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; position: relative; background-color: var(--bg); background-image: var(--ambient); background-attachment: local;">
+
+    <header style="display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 22px 36px 18px; flex-shrink: 0;">
+      <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-4);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span>{{ companyLabel }}</span>
+          <span style="opacity: .5;">/</span>
+          <span style="color: var(--ink-3);">{{ crumbLeaf }}</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;">
+          <h1 style="font-size: 30px; font-weight: 700; letter-spacing: -0.032em; color: var(--ink); line-height: 1.1;">{{ pageTitle }}</h1>
+          <span style="font-size: 13.5px; color: var(--ink-3);">{{ pageSubtitle }}</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+        <button data-action="new:alertas-cliente" onClick="{{ toggleAlerts }}" title="Alertas" style="position: relative; width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2); color: var(--ink);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="position: absolute; top: 7px; right: 7px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--brand); color: #FFFFFF; font-size: 10px; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--surface-solid); box-shadow: 0 0 12px rgba(226,75,74,0.6);">4</span>
+        </button>
+        <sc-for list="{{ ghostActions }}" as="a" hint-placeholder-count="1">
+          <button data-action="{{ a.action }}" style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 500; white-space: nowrap; box-shadow: var(--shadow);" style-hover="border-color: var(--line-2); color: var(--ink);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ a.icon }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            {{ a.label }}
+          </button>
+        </sc-for>
+        <sc-if value="{{ primaryAction }}" hint-placeholder-val="{{ true }}">
+          <button data-action="{{ primaryActionId }}" data-btn="primary" onClick="{{ noop }}" style="display: flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 12px; border: 1px solid rgba(111,184,255,0.42); background: linear-gradient(180deg, rgba(88,166,255,0.26), rgba(88,166,255,0.10)); color: #EAF4FF; cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 600; white-space: nowrap;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>
+            {{ primaryAction }}
+          </button>
+        </sc-if>
+      </div>
+    </header>
+
+    <div style="flex: 1; overflow-y: auto; min-height: 0; padding: 0 36px 48px;">
+      <div style="border: 1.5px dashed var(--line-2); border-radius: 20px; min-height: 420px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 48px 32px;">
+        <div style="width: 48px; height: 48px; border-radius: 15px; background: var(--surface-2); color: var(--ink-4); display: grid; place-items: center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+        </div>
+        <span style="font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink);">Contenido de {{ pageTitle }}</span>
+        <p style="font-size: 13.5px; line-height: 1.6; color: var(--ink-3); max-width: 52ch; text-wrap: pretty;">Este shell aporta el sidebar y el topbar. El contenido de cada pantalla vive en su propio archivo — por ejemplo <span style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink-2);">design/Cliente — Resumen.html</span>.</p>
+      </div>
+    </div>
+
+    <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeSearch }}" style="position: absolute; inset: 0; background: rgba(2,4,10,0.7); backdrop-filter: blur(4px); z-index: 50; display: flex; justify-content: center; padding-top: 96px; animation: fadeIn .14s ease;">
+        <div onClick="{{ stop }}" style="width: 600px; background: var(--surface-solid); border: 1px solid var(--line-2); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); height: fit-content; max-height: 440px; animation: popIn .18s cubic-bezier(.16,1,.3,1);">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line);">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="color: var(--ink-3);"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            <span style="flex: 1; font-size: 15px; color: var(--ink-3);">Buscar en tu portal…</span>
+            <kbd style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px;">ESC</kbd>
+          </div>
+          <div style="overflow-y: auto; padding: 8px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--ink-4); padding: 9px 12px 6px;">Ir a</div>
+            <sc-for list="{{ paletteItems }}" as="p" hint-placeholder-count="8">
+              <button data-action="{{ p.action }}" onClick="{{ p.select }}" style="width: 100%; display: flex; align-items: center; gap: 13px; padding: 11px 12px; border-radius: 12px; border: none; background: transparent; color: var(--ink-2); cursor: pointer; font-family: inherit; font-size: 14px; text-align: left;" style-hover="background: var(--hover); color: var(--ink);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0; color: var(--ink-3);"><path d="{{ p.icon }}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span style="flex: 1;">{{ p.label }}</span>
+                <span style="font-size: 11.5px; color: var(--ink-4);">{{ p.group }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1512,&quot;height&quot;:950},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;owner&quot;,&quot;options&quot;:[&quot;owner&quot;,&quot;project_manager&quot;,&quot;trafficker&quot;,&quot;copywriter&quot;,&quot;content&quot;,&quot;editor&quot;,&quot;designer&quot;,&quot;sin_rol&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Permisos&quot;},&quot;isInforceAdmin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Permisos&quot;},&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Mariana Restrepo&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+// Shell del workspace de cliente. Espeja CompanyWorkspace.jsx.
+// Nav gateado por rol según member_access.js / allowedNavForMember.
+const V = {
+  green: "var(--green)", amber: "var(--amber)", blue: "var(--blue)",
+  purple: "var(--purple)", pink: "var(--pink)", brand: "var(--brand)",
+};
+
+const IC = {
+  gauge: "M22 12h-4l-3 9L9 3l-3 9H2",
+  chart: "M4 20V10M10 20V4M16 20v-7M22 20v-12",
+  clipboard: "M9 3h6v3H9zM7 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2M9 12h6M9 16h4",
+  film: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM3 9h18M3 15h18M8.5 3v18M15.5 3v18",
+  funnel: "M3 4h18l-7 8v8l-4-2v-6L3 4z",
+  grid: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+  check: "M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9",
+  users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  trash: "M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6",
+  moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
+  sun: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+  down: "M12 4v14M6 13l6 6 6-6",
+  share: "M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13",
+  print: "M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5h20v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z",
+  gear: "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.3 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z",
+};
+
+// allowedNavForMember: qué ve cada rol del cliente.
+const ROLE_NAV = {
+  owner:           ["home", "reportes", "plan", "pipeline", "despliegue", "control", "tareas", "equipo", "papelera", "ajustes"],
+  project_manager: ["home", "reportes", "plan", "pipeline", "despliegue", "control", "tareas", "equipo", "papelera", "ajustes"],
+  trafficker:      ["home", "reportes", "plan", "despliegue", "control", "tareas", "equipo"],
+  copywriter:      ["home", "plan", "pipeline", "tareas", "equipo"],
+  content:         ["home", "plan", "pipeline", "tareas", "equipo"],
+  editor:          ["home", "pipeline", "control", "tareas", "equipo"],
+  designer:        ["home", "pipeline", "control", "tareas", "equipo"],
+  sin_rol:         ["home", "tareas", "equipo"],
+};
+
+const NAV = [
+  { label: "Resumen", items: [
+    { key: "home", label: "Resumen", icon: IC.gauge, action: "nav.resumen" },
+    { key: "reportes", label: "Reportes", icon: IC.chart, count: 8, action: "nav.reportes" },
+  ]},
+  { label: "Creativos", items: [
+    { key: "despliegue", label: "Despliegue", icon: IC.funnel, action: "nav.despliegue" },
+    { key: "pipeline", label: "Content Pipeline", icon: IC.film, count: 9, action: "nav.content-pipeline" },
+    { key: "control", label: "Control Creativos", icon: IC.grid, action: "nav.control-creativos" },
+  ]},
+  { label: "Operación", items: [
+    { key: "plan", label: "Plan de implementación", icon: IC.clipboard, action: "nav.plan" },
+    { key: "tareas", label: "Tareas", icon: IC.check, count: 7, action: "nav.tareas" },
+    { key: "equipo", label: "Equipo", icon: IC.users, action: "nav.equipo" },
+    { key: "papelera", label: "Papelera", icon: IC.trash, action: "nav.papelera" },
+    // stub: true en CompanyWorkspace.jsx — está en el nav pero todavía no navega.
+    { key: "ajustes", label: "Ajustes", icon: IC.gear, action: "nav.ajustes", stub: true },
+  ]},
+];
+
+const COMPANIES = [
+  { key: "natucer", name: "Natucer", initial: "N", color: V.blue },
+  { key: "dental", name: "Clínica Dental Sur", initial: "C", color: V.green },
+  { key: "aurora", name: "Grupo Aurora", initial: "A", color: V.amber },
+];
+
+const PAGE = {
+  home:       { leaf: "Resumen", title: "Resumen", sub: "Cómo va tu cuenta", action: "", actionId: "",
+                ghost: [{ label: "Compartir link", icon: IC.share, action: "resumen.compartir-link-cliente" }] },
+  reportes:   { leaf: "Reportes", title: "Reportes", sub: "8 reportes disponibles", action: "Nuevo reporte", actionId: "reportes.nuevo", ghost: [] },
+  plan:       { leaf: "Plan", title: "Plan de implementación", sub: "4 fases · 90 días", action: "", actionId: "",
+                ghost: [{ label: "Imprimir", icon: IC.print, action: "plan.imprimir" }] },
+  pipeline:   { leaf: "Content Pipeline", title: "Content Pipeline", sub: "9 piezas en producción", action: "Nuevo slot", actionId: "pipeline.nuevo-slot", ghost: [] },
+  despliegue: { leaf: "Despliegue", title: "Despliegue creativo", sub: "Embudo de anuncios", action: "", actionId: "",
+                ghost: [{ label: "Exportar", icon: IC.share, action: "despliegue.exportar" }] },
+  control:    { leaf: "Control Creativos", title: "Control de creativos", sub: "Entrega 12 · semana 30", action: "", actionId: "",
+                ghost: [{ label: "Descargar", icon: IC.down, action: "control.descargar" }] },
+  tareas:     { leaf: "Tareas", title: "Tareas", sub: "7 abiertas", action: "Nueva tarea", actionId: "tareas.nueva", ghost: [] },
+  equipo:     { leaf: "Equipo", title: "Tu equipo", sub: "5 personas asignadas", action: "Agregar persona", actionId: "equipo.agregar-persona", ghost: [] },
+  papelera:   { leaf: "Papelera", title: "Papelera", sub: "Se vacía a los 30 días", action: "", actionId: "",
+                ghost: [{ label: "Vaciar papelera", icon: IC.trash, action: "papelera.vaciar" }] },
+};
+
+class Component extends DCLogic {
+  state = {
+    view: "home", company: "natucer", theme: "dark", expanded: true,
+    censor: false, searchOpen: false, alertsOpen: false, showArchived: false,
+  };
+
+  componentDidMount() {
+    this._key = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); this.setState({ searchOpen: true }); }
+      if (e.key === "Escape") this.setState({ searchOpen: false, alertsOpen: false });
+    };
+    window.addEventListener("keydown", this._key);
+  }
+  componentWillUnmount() { window.removeEventListener("keydown", this._key); }
+
+  go(view) { return () => this.setState({ view, searchOpen: false }); }
+
+  renderVals() {
+    const s = this.state;
+    const role = this.props.role ?? "owner";
+    const isInforceAdmin = this.props.isInforceAdmin ?? false;
+    const userName = this.props.userName ?? "Mariana Restrepo";
+    const expanded = s.expanded;
+    const view = s.view;
+    const page = PAGE[view] || PAGE.home;
+
+    const ON = { bg: "var(--sel-soft)", fg: "var(--sel)", weight: 600 };
+    const OFF = { bg: "transparent", fg: "var(--ink-2)", weight: 500 };
+
+    const allowed = ROLE_NAV[role] || ROLE_NAV.sin_rol;
+    const navGroups = NAV
+      .map((g) => ({
+        label: g.label, showLabel: expanded,
+        items: g.items.filter((i) => allowed.includes(i.key)).map((it) => ({ ...it,
+          count: expanded && it.count ? it.count : "",
+          ...(it.key === view ? ON : it.stub ? { bg: "transparent", fg: "var(--ink-4)", weight: 500 } : OFF),
+          select: it.stub ? (e) => e.preventDefault() : this.go(it.key) })),
+      }))
+      .filter((g) => g.items.length > 0);
+
+    // La sección Empresas solo aparece si el usuario tiene acceso a varias.
+    const showCompanies = expanded && (isInforceAdmin || COMPANIES.length > 1);
+    const active = COMPANIES.find((c) => c.key === s.company) || COMPANIES[0];
+    const companyLabel = s.censor ? "Empresa 1" : active.name;
+
+    const paletteItems = NAV
+      .flatMap((g) => g.items.filter((i) => allowed.includes(i.key)).map((it) => ({ ...it, group: g.label })))
+      .map((p) => ({ ...p, select: this.go(p.key) }));
+
+    return {
+      themeClass: s.theme === "light" ? "theme-light" : "",
+      themeIcon: s.theme === "light" ? IC.sun : IC.moon,
+      toggleTheme: () => this.setState((st) => ({ theme: st.theme === "light" ? "dark" : "light" })),
+
+      expanded, sidebarWidth: expanded ? "252px" : "72px",
+      collapseIcon: expanded ? "rotate(0deg)" : "rotate(180deg)",
+      collapseTitle: expanded ? "Colapsar el menú" : "Expandir el menú",
+      toggleSidebar: () => this.setState((st) => ({ expanded: !st.expanded })),
+
+      companyLabel, navGroups, paletteItems,
+      showCompanies, companyCount: COMPANIES.length,
+      companies: COMPANIES.map((c) => ({ ...c,
+        name: s.censor ? `Empresa ${COMPANIES.indexOf(c) + 1}` : c.name,
+        ...(c.key === s.company ? ON : OFF),
+        select: () => this.setState({ company: c.key }) })),
+      showArchived: s.showArchived,
+      archivedLabel: s.showArchived ? "Ocultar archivadas" : "Ver archivadas",
+      archivedCount: 3,
+      toggleArchived: () => this.setState((st) => ({ showArchived: !st.showArchived })),
+
+      censor: s.censor,
+      censorLabel: s.censor ? "Mostrar nombres" : "Censurar nombres",
+      censorBg: s.censor ? "var(--sel-soft)" : "transparent",
+      censorFg: s.censor ? "var(--sel)" : "var(--ink-3)",
+      censorBorder: s.censor ? "transparent" : "var(--line)",
+      toggleCensor: () => this.setState((st) => ({ censor: !st.censor })),
+
+      isInforceAdmin,
+      userName, userInitial: userName.charAt(0),
+      roleLabel: {
+        owner: "Dueña", project_manager: "Project manager", trafficker: "Trafficker",
+        copywriter: "Copywriter", content: "Contenido", editor: "Editora",
+        designer: "Diseñador", sin_rol: "Colaborador",
+      }[role] || "Colaborador",
+
+      crumbLeaf: page.leaf, pageTitle: page.title, pageSubtitle: page.sub,
+      primaryAction: page.action, primaryActionId: page.actionId, ghostActions: page.ghost,
+
+      searchOpen: s.searchOpen,
+      openSearch: () => this.setState({ searchOpen: true }),
+      closeSearch: () => this.setState({ searchOpen: false }),
+      toggleAlerts: () => this.setState((st) => ({ alertsOpen: !st.alertsOpen })),
+      stop: (e) => e.stopPropagation(),
+      noop: () => {},
+    };
+  }
+}
+
+</script>
+</body>
+</html>
