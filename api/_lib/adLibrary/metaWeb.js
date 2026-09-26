@@ -98,28 +98,56 @@ export function parseWebResponse(body, pageId) {
 // Proxy de salida estable y opcional. Las credenciales van en variables aparte,
 // nunca en la URL, para que no aparezcan en logs. Una configuración inválida
 // detiene la corrida en lugar de salir en silencio por la IP del servidor.
-export function proxyFromEnv(env = process.env) {
-  const raw = env.ADLIB_PROXY_SERVER?.trim();
+export function proxyFromEnv(env = process.env, prefix = 'ADLIB_PROXY') {
+  const raw = env[`${prefix}_SERVER`]?.trim();
   if (!raw) return undefined;
   let url;
   try { url = new URL(raw); } catch { throw new Error('ADLIB_PROXY_INVALID'); }
   if (!['http:', 'https:', 'socks5:'].includes(url.protocol) || !url.hostname || !url.port || url.username || url.password
     || url.pathname.replace(/\/$/, '') || url.search || url.hash) throw new Error('ADLIB_PROXY_INVALID');
-  const username = env.ADLIB_PROXY_USERNAME?.trim(), password = env.ADLIB_PROXY_PASSWORD;
+  const username = env[`${prefix}_USERNAME`]?.trim(), password = env[`${prefix}_PASSWORD`];
   if (!!username !== !!password) throw new Error('ADLIB_PROXY_INVALID');
+  // Chromium rechaza SOCKS5 con usuario/contraseña al arrancar: usar el endpoint
+  // HTTP del proveedor o autorizar la IP del servidor sin credenciales.
+  if (url.protocol === 'socks5:' && username) throw new Error('ADLIB_PROXY_SOCKS_AUTH_UNSUPPORTED');
   return { server: `${url.protocol}//${url.host}`, ...(username ? { username, password } : {}) };
 }
 
+// Principal y respaldo. El respaldo solo cubre fallos de conexión del proxy;
+// un límite de Meta detiene la corrida y activa la espera global de siempre.
+export function proxiesFromEnv(env = process.env) {
+  const primary = proxyFromEnv(env), backup = proxyFromEnv(env, 'ADLIB_PROXY_BACKUP');
+  if (backup && !primary) throw new Error('ADLIB_PROXY_INVALID');
+  return [primary, backup].filter(Boolean);
+}
+
+const PROXY_FAILURE = /net::ERR_(PROXY_[A-Z_]+|SOCKS_[A-Z_]+|TUNNEL_CONNECTION_FAILED|NO_SUPPORTED_PROXIES)/;
+
 export class MetaWebCollector {
-  constructor({ browserType = chromium, maxPages = 500, maxDurationMs = 15 * 60_000, idleTimeoutMs = 30_000, proxy = proxyFromEnv() } = {}) {
-    Object.assign(this, { browserType, maxPages, maxDurationMs, idleTimeoutMs, proxy });
+  constructor({ browserType = chromium, maxPages = 500, maxDurationMs = 15 * 60_000, idleTimeoutMs = 30_000, proxies = proxiesFromEnv() } = {}) {
+    Object.assign(this, { browserType, maxPages, maxDurationMs, idleTimeoutMs, proxies });
   }
 
   async *pages(brand) {
+    const routes = this.proxies.length ? this.proxies : [undefined];
+    for (let index = 0; index < routes.length; index++) {
+      let delivered = false;
+      try {
+        for await (const page of this.pagesVia(brand, routes[index])) { delivered = true; yield page; }
+        return;
+      } catch (error) {
+        // Solo se cambia de salida si el proxy no conectó y aún no llegó ningún dato.
+        if (error.message !== 'META_PROXY_UNAVAILABLE' || delivered || index === routes.length - 1) throw error;
+        console.warn('[ad-library] proxy unavailable, using backup', index + 1);
+      }
+    }
+  }
+
+  async *pagesVia(brand, proxy) {
     if (!/^\d{5,25}$/.test(brand.meta_page_id) || !/^(ALL|[A-Z]{2})$/.test(brand.country || 'ALL')) throw new Error('META_INVALID_BRAND');
     const browser = await this.browserType.launch({
       ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}),
-      ...(this.proxy ? { proxy: this.proxy } : {}),
+      ...(proxy ? { proxy } : {}),
     });
     const pending = new Set();
     const batches = [];
@@ -156,7 +184,9 @@ export class MetaWebCollector {
       });
       const url = new URL('https://www.facebook.com/ads/library/');
       Object.entries({ active_status: brand.last_complete_scan_at ? 'active' : 'all', ad_type: 'all', country: brand.country || 'ALL', search_type: 'page', view_all_page_id: brand.meta_page_id }).forEach(([key, value]) => url.searchParams.set(key, value));
-      const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 45_000 });
+      const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 45_000 }).catch(error => {
+        throw PROXY_FAILURE.test(error.message || '') ? new Error('META_PROXY_UNAVAILABLE', { cause: error }) : error;
+      });
       if (response?.status() === 429) throw new Error('META_RATE_LIMITED');
       const readScripts = async () => {
         try { for (const body of await page.locator('script[type="application/json"]').allTextContents()) ingest(body); }
