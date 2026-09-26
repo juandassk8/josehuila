@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
+import { startSocksBridge } from './socksBridge.js';
+import { metaRateLimitError, sourceCooldownMs } from './retryPolicy.js';
 
 const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const text = value => typeof value === 'string' && value.trim() ? value.trim() : null;
@@ -95,14 +97,96 @@ export function parseWebResponse(body, pageId) {
   return batches;
 }
 
+// Proxy de salida estable y opcional. Las credenciales van en variables aparte,
+// nunca en la URL, para que no aparezcan en logs. Una configuración inválida
+// detiene la corrida en lugar de salir en silencio por la IP del servidor.
+export function proxyFromEnv(env = process.env, prefix = 'ADLIB_PROXY') {
+  const raw = env[`${prefix}_SERVER`]?.trim();
+  if (!raw) return undefined;
+  let url;
+  try { url = new URL(raw); } catch { throw new Error('ADLIB_PROXY_INVALID'); }
+  if (!['http:', 'https:', 'socks5:'].includes(url.protocol) || !url.hostname || !url.port || url.username || url.password
+    || url.pathname.replace(/\/$/, '') || url.search || url.hash) throw new Error('ADLIB_PROXY_INVALID');
+  const username = env[`${prefix}_USERNAME`]?.trim(), password = env[`${prefix}_PASSWORD`];
+  if (!!username !== !!password) throw new Error('ADLIB_PROXY_INVALID');
+  return { server: `${url.protocol}//${url.host}`, ...(username ? { username, password } : {}) };
+}
+
+// Principal y respaldo configurados explícitamente; nunca se añade una salida directa.
+export function proxiesFromEnv(env = process.env) {
+  const primary = proxyFromEnv(env), backup = proxyFromEnv(env, 'ADLIB_PROXY_BACKUP');
+  if (backup && !primary) throw new Error('ADLIB_PROXY_INVALID');
+  return [primary, backup].filter(Boolean);
+}
+
+const PROXY_FAILURE = /net::ERR_(PROXY_[A-Z_]+|SOCKS_[A-Z_]+|TUNNEL_CONNECTION_FAILED|NO_SUPPORTED_PROXIES)/;
+
+export class ProxyCooldowns {
+  constructor(now = Date.now) { this.now = now; this.until = new Map(); }
+  key(proxy) { return hash([proxy?.server || 'direct', proxy?.username || '']); }
+  remaining(proxy) {
+    const key = this.key(proxy);
+    const remaining = Math.max(0, (this.until.get(key) || 0) - this.now());
+    if (!remaining) this.until.delete(key);
+    return remaining;
+  }
+  block(proxy, duration) { this.until.set(this.key(proxy), this.now() + duration); }
+}
+
+// Shared across brands in this worker, so the next brand uses the healthy route.
+const workerProxyCooldowns = new ProxyCooldowns();
+
 export class MetaWebCollector {
-  constructor({ browserType = chromium, maxPages = 500, maxDurationMs = 15 * 60_000, idleTimeoutMs = 30_000 } = {}) {
-    Object.assign(this, { browserType, maxPages, maxDurationMs, idleTimeoutMs });
+  constructor({ browserType = chromium, maxPages = 500, maxDurationMs = 15 * 60_000, idleTimeoutMs = 30_000, proxies = proxiesFromEnv(),
+    proxyCooldowns = workerProxyCooldowns, cooldownMs = sourceCooldownMs() } = {}) {
+    Object.assign(this, { browserType, maxPages, maxDurationMs, idleTimeoutMs, proxies, proxyCooldowns, cooldownMs });
   }
 
   async *pages(brand) {
+    const routes = this.proxies.length ? this.proxies : [undefined];
+    const delivered = new Set();
+    let lastError;
+    for (let index = 0; index < routes.length; index++) {
+      const proxy = routes[index];
+      if (this.proxyCooldowns.remaining(proxy)) continue;
+      try {
+        for await (const page of this.pagesVia(brand, proxy)) {
+          const ads = page.ads.filter(ad => {
+            const key = hash([ad.source_ad_id, ad.content_hash, ad.status]);
+            if (delivered.has(key)) return false;
+            delivered.add(key);
+            return true;
+          });
+          yield { ...page, ads };
+        }
+        return;
+      } catch (error) {
+        if (!['META_PROXY_UNAVAILABLE', 'META_RATE_LIMITED'].includes(error.message)) throw error;
+        lastError = error;
+        if (error.message === 'META_RATE_LIMITED') this.proxyCooldowns.block(proxy, this.cooldownMs);
+        if (index < routes.length - 1) console.warn('[ad-library] retrying configured route', error.message, index + 2);
+      }
+    }
+    const remaining = routes.map(proxy => this.proxyCooldowns.remaining(proxy)).filter(ms => ms > 0);
+    if (remaining.length) throw metaRateLimitError(Math.min(...remaining));
+    throw lastError || new Error('META_PROXY_UNAVAILABLE');
+  }
+
+  async *pagesVia(brand, proxy) {
     if (!/^\d{5,25}$/.test(brand.meta_page_id) || !/^(ALL|[A-Z]{2})$/.test(brand.country || 'ALL')) throw new Error('META_INVALID_BRAND');
-    const browser = await this.browserType.launch(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {});
+    // Chromium no admite SOCKS5 autenticado: en ese caso sale por un puente local.
+    const socksUrl = proxy?.username && proxy.server.startsWith('socks5:') ? new URL(proxy.server) : null;
+    // El tráfico de fondo de Chrome (servicios de Google) no gasta el proxy.
+    const bridge = socksUrl ? await startSocksBridge({ host: socksUrl.hostname, port: Number(socksUrl.port), username: proxy.username, password: proxy.password },
+      { allowedHosts: /(^|\.)(facebook\.com|fbcdn\.net|fbsbx\.com)$/ }) : null;
+    let browser;
+    try {
+      browser = await this.browserType.launch({
+        ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}),
+        ...(proxy ? { proxy: bridge ? { server: bridge.server } : proxy } : {}),
+      });
+    } catch (error) { await bridge?.close(); throw error; }
+    let context;
     const pending = new Set();
     const batches = [];
     const seen = new Set();
@@ -119,7 +203,8 @@ export class MetaWebCollector {
       }
     };
     try {
-      const page = await browser.newPage({ locale: 'en-US', viewport: { width: 1280, height: 1000 } });
+      context = await browser.newContext({ locale: 'en-US', viewport: { width: 1280, height: 1000 }, storageState: { cookies: [], origins: [] } });
+      const page = await context.newPage();
       await page.route('**/*', route => {
         const request = route.request();
         const url = new URL(request.url());
@@ -138,7 +223,9 @@ export class MetaWebCollector {
       });
       const url = new URL('https://www.facebook.com/ads/library/');
       Object.entries({ active_status: brand.last_complete_scan_at ? 'active' : 'all', ad_type: 'all', country: brand.country || 'ALL', search_type: 'page', view_all_page_id: brand.meta_page_id }).forEach(([key, value]) => url.searchParams.set(key, value));
-      const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 45_000 });
+      const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 45_000 }).catch(error => {
+        throw PROXY_FAILURE.test(error.message || '') ? new Error('META_PROXY_UNAVAILABLE', { cause: error }) : error;
+      });
       if (response?.status() === 429) throw new Error('META_RATE_LIMITED');
       const readScripts = async () => {
         try { for (const body of await page.locator('script[type="application/json"]').allTextContents()) ingest(body); }
@@ -169,8 +256,9 @@ export class MetaWebCollector {
         if (!pageCount) await readScripts();
       }
     } finally {
-      await browser.close();
-      await Promise.allSettled(pending);
+      await Promise.allSettled([context?.close()]);
+      await Promise.allSettled([browser.close(), ...pending]);
+      await bridge?.close();
     }
   }
 }

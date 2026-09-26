@@ -5,6 +5,7 @@ import { serviceClient } from '../../api/_lib/auth.js';
 import { createCollector } from '../../api/_lib/adLibrary/collectors.js';
 import { nextCrawlDelayMs } from '../../api/_lib/adLibrary/core.js';
 import { redisConnection, enqueueMedia } from '../../api/_lib/adLibrary/queue.js';
+import { rateLimitDelayMs, metaRateLimitError } from '../../api/_lib/adLibrary/retryPolicy.js';
 
 function data(response) {
   if (response.error) throw new Error(response.error.message || 'DATABASE_ERROR');
@@ -90,25 +91,29 @@ export async function crawlBrand(brandId, { client = serviceClient(), collectorF
     }).eq('id', run.id);
     await client.from('ad_library_brands').update({
       last_crawl_at: now, last_crawl_status: 'failed',
-      next_crawl_at: plusMs(nextCrawlDelayMs({ failed: true })),
+      next_crawl_at: plusMs(code === 'META_RATE_LIMITED' ? rateLimitDelayMs(error) : nextCrawlDelayMs({ failed: true })),
     }).eq('id', brandId);
+    if (code === 'META_RATE_LIMITED') throw metaRateLimitError(rateLimitDelayMs(error));
     throw new Error(code, { cause: error });
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const worker = new Worker('ad-library-crawls', async job => {
-    try { return await crawlBrand(job.data.brandId, { onProgress: progress => job.updateProgress(progress) }); }
-    catch (error) {
-      if (error.message === 'META_RATE_LIMITED') {
-        // Cool down the shared source queue, including other brands on this VPS.
-        await worker.rateLimit(6 * 60 * 60_000);
-        console.warn('[ad-library] source cooldown', 'META_RATE_LIMITED', '6h');
-        throw Worker.RateLimitError();
-      }
-      throw error;
+export async function processCrawlJob(job, worker, { crawl = crawlBrand } = {}) {
+  try { return await crawl(job.data.brandId, { onProgress: progress => job.updateProgress(progress) }); }
+  catch (error) {
+    if (error.message === 'META_RATE_LIMITED') {
+      const delayMs = rateLimitDelayMs(error);
+      // The collector has already exhausted the configured proxies.
+      await worker.rateLimit(delayMs);
+      console.warn('[ad-library] configured routes exhausted; retry in seconds', Math.ceil(delayMs / 1000));
+      throw Worker.RateLimitError();
     }
-  }, {
+    throw error;
+  }
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const worker = new Worker('ad-library-crawls', job => processCrawlJob(job, worker), {
     connection: redisConnection(), concurrency: Number(process.env.ADLIB_WORKER_CONCURRENCY || 1),
     limiter: { max: 1, duration: 1000 },
   });

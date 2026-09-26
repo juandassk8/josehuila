@@ -53,9 +53,25 @@ export async function crawlQueueStatus(brandId, { queueFactory = crawlQueue, tim
   finally { clearTimeout(timer); }
 }
 
-export async function enqueueBrand(brandId) {
-  return crawlQueue().add('crawl-brand', { brandId }, {
+// Menor número = antes. BullMQ procesa primero los trabajos sin prioridad (0),
+// por eso las actualizaciones programadas también llevan una: así una marca
+// recién seguida nunca espera detrás del catálogo.
+export const CRAWL_PRIORITY = { first_import: 1, manual: 2, scheduled: 10 };
+
+export async function enqueueBrand(brandId, { reason = 'scheduled', queueFactory = crawlQueue } = {}) {
+  const priority = CRAWL_PRIORITY[reason] ?? CRAWL_PRIORITY.scheduled;
+  const queue = queueFactory();
+  const existing = await queue.getJob(`brand-${brandId}`);
+  if (existing) {
+    // Solo adelanta trabajos que siguen esperando; nunca los duplica, retrasa ni reinicia.
+    const current = existing.priority ?? existing.opts?.priority ?? 0;
+    if ((current === 0 || priority < current) && ['waiting', 'prioritized'].includes(await existing.getState()))
+      await existing.changePriority({ priority });
+    return existing;
+  }
+  return queue.add('crawl-brand', { brandId }, {
     jobId: `brand-${brandId}`,
+    priority,
     attempts: 3,
     backoff: { type: 'exponential', delay: 60_000 },
     removeOnComplete: true,

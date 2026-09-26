@@ -28,16 +28,24 @@ pero Meta limitó la segunda página. La corrida es parcial y no prueba que se
 pueda importar una marca completa desde el VPS. Bonapet tenía 71 anuncios de una
 captura previa importada. Prodental todavía no tenía una importación completada.
 
-Release observada tras el despliegue de Claude: `/opt/inforce/releases/20260926-scraper-proxy`.
-Compone la base MCP `2179cd1` y los ocho archivos de `claude/scraper` (`6303344`).
-La rama del scraper está publicada por separado; no desplegar esta rama sin
-incorporar ese trabajo o partir del código activo. El cambio de dominio solo
-actualizó la configuración de `/etc`, conservando esa release y sus contenedores.
+Release de esta entrega: `/opt/inforce/releases/20260926-proxy-failover`.
+Integra los ocho archivos de `claude/scraper` (`6303344`), MCP, el dominio y la
+recuperación automática mediante el proxy de respaldo. `SOURCE_COMMIT` y
+`SOURCE_MANIFEST.json` identifican sus archivos versionados. La configuración
+activa de dominio en `/etc` se conserva y no se reinstala durante este cambio.
 Conserva las dependencias de `/opt/inforce/releases/20260926-creative-mcp`;
 no borrar esa release mientras el enlace `node_modules` siga usándola.
-Worker y scheduler usan `inforce-ad-library:scraper-proxy`; media-worker conserva
-`inforce-ad-library:local`. Los videos
+Worker usa `inforce-ad-library:proxy-failover`; scheduler conserva
+`inforce-ad-library:scraper-proxy` y media-worker `inforce-ad-library:local`. Los videos
 y las imágenes van a R2 privado, deduplicados por SHA-256. No se versionan aquí.
+
+Actualización de esta entrega: se integra `claude/scraper` y se amplía la
+recuperación a límites de Meta, con navegador/contexto nuevo por intento y
+deduplicación al reiniciar mediante el respaldo. La pausa fija por bloqueo de
+seis horas se reemplaza por 15 minutos configurables, solo cuando se agotan las
+salidas. Ver [operación y pruebas](../deploy/ad-library/README.md). Antes de
+activar esta entrega, los tres recorridos LIVE de la versión de Claude terminaron:
+ProdentaCol 9 anuncios, Bonapet 71 y Peluna 266 (245 anuncios nuevos en conjunto).
 
 ## Creación de imágenes: prueba MCP
 
@@ -48,9 +56,8 @@ El conector está activo; falta probar la generación nativa y la devolución de
 archivo con una cuenta Pro real. Inforce no invoca la suscripción como una API.
 Ver [alcance, pruebas y conexión](creative-images-mcp.md).
 
-La entrega MCP forma parte de esta base de código. `SOURCE_COMMIT` identifica la
-base de la release; consultar también los cambios posteriores de Claude en la
-bitácora y contrastar sus archivos antes de desplegar. Actualizar las ramas de
+La entrega MCP y el scraper de Claude forman parte de esta base de código.
+Consultar también cambios posteriores en la bitácora antes de desplegar. Actualizar las ramas de
 trabajo desde `origin/main` y consultar la bitácora compartida antes de desplegar
 trabajo de otro agente. La entrega móvil de Claude se mantiene en su propia rama
 hasta corregir y revisar el hallazgo pendiente.

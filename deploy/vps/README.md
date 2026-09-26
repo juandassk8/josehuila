@@ -81,9 +81,9 @@ Solo continuar con el inicio si la migración termina correctamente. No ejecutar
 ## Operación
 
 Código activo: `/opt/inforce/current`. El 26/09/2026 apunta a
-`/opt/inforce/releases/20260926-scraper-proxy`: base MCP `2179cd1` más los ocho
-archivos de `claude/scraper` (`6303344`). Consultar el enlace y la bitácora antes
-de cada despliegue; no instalar una copia de una rama que omita esos cambios.
+`/opt/inforce/releases/20260926-proxy-failover`, que integra MCP y el scraper
+de Claude (`6303344`) con recuperación mediante el proxy de respaldo. Consultar
+el enlace, `SOURCE_COMMIT`, el manifiesto y la bitácora antes de cada despliegue.
 
 ```sh
 systemctl status inforce-api inforce-data nginx postgresql

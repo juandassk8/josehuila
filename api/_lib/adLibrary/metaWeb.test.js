@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { mediaSource, normalizeMetaWebAd, parseWebResponse } from './metaWeb.js';
+import { describe, expect, it, vi } from 'vitest';
+import { MetaWebCollector, ProxyCooldowns, mediaSource, normalizeMetaWebAd, parseWebResponse, proxiesFromEnv, proxyFromEnv } from './metaWeb.js';
 
 const raw = () => ({ ad_archive_id: '2348098406020535', page_id: '646751588512715', is_active: true, start_date: 1789801200, end_date: 1790319600,
   snapshot: { page_name: 'Bonapet', body: { text: 'Copy de prueba' }, title: 'Título', cta_text: 'Shop now', link_url: 'https://www.bonapet.shop/products/test',
@@ -43,5 +43,143 @@ describe('public Meta page normalization', () => {
     expect(() => parseWebResponse(JSON.stringify({ errors: [{ code: 1675004, message: 'Rate limit exceeded' }] }), raw().page_id)).toThrow('META_RATE_LIMITED');
     expect(() => parseWebResponse('for (;;);' + JSON.stringify({ error: 1675004 }), raw().page_id)).toThrow('META_RATE_LIMITED');
     expect(() => parseWebResponse(JSON.stringify({ errors: [{ message: 'Unknown failure' }] }), raw().page_id)).toThrow('META_SOURCE_ERROR');
+  });
+});
+
+describe('optional egress proxy', () => {
+  it('uses the server IP when no proxy is configured', () => {
+    expect(proxyFromEnv({})).toBeUndefined();
+    expect(proxyFromEnv({ ADLIB_PROXY_SERVER: '  ' })).toBeUndefined();
+  });
+  it('keeps credentials out of the server URL', () => {
+    expect(proxyFromEnv({ ADLIB_PROXY_SERVER: 'http://proxy.example:8080', ADLIB_PROXY_USERNAME: 'user', ADLIB_PROXY_PASSWORD: 'secret' }))
+      .toEqual({ server: 'http://proxy.example:8080', username: 'user', password: 'secret' });
+    expect(proxyFromEnv({ ADLIB_PROXY_SERVER: 'socks5://10.0.0.2:1080/' })).toEqual({ server: 'socks5://10.0.0.2:1080' });
+  });
+  it('routes authenticated SOCKS5 through a local bridge because Chromium cannot authenticate it', async () => {
+    const proxy = proxyFromEnv({ ADLIB_PROXY_SERVER: 'socks5://10.0.0.2:1080', ADLIB_PROXY_USERNAME: 'u', ADLIB_PROXY_PASSWORD: 'p' });
+    expect(proxy).toEqual({ server: 'socks5://10.0.0.2:1080', username: 'u', password: 'p' });
+    let options;
+    const browserType = { launch: async value => { options = value; throw new Error('STOP'); } };
+    await expect(new MetaWebCollector({ browserType, proxies: [proxy] }).pages({ meta_page_id: '646751588512715' }).next()).rejects.toThrow('STOP');
+    expect(options.proxy.server).toMatch(/^http:\/\/127\.0\.0\.1:\d+$/);
+    expect(JSON.stringify(options)).not.toContain('"p"');
+  });
+  it('reads an optional backup, never a backup alone', () => {
+    expect(proxiesFromEnv({ ADLIB_PROXY_SERVER: 'http://a.example:1', ADLIB_PROXY_BACKUP_SERVER: 'http://b.example:2' }))
+      .toEqual([{ server: 'http://a.example:1' }, { server: 'http://b.example:2' }]);
+    expect(proxiesFromEnv({})).toEqual([]);
+    expect(() => proxiesFromEnv({ ADLIB_PROXY_BACKUP_SERVER: 'http://b.example:2' })).toThrow('ADLIB_PROXY_INVALID');
+  });
+  it('fails closed on invalid configuration instead of silently using the server IP', () => {
+    for (const env of [
+      { ADLIB_PROXY_SERVER: 'proxy.example:8080' },
+      { ADLIB_PROXY_SERVER: 'ftp://proxy.example:21' },
+      { ADLIB_PROXY_SERVER: 'http://proxy.example' },
+      { ADLIB_PROXY_SERVER: 'http://user:secret@proxy.example:8080' },
+      { ADLIB_PROXY_SERVER: 'http://proxy.example:8080/path?x=1' },
+      { ADLIB_PROXY_SERVER: 'http://proxy.example:8080', ADLIB_PROXY_USERNAME: 'user' },
+    ]) expect(() => proxyFromEnv(env)).toThrow('ADLIB_PROXY_INVALID');
+  });
+  it('launches the browser through the configured proxy', async () => {
+    let options;
+    const browserType = { launch: async value => { options = value; throw new Error('STOP'); } };
+    const collector = new MetaWebCollector({ browserType, proxies: [{ server: 'http://proxy.example:8080' }] });
+    await expect(collector.pages({ meta_page_id: '646751588512715' }).next()).rejects.toThrow('STOP');
+    expect(options.proxy).toEqual({ server: 'http://proxy.example:8080' });
+  });
+});
+
+describe('backup proxy', () => {
+  const brand = { meta_page_id: '646751588512715' };
+  const collect = async collector => { const pages = []; for await (const page of collector.pages(brand)) pages.push(page); return pages; };
+  const collectorWith = (behaviour, proxyCooldowns = new ProxyCooldowns()) => {
+    const collector = new MetaWebCollector({ proxies: [{ server: 'http://a.example:1' }, { server: 'http://b.example:2' }], proxyCooldowns });
+    const used = [];
+    collector.pagesVia = async function* (_, proxy) { used.push(proxy.server); yield* behaviour(proxy.server); };
+    return { collector, used };
+  };
+  it('switches to the backup when the primary proxy cannot connect', async () => {
+    const { collector, used } = collectorWith(async function* (server) {
+      if (server === 'http://a.example:1') throw new Error('META_PROXY_UNAVAILABLE');
+      yield { ads: [], page: 1 };
+    });
+    expect(await collect(collector)).toEqual([{ ads: [], page: 1 }]);
+    expect(used).toEqual(['http://a.example:1', 'http://b.example:2']);
+  });
+  it('exhausts both configured routes once and reports the remaining pause', async () => {
+    const { collector, used } = collectorWith(async function* () { yield* []; throw new Error('META_RATE_LIMITED'); });
+    await expect(collect(collector)).rejects.toMatchObject({ message: 'META_RATE_LIMITED', retryAfterMs: expect.any(Number) });
+    expect(used).toEqual(['http://a.example:1', 'http://b.example:2']);
+    used.length = 0;
+    await expect(collect(collector)).rejects.toThrow('META_RATE_LIMITED');
+    expect(used).toEqual([]);
+  });
+  it.each(['META_PROXY_UNAVAILABLE', 'META_RATE_LIMITED'])('preserves partial ads and deduplicates the restarted scan after %s', async code => {
+    const first = { source_ad_id: '1', content_hash: 'a', status: 'active' };
+    const second = { source_ad_id: '2', content_hash: 'b', status: 'active' };
+    const { collector, used } = collectorWith(async function* (server) {
+      if (server === 'http://a.example:1') { yield { ads: [first], page: 1 }; throw new Error(code); }
+      yield { ads: [first, second], page: 1 };
+    });
+    const pages = await collect(collector);
+    expect(pages.flatMap(page => page.ads)).toEqual([first, second]);
+    expect(used).toEqual(['http://a.example:1', 'http://b.example:2']);
+  });
+  it('uses the healthy route for subsequent brands until the primary cooldown expires', async () => {
+    let now = 0;
+    const cooldowns = new ProxyCooldowns(() => now);
+    const behaviour = async function* (server) {
+      if (server === 'http://a.example:1') throw new Error('META_RATE_LIMITED');
+      yield { ads: [], page: 1 };
+    };
+    const first = collectorWith(behaviour, cooldowns);
+    await collect(first.collector);
+    const second = collectorWith(behaviour, cooldowns);
+    await collect(second.collector);
+    expect(second.used).toEqual(['http://b.example:2']);
+    now = 15 * 60_000 + 1;
+    const third = collectorWith(behaviour, cooldowns);
+    await collect(third.collector);
+    expect(third.used).toEqual(['http://a.example:1', 'http://b.example:2']);
+  });
+  it('never adds a direct route when both proxies cannot connect', async () => {
+    const { collector, used } = collectorWith(async function* () { yield* []; throw new Error('META_PROXY_UNAVAILABLE'); });
+    await expect(collect(collector)).rejects.toThrow('META_PROXY_UNAVAILABLE');
+    expect(used).toEqual(['http://a.example:1', 'http://b.example:2']);
+  });
+  it.each(['META_ACCESS_REQUIRED', 'META_PAGE_MISMATCH', 'META_SCHEMA_CHANGED', 'META_SOURCE_ERROR'])('does not restart on %s', async code => {
+    const { collector, used } = collectorWith(async function* () { yield* []; throw new Error(code); });
+    await expect(collect(collector)).rejects.toThrow(code);
+    expect(used).toEqual(['http://a.example:1']);
+  });
+  it('closes the limited browser before opening a separate empty context for the backup', async () => {
+    const events = [], contexts = [];
+    const browserType = { launch: vi.fn(async ({ proxy }) => {
+      const primary = proxy.server === 'http://a.example:1';
+      events.push(`launch:${primary}`);
+      return {
+        newContext: async options => {
+          contexts.push(options);
+          return {
+            newPage: async () => ({
+              route: async () => {}, on: () => {},
+              goto: async () => ({ status: () => primary ? 429 : 200 }),
+              url: () => 'https://www.facebook.com/ads/library/',
+              locator: () => ({ allTextContents: async () => [JSON.stringify(payload(raw()))] }),
+            }),
+            close: async () => events.push(`contextClosed:${primary}`),
+          };
+        },
+        close: async () => events.push(`browserClosed:${primary}`),
+      };
+    }) };
+    const collector = new MetaWebCollector({ browserType, proxyCooldowns: new ProxyCooldowns(),
+      proxies: [{ server: 'http://a.example:1' }, { server: 'http://b.example:2' }] });
+    expect((await collect(collector)).flatMap(page => page.ads)).toHaveLength(1);
+    expect(contexts).toHaveLength(2);
+    for (const context of contexts) expect(context.storageState).toEqual({ cookies: [], origins: [] });
+    expect(contexts[0]).not.toBe(contexts[1]);
+    expect(events).toEqual(['launch:true', 'contextClosed:true', 'browserClosed:true', 'launch:false', 'contextClosed:false', 'browserClosed:false']);
   });
 });

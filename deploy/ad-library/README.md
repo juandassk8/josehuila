@@ -8,7 +8,12 @@ Se integra en **Creativos → Bibliotecas de anuncios**, tanto en el equipo como
 - La primera importación recorre todos los resultados disponibles; después de una corrida completa consulta activos. Los IDs y hashes evitan duplicar anuncios y versiones. La expiración de las firmas del CDN no crea versiones nuevas.
 - Solo el fin explícito de la paginación confirma una corrida completa. Fallos, límites, cambios de formato o una página distinta no marcan anuncios ausentes. Se requieren dos recorridos completos sin observar un anuncio para pasar a `not_observed`, que no afirma una pausa confirmada por Meta.
 - BullMQ ejecuta los crawls y las descargas de medios en colas separadas, con tres intentos y backoff exponencial. El scheduler consulta marcas únicas vencidas cada cinco minutos; programa seis horas si hubo cambios y 24 horas si no los hubo.
-- El error de Meta `1675004` o HTTP 429 produce `META_RATE_LIMITED` y una espera global de seis horas en la cola de recolección. Las colas de medios siguen siendo independientes. Un error de GraphQL entregado con HTTP 200 tampoco se trata como éxito.
+- El error de Meta `1675004` o HTTP 429 produce `META_RATE_LIMITED`. El collector
+  cierra el navegador e intenta el siguiente proxy configurado, sin volver a
+  emitir versiones de anuncios ya entregadas en esa consulta. Si se agotan las
+  salidas, la pausa global es configurable y vale **15 minutos** por defecto.
+  Las colas de medios siguen siendo independientes. Un error de GraphQL con HTTP
+  200 tampoco se trata como éxito.
 - Las descargas solo aceptan URLs de medios de Meta, validan DNS/redirecciones, firma del tipo de archivo y un máximo de 100 MiB por archivo. Se procesan de una en una. No se descargan las landing pages.
 - R2 privado guarda los bytes por SHA-256; PostgreSQL guarda metadatos, versiones y referencias. Una fuente de medio ya archivada se reutiliza entre anuncios. Un trabajo obsoleto no puede reemplazar el creativo de una versión posterior.
 - `S3MediaStorage` y `R2MediaStorage` implementan `put`, `signedRead` y `close`. `MEDIA_STORAGE_PROVIDER=s3` permite configurar otro endpoint mediante `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID` y `S3_SECRET_ACCESS_KEY`.
@@ -34,6 +39,48 @@ La prueba desde el VPS obtuvo 29 anuncios y después Meta devolvió `1675004`; n
 Comprobaciones: `ad-library-queue-smoke.mjs` procesa un job temporal con deduplicación y reintento; `ad-library-integration-smoke.mjs` crea y elimina dos empresas de prueba para verificar límites de acceso e historial; `ad-library-ui-smoke.mjs` usa una cuenta temporal de lectura y comprueba la biblioteca en el navegador.
 
 Antes de ampliar a 100 marcas o 500.000 anuncios hay que medir estabilidad, memoria del navegador, volumen real de medios y respaldo/restauración. Los resultados dependen de lo que Meta publique y permita cargar en cada consulta. El tiempo activo no demuestra ventas o rentabilidad. El descubrimiento con IA es una etapa posterior.
+
+## Recuperación con proxy y navegador limpio
+
+Desde el 26/09/2026, por instrucción del usuario, se sustituye la espera fija de
+seis horas tras un límite de Meta:
+
+1. Cada intento usa un proceso de Chrome nuevo y un contexto sin cookies ni
+   almacenamiento local previo. Al finalizar se cierran contexto, navegador y
+   puente SOCKS5. No se usa un perfil persistente ni cookies de usuarios.
+2. Ante `META_RATE_LIMITED` o `META_PROXY_UNAVAILABLE`, se intenta el otro proxy
+   configurado una vez, incluso si el primero entregó datos parciales. La consulta
+   empieza de nuevo y deduplica por anuncio/versión antes de guardar. Un recorrido
+   se declara completo únicamente si una salida termina la paginación.
+3. El worker recuerda temporalmente qué proxy recibió el límite y lo omite en
+   las siguientes marcas hasta que venza su pausa. Este estado vive en memoria
+   del worker; la pausa global al agotar las salidas se conserva en Redis.
+4. Si ambas salidas están limitadas, el job conserva su lugar y reintenta cuando
+   venza el intervalo restante. `ADLIB_RATE_LIMIT_COOLDOWN_SECONDS` acepta de 60 a
+   3600 segundos; valores ausentes o inválidos usan 900. El próximo intento de la
+   marca refleja ese mismo plazo. No se repiten proxies en un bucle continuo.
+5. Errores de esquema, página incorrecta o necesidad de iniciar sesión detienen
+   la consulta. Si hay proxies configurados, nunca se añade como alternativa la
+   IP directa del VPS. Los logs no contienen direcciones ni credenciales de proxy.
+
+La frecuencia ordinaria tras una consulta exitosa sigue siendo de seis horas
+cuando hubo cambios y 24 horas cuando no los hubo. Esa frecuencia es distinta
+de la pausa por limitación. Los reintentos ordinarios de errores de conexión
+mantienen los tres intentos y el backoff existente de BullMQ.
+
+Prueba de aceptación aislada, sin Meta, base de datos, Redis ni credenciales:
+
+```sh
+docker run --rm --network none --memory 1g --shm-size 256m \
+  inforce-ad-library:proxy-failover \
+  node scripts/ad-library-proxy-failover-smoke.mjs
+```
+
+Usa Chrome real con respuestas sintéticas: una página parcial seguida de 429,
+respaldo con resultados repetidos, cookies y localStorage deliberadamente
+creados en el primer navegador, y ambos proxies limitados. Comprueba limpieza,
+cierre de navegadores, deduplicación y pausa acotada. No provoca bloqueos reales
+de Meta para probar el mecanismo.
 
 
 ## Actualización de la biblioteca visual (referencia Foreplay)
