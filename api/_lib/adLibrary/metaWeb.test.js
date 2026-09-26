@@ -56,9 +56,14 @@ describe('optional egress proxy', () => {
       .toEqual({ server: 'http://proxy.example:8080', username: 'user', password: 'secret' });
     expect(proxyFromEnv({ ADLIB_PROXY_SERVER: 'socks5://10.0.0.2:1080/' })).toEqual({ server: 'socks5://10.0.0.2:1080' });
   });
-  it('rejects SOCKS5 with credentials up front, which Chromium cannot launch', () => {
-    expect(() => proxyFromEnv({ ADLIB_PROXY_SERVER: 'socks5://10.0.0.2:1080', ADLIB_PROXY_USERNAME: 'u', ADLIB_PROXY_PASSWORD: 'p' }))
-      .toThrow('ADLIB_PROXY_SOCKS_AUTH_UNSUPPORTED');
+  it('routes authenticated SOCKS5 through a local bridge because Chromium cannot authenticate it', async () => {
+    const proxy = proxyFromEnv({ ADLIB_PROXY_SERVER: 'socks5://10.0.0.2:1080', ADLIB_PROXY_USERNAME: 'u', ADLIB_PROXY_PASSWORD: 'p' });
+    expect(proxy).toEqual({ server: 'socks5://10.0.0.2:1080', username: 'u', password: 'p' });
+    let options;
+    const browserType = { launch: async value => { options = value; throw new Error('STOP'); } };
+    await expect(new MetaWebCollector({ browserType, proxies: [proxy] }).pages({ meta_page_id: '646751588512715' }).next()).rejects.toThrow('STOP');
+    expect(options.proxy.server).toMatch(/^http:\/\/127\.0\.0\.1:\d+$/);
+    expect(JSON.stringify(options)).not.toContain('"p"');
   });
   it('reads an optional backup, never a backup alone', () => {
     expect(proxiesFromEnv({ ADLIB_PROXY_SERVER: 'http://a.example:1', ADLIB_PROXY_BACKUP_SERVER: 'http://b.example:2' }))

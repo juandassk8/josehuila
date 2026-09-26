@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
+import { startSocksBridge } from './socksBridge.js';
 
 const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const text = value => typeof value === 'string' && value.trim() ? value.trim() : null;
@@ -107,9 +108,6 @@ export function proxyFromEnv(env = process.env, prefix = 'ADLIB_PROXY') {
     || url.pathname.replace(/\/$/, '') || url.search || url.hash) throw new Error('ADLIB_PROXY_INVALID');
   const username = env[`${prefix}_USERNAME`]?.trim(), password = env[`${prefix}_PASSWORD`];
   if (!!username !== !!password) throw new Error('ADLIB_PROXY_INVALID');
-  // Chromium rechaza SOCKS5 con usuario/contraseña al arrancar: usar el endpoint
-  // HTTP del proveedor o autorizar la IP del servidor sin credenciales.
-  if (url.protocol === 'socks5:' && username) throw new Error('ADLIB_PROXY_SOCKS_AUTH_UNSUPPORTED');
   return { server: `${url.protocol}//${url.host}`, ...(username ? { username, password } : {}) };
 }
 
@@ -145,10 +143,18 @@ export class MetaWebCollector {
 
   async *pagesVia(brand, proxy) {
     if (!/^\d{5,25}$/.test(brand.meta_page_id) || !/^(ALL|[A-Z]{2})$/.test(brand.country || 'ALL')) throw new Error('META_INVALID_BRAND');
-    const browser = await this.browserType.launch({
-      ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}),
-      ...(proxy ? { proxy } : {}),
-    });
+    // Chromium no admite SOCKS5 autenticado: en ese caso sale por un puente local.
+    const socksUrl = proxy?.username && proxy.server.startsWith('socks5:') ? new URL(proxy.server) : null;
+    // El tráfico de fondo de Chrome (servicios de Google) no gasta el proxy.
+    const bridge = socksUrl ? await startSocksBridge({ host: socksUrl.hostname, port: Number(socksUrl.port), username: proxy.username, password: proxy.password },
+      { allowedHosts: /(^|\.)(facebook\.com|fbcdn\.net|fbsbx\.com)$/ }) : null;
+    let browser;
+    try {
+      browser = await this.browserType.launch({
+        ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}),
+        ...(proxy ? { proxy: bridge ? { server: bridge.server } : proxy } : {}),
+      });
+    } catch (error) { await bridge?.close(); throw error; }
     const pending = new Set();
     const batches = [];
     const seen = new Set();
@@ -219,6 +225,7 @@ export class MetaWebCollector {
     } finally {
       await browser.close();
       await Promise.allSettled(pending);
+      await bridge?.close();
     }
   }
 }
