@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { date, number, request, safeHref, formatName, statusName } from './workspaceHelpers.js';
+import { date, number, request, safeHref, share, formatName, statusName } from './workspaceHelpers.js';
 
 const paths = {
   grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
@@ -46,6 +46,17 @@ export function AdCard({ ad, onOpen, onSave, saving, rank }) {
   </article>;
 }
 
+export function AdCardSkeletons({ count = 8 }) {
+  return <div className="adlib-cards adlib-skeletons" role="status" aria-label="Cargando anuncios…">
+    {Array.from({ length: count }, (_, i) => <div key={i} className="adlib-ad adlib-skeleton" aria-hidden="true">
+      <div className="adlib-ad-top"><span className="adlib-avatar" /><span className="adlib-skeleton-line" style={{ width: '55%' }} /></div>
+      <div className="adlib-ad-status"><span className="adlib-skeleton-line" style={{ width: '35%' }} /></div>
+      <div className="adlib-media" />
+      <div className="adlib-ad-content"><span className="adlib-skeleton-line" /><span className="adlib-skeleton-line" style={{ width: '70%' }} /><span className="adlib-skeleton-line button" /></div>
+    </div>)}
+  </div>;
+}
+
 export function AdDetail({ ad, companyId, onClose, onSave, saving }) {
   const dialog = useRef(null);
   const [history, setHistory] = useState(null), [error, setError] = useState('');
@@ -86,8 +97,8 @@ export function Overview({ insights, onGroup, onTab }) {
   const total = insights.total || 0;
   return <div className="adlib-overview">
     <section className="adlib-mix"><div className="adlib-panel-heading"><h3>Mezcla de formatos</h3><Icon name="grid" /></div><div className="adlib-total"><strong>{number(total)}</strong><span>anuncios en esta selección</span></div>
-      <div className="adlib-mix-bar" aria-hidden="true">{insights.formats.map((format, i) => <span key={format.name} className={`tone-${i % 4}`} style={{ width: `${100 * format.total / total}%` }} />)}</div>
-      <div className="adlib-format-list">{insights.formats.map((format, i) => <div key={format.name}><span className={`adlib-swatch tone-${i % 4}`} />{formatName(format.name)}<strong>{number(format.total)}</strong><span>{total ? Math.round(format.total / total * 100) : 0}%</span></div>)}</div>
+      <div className="adlib-mix-bar" aria-hidden="true">{insights.formats.map((format, i) => <span key={format.name} className={`tone-${i % 4}`} style={{ width: `${share(format.total, total)}%` }} />)}</div>
+      <div className="adlib-format-list">{insights.formats.map((format, i) => <div key={format.name}><span className={`adlib-swatch tone-${i % 4}`} />{formatName(format.name)}<strong>{number(format.total)}</strong><span>{Math.round(share(format.total, total))}%</span></div>)}</div>
       {!total && <p className="adlib-caption">Todavía no hay datos para estos filtros.</p>}
     </section>
     <section><div className="adlib-panel-heading"><h3>Destinos más usados</h3><Icon name="link" /></div><div className="adlib-top-list">{insights.destinations.slice(0, 4).map(item => <button key={item.value} onClick={() => onGroup('landing', item)} title={item.value}><span>{item.value.replace(/^https?:\/\//, '')}</span><strong>{number(item.total)}</strong></button>)}{!insights.destinations.length && <p className="adlib-caption">Sin páginas de destino disponibles.</p>}</div><button className="adlib-text-button" onClick={() => onTab('destinations')}>Explorar destinos <Icon name="arrow" /></button></section>

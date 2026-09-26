@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DS } from '../../lib/design.js';
-import { AdCard, AdDetail, Icon, Overview } from './workspaceUi.jsx';
+import { AdCard, AdCardSkeletons, AdDetail, Icon, Overview } from './workspaceUi.jsx';
 import { date, number, request, safeHref } from './workspaceHelpers.js';
 import { collectionCopy, collectionNotice } from './collectionState.js';
 import { useCollectionStatus } from './useCollectionStatus.js';
@@ -29,7 +29,7 @@ export function AdLibraryPage({ currentMember, companies = [], fixedCompanyId, c
   const [pageUrl, setPageUrl] = useState(''), [name, setName] = useState(''), [showFollow, setShowFollow] = useState(false);
   const [busy, setBusy] = useState(''), [saving, setSaving] = useState(''), [detail, setDetail] = useState(null);
   const [error, setError] = useState(''), [notice, setNotice] = useState('');
-  const requestId = useRef(0), scope = useRef(companyId), pendingMedia = useRef(false);
+  const requestId = useRef(0), scope = useRef(companyId), pendingMedia = useRef(false), manageMenu = useRef(null);
   const canManage = manageOverride ?? ['admin', 'member'].includes(currentMember?.role);
   const selected = brands.find(brand => brand.id === brandId);
   const effectiveSort = tab === 'rank' ? 'longest' : sort;
@@ -112,6 +112,7 @@ export function AdLibraryPage({ currentMember, companies = [], fixedCompanyId, c
   }
   async function changeFollow(action) {
     if (!selected) return;
+    if (manageMenu.current) manageMenu.current.open = false;
     const currentScope = companyId; setBusy(action); setError('');
     try {
       const result = await request('POST', { action, companyId, brandId });
@@ -129,6 +130,8 @@ export function AdLibraryPage({ currentMember, companies = [], fixedCompanyId, c
   const groups = tab === 'launches' ? insights?.launches : tab === 'destinations' ? insights?.destinations : tab === 'hooks' ? insights?.hooks : null;
   const groupType = tab === 'launches' ? 'launch' : tab === 'destinations' ? 'landing' : 'hook';
   const showCards = !['launches', 'destinations', 'hooks'].includes(tab) || !!group;
+  const cardsVisible = showCards && !showImportEmpty && !(tab === 'launches' && group);
+  const initialLoading = loading && !ads.length && cardsVisible;
   return <div className="adlib" style={{ '--adlib-card': DS.bgCard, '--adlib-surface': DS.bgSide, '--adlib-border': DS.border,
     '--adlib-text': DS.textPrimary, '--adlib-muted': DS.textSecondary, '--adlib-accent': DS.blue, '--adlib-success': DS.green, '--adlib-danger': DS.red, '--adlib-font': DS.font }}>
     <header className="adlib-heading"><div><p className="adlib-eyebrow">Creativos / Inteligencia competitiva</p><h1>Bibliotecas de anuncios</h1></div>
@@ -139,12 +142,12 @@ export function AdLibraryPage({ currentMember, companies = [], fixedCompanyId, c
     <div className="adlib-workspace">
       <div className="adlib-brandbar"><div className="adlib-brand-selector"><span className="adlib-avatar large" aria-hidden="true">{(selected?.display_name || 'M').slice(0, 1)}</span><label><span>Marcas seguidas · {brands.length}</span><select aria-label="Marca" value={brandId} onChange={event => { setBrandId(event.target.value); setGroup(null); }}>{<option value="">Todas las marcas</option>}{brands.map(brand => <option key={brand.id} value={brand.id}>{brand.display_name}</option>)}</select></label></div>
         <div className="adlib-freshness"><span>Meta Ads Library</span><small>{selected && collection?.phase !== 'ready' ? importMessage.title : insights?.lastSeen ? `Última observación: ${date(insights.lastSeen)}` : selected?.last_complete_scan_at ? `Última consulta: ${date(selected.last_complete_scan_at)}` : 'Esperando primera observación'}</small></div>
-        <div className="adlib-brand-actions"><button className="adlib-icon" aria-label="Actualizar resultados" title="Actualizar resultados" disabled={loading} onClick={() => { refreshResults(); setCollectionRefresh(value => value + 1); }}><Icon name="refresh" /></button>{canManage && selected && <details><summary>Gestionar marca</summary><div><button disabled={!!busy} onClick={() => changeFollow('sync')}>Solicitar actualización</button><button disabled={!!busy} onClick={() => changeFollow('pause')}>Dejar de seguir</button></div></details>}</div></div>
+        <div className="adlib-brand-actions"><button className="adlib-icon" aria-label="Actualizar resultados" title="Actualizar resultados" disabled={loading} onClick={() => { refreshResults(); setCollectionRefresh(value => value + 1); }}><Icon name="refresh" /></button>{canManage && selected && <details ref={manageMenu}><summary>Gestionar marca</summary><div><button disabled={!!busy} onClick={() => changeFollow('sync')}>Solicitar actualización</button><button disabled={!!busy} onClick={() => changeFollow('pause')}>Dejar de seguir</button></div></details>}</div></div>
       {selected && collection && (collection.phase !== 'ready' || collection.stale) ? <div className="adlib-source-status" role="status" data-collection-phase={collection.phase}><strong>{importMessage.title}. </strong>{importMessage.description}{collection.stale && ' No se pudo actualizar el estado; volveremos a comprobarlo.'}</div>
         : !selected && sourceRetryAt && Date.parse(sourceRetryAt) > Date.now() && <div className="adlib-source-status" role="status">Meta limitó las consultas. Los anuncios guardados siguen disponibles; el próximo intento podrá comenzar a partir de {new Date(sourceRetryAt).toLocaleString('es-CO')}.</div>}
       <nav className="adlib-tabs" aria-label="Vistas de la biblioteca">{tabs.map(([id, label, icon]) => <button key={id} className={tab === id ? 'active' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => changeTab(id)}><Icon name={icon} />{label}</button>)}</nav>
       <div className="adlib-toolbar"><label className="adlib-search"><Icon name="search" /><input type="search" aria-label="Buscar anuncios" placeholder="Buscar en el copy o la marca…" maxLength={120} value={input} onChange={event => setInput(event.target.value)} /></label>
-        <div className="adlib-filters" aria-label="Estado del anuncio">{[['active', 'Activos'], ['historical', 'Históricos'], ['all', 'Todos']].map(([value, label]) => <button key={value} aria-pressed={status === value} className={status === value ? 'active' : ''} onClick={() => { setStatus(value); setGroup(null); }}>{label}</button>)}</div>
+        <div className="adlib-filters" role="group" aria-label="Estado del anuncio">{[['active', 'Activos'], ['historical', 'Históricos'], ['all', 'Todos']].map(([value, label]) => <button key={value} aria-pressed={status === value} className={status === value ? 'active' : ''} onClick={() => { setStatus(value); setGroup(null); }}>{label}</button>)}</div>
         <select aria-label="Formato" value={format} onChange={event => { setFormat(event.target.value); setGroup(null); }}><option value="all">Todos los formatos</option><option value="video">Videos</option><option value="image">Imágenes</option></select>
         <select aria-label="Orden" value={effectiveSort} disabled={tab === 'rank'} onChange={event => setSort(event.target.value)}><option value="newest">Recién encontrados</option><option value="longest">Mayor duración</option></select></div>
       <main className="adlib-results" aria-busy={loading}>
@@ -159,9 +162,9 @@ export function AdLibraryPage({ currentMember, companies = [], fixedCompanyId, c
             {tab === 'launches' && <div className="adlib-duration-list">{ads.map(ad => <button key={ad.id} onClick={() => setDetail(ad)}><span className="adlib-duration-thumb">{ad.media?.[0]?.poster || ad.media?.[0]?.kind === 'image' ? <img loading="lazy" src={ad.media[0].poster || ad.media[0].url} alt="" /> : <Icon name="grid" />}</span><span className="adlib-duration-track"><span className={ad.status === 'active' ? 'active' : ''} style={{ width: `${Math.max(8, ad.running_days / Math.max(item.days, 1) * 100)}%` }} /><strong>{ad.running_days} días</strong></span><span className="adlib-duration-copy">{ad.body || ad.title || 'Ver anuncio'}</span></button>)}</div>}
           </div>}
         </section>)}<p className="adlib-caption">Hasta 60 grupos {tab === 'launches' ? 'recientes' : tab === 'hooks' ? 'con mayor duración' : 'más frecuentes'} para los filtros seleccionados.</p></div>}
-        {showCards && !showImportEmpty && !(tab === 'launches' && group) && <><div className="adlib-results-label"><p>{group ? <><strong>{group.type === 'hook' ? 'Anuncios con este copy' : group.type === 'landing' ? 'Anuncios para este destino' : 'Anuncios del lanzamiento'}</strong><button className="adlib-text-button" onClick={() => setGroup(null)}>Quitar selección ×</button></> : <><strong>{number(insights?.total)} anuncios</strong><span>{ads.length} cargados</span></>}</p><small>Días hasta la última observación</small></div>
-          <div className="adlib-cards">{ads.map((ad, index) => <AdCard key={ad.id} ad={ad} onOpen={setDetail} onSave={save} saving={saving === ad.id} rank={tab === 'rank' ? index + 1 : null} />)}</div></>}
-        {loading && <p className="adlib-loading" role="status">Cargando anuncios…</p>}
+        {cardsVisible && <><div className="adlib-results-label"><p>{group ? <><strong>{group.type === 'hook' ? 'Anuncios con este copy' : group.type === 'landing' ? 'Anuncios para este destino' : 'Anuncios del lanzamiento'}</strong><button className="adlib-text-button" onClick={() => setGroup(null)}>Quitar selección ×</button></> : insights ? <><strong>{number(insights.total)} anuncios</strong><span>{ads.length} cargados</span></> : <span>Contando anuncios…</span>}</p><small>Días hasta la última observación</small></div>
+          {initialLoading ? <AdCardSkeletons /> : <div className="adlib-cards">{ads.map((ad, index) => <AdCard key={ad.id} ad={ad} onOpen={setDetail} onSave={save} saving={saving === ad.id} rank={tab === 'rank' ? index + 1 : null} />)}</div>}</>}
+        {loading && !initialLoading && <p className="adlib-loading" role="status">Cargando anuncios…</p>}
         {showImportEmpty && <div className="adlib-empty" data-testid="import-empty"><Icon name="refresh" /><h3>{importMessage.title}</h3><p>Aún no hay una primera consulta completa de {selected.display_name}. No necesitas volver a agregar la marca.</p><p>El estado se comprueba automáticamente mientras esta página esté abierta.</p></div>}
         {!showImportEmpty && !error && !loading && !ads.length && (showCards || !groups?.length) && <div className="adlib-empty"><Icon name={tab === 'saved' ? 'save' : 'grid'} /><h3>{tab === 'saved' ? 'Tu selección empieza aquí' : 'No hay anuncios para estos filtros'}</h3><p>{!brands.length ? 'Sigue una marca para comenzar a construir su biblioteca.' : tab === 'saved' ? 'Guarda anuncios desde la biblioteca para consultarlos después.' : 'Prueba otro estado, formato o búsqueda.'}</p></div>}
         {showCards && cursor && <button className="adlib-more" disabled={loading} onClick={() => loadAds(cursor)}>Cargar más anuncios</button>}

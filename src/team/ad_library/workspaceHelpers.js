@@ -12,6 +12,10 @@ export const date = value => value && Number.isFinite(Date.parse(value))
   ? new Date(value).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : 'Sin fecha';
 export const number = value => Number(value || 0).toLocaleString('es-CO');
 export const safeHref = value => { try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) ? url.href : undefined; } catch { return undefined; } };
-export const formatName = value => ({ video: 'Videos', image: 'Imágenes', carousel: 'Carruseles', other: 'Otros' }[value] || 'Otros');
+export const share = (part, total) => {
+  const value = Number(part) / Number(total) * 100;
+  return Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : 0;
+};
+export const formatName =value => ({ video: 'Videos', image: 'Imágenes', carousel: 'Carruseles', other: 'Otros' }[value] || 'Otros');
 export const statusName = value => ({ active: 'Activo', inactive: 'Inactivo', not_observed: 'Ya no observado' }[value] || 'Sin estado');
 
