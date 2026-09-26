@@ -22,20 +22,20 @@ Está integrada en Creativos, tanto para el equipo como para cada empresa. Inclu
 biblioteca, duración, lanzamientos, destinos, ganchos del copy y guardados.
 El catálogo se comparte por marca; el acceso a cada seguimiento es privado.
 
-El collector público tiene límites reales. La última consulta manual con Chrome
-guardó 30 anuncios activos de Peluna y archivó sus medios (27 archivos únicos),
-pero Meta limitó la segunda página. La corrida es parcial y no prueba que se
-pueda importar una marca completa desde el VPS. Bonapet tenía 71 anuncios de una
-captura previa importada. Prodental todavía no tenía una importación completada.
+El collector público tiene límites reales. El 26/09/2026 se verificaron recorridos
+LIVE completos desde el VPS: Peluna 266 anuncios, Bonapet 71 y ProdentaCol 9,
+todos con medios archivados. Estas corridas reemplazan las primeras observaciones
+parciales y la captura importada de Bonapet como evidencia de acceso en vivo.
+No demuestran cobertura permanente de Meta ni capacidad para cualquier catálogo.
 
-Release de esta entrega: `/opt/inforce/releases/20260926-proxy-failover`.
+Release de esta entrega: `/opt/inforce/releases/20260926-proxy-failover-lite`.
 Integra los ocho archivos de `claude/scraper` (`6303344`), MCP, el dominio y la
 recuperación automática mediante el proxy de respaldo. `SOURCE_COMMIT` y
 `SOURCE_MANIFEST.json` identifican sus archivos versionados. La configuración
 activa de dominio en `/etc` se conserva y no se reinstala durante este cambio.
 Conserva las dependencias de `/opt/inforce/releases/20260926-creative-mcp`;
 no borrar esa release mientras el enlace `node_modules` siga usándola.
-Worker usa `inforce-ad-library:proxy-failover`; scheduler conserva
+Worker usa `inforce-ad-library:proxy-failover-lite`; scheduler conserva
 `inforce-ad-library:scraper-proxy` y media-worker `inforce-ad-library:local`. Los videos
 y las imágenes van a R2 privado, deduplicados por SHA-256. No se versionan aquí.
 
@@ -46,6 +46,10 @@ seis horas se reemplaza por 15 minutos configurables, solo cuando se agotan las
 salidas. Ver [operación y pruebas](../deploy/ad-library/README.md). Antes de
 activar esta entrega, los tres recorridos LIVE de la versión de Claude terminaron:
 ProdentaCol 9 anuncios, Bonapet 71 y Peluna 266 (245 anuncios nuevos en conjunto).
+La versión inicial de recuperación volvió a consultar ProdentaCol completa en
+8 segundos. La prueba de Lummia detectó un cierre de Chrome por falta de memoria
+(`oom_kill` en el contenedor de 1.5 GiB); se omiten las imágenes de vista previa
+en el navegador. El worker de medios sigue descargando los originales por separado.
 
 ## Creación de imágenes: prueba MCP
 
@@ -73,7 +77,7 @@ verificados desde fuera del VPS; falta la autorización real desde la cuenta Pro
 - Recomendaciones por nicho e IA para sugerencias creativas son una etapa futura.
 - `scripts/ad-library-ui-smoke.mjs` contiene una expectativa histórica de Peluna
   sin anuncios. Ajustar la prueba a una fixture aislada antes de reutilizarla;
-  ahora Peluna sí tiene resultados parciales.
+  ahora Peluna sí tiene una consulta completa.
 - `npm run dev` sirve Vite y los handlers de `/api`; no inicia PostgreSQL,
   PostgREST, autenticación, Redis ni workers. El frontend usa `/backend` por
   defecto. El acceso a datos necesita un backend de desarrollo configurado.

@@ -209,7 +209,9 @@ export class MetaWebCollector {
         const request = route.request();
         const url = new URL(request.url());
         const allowed = url.protocol === 'https:' && /(^|\.)(facebook\.com|fbcdn\.net|fbsbx\.com)$/.test(url.hostname);
-        return !allowed || ['media', 'font'].includes(request.resourceType()) ? route.abort() : route.continue();
+        // Assets are archived by the media worker; rendering previews here can
+        // exhaust Chrome's memory on long catalogs without helping collection.
+        return !allowed || ['image', 'media', 'font'].includes(request.resourceType()) ? route.abort() : route.continue();
       });
       page.on('response', response => {
         if (!new URL(response.url()).pathname.startsWith('/api/graphql')) return;

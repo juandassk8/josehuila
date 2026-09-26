@@ -34,7 +34,7 @@ Los workers usan el backend interno y su clave de servicio; ninguna credencial l
 
 El 25 de septiembre de 2026, la prueba local con Bonapet (`646751588512715`) terminó seis páginas, 71 anuncios únicos y 71 con medios identificados. El contador aproximado de la web mostraba 72. Esto valida esa corrida, no garantiza cobertura permanente ni todos los anuncios históricos de Meta.
 
-La prueba desde el VPS obtuvo 29 anuncios y después Meta devolvió `1675004`; no terminó la paginación. Los 71 anuncios iniciales se importaron desde la captura previa mediante `ad-library-import-capture.mjs`, preservando la fecha de observación y registrando `collection_method=stored_capture`. La recolección automática del VPS aún necesita demostrar recorridos completos tras el período de espera. No confundir una captura importada con una consulta en vivo exitosa del servidor.
+La primera prueba desde el VPS obtuvo 29 anuncios y después Meta devolvió `1675004`; no terminó la paginación. Los 71 anuncios iniciales se importaron desde la captura previa mediante `ad-library-import-capture.mjs`, preservando la fecha de observación y registrando `collection_method=stored_capture`. El 26/09/2026, ya con proxies, las consultas LIVE terminaron completas: Bonapet 71, Peluna 266 y ProdentaCol 9. La versión de recuperación volvió a consultar ProdentaCol completa a las 22:12 UTC. No confundir aquellas capturas importadas con estas verificaciones en vivo.
 
 Comprobaciones: `ad-library-queue-smoke.mjs` procesa un job temporal con deduplicación y reintento; `ad-library-integration-smoke.mjs` crea y elimina dos empresas de prueba para verificar límites de acceso e historial; `ad-library-ui-smoke.mjs` usa una cuenta temporal de lectura y comprueba la biblioteca en el navegador.
 
@@ -48,6 +48,10 @@ seis horas tras un límite de Meta:
 1. Cada intento usa un proceso de Chrome nuevo y un contexto sin cookies ni
    almacenamiento local previo. Al finalizar se cierran contexto, navegador y
    puente SOCKS5. No se usa un perfil persistente ni cookies de usuarios.
+   No se cargan imágenes, videos ni fuentes en esa página: el collector obtiene
+   los anuncios de las respuestas de datos y el worker de medios archiva los
+   originales. Esto reduce memoria y tráfico en catálogos largos; Lummia mostró
+   un cierre por memoria al renderizar las vistas previas con el límite de 1.5 GiB.
 2. Ante `META_RATE_LIMITED` o `META_PROXY_UNAVAILABLE`, se intenta el otro proxy
    configurado una vez, incluso si el primero entregó datos parciales. La consulta
    empieza de nuevo y deduplica por anuncio/versión antes de guardar. Un recorrido
