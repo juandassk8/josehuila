@@ -1,4 +1,5 @@
 import { normalizeMetaAd } from './core.js';
+import { completedCollection } from './collectorContract.js';
 
 const FIELDS = [
   'id', 'page_id', 'page_name', 'ad_creative_bodies', 'ad_creative_link_titles',
@@ -41,8 +42,9 @@ export class MetaOfficialCollector {
       const payload = await response.json();
       if (!Array.isArray(payload?.data)) throw new Error('META_INVALID_RESPONSE');
       const ads = payload.data.map(raw => normalizeMetaAd(raw, brand.meta_page_id)).filter(Boolean);
+      if (ads.length !== payload.data.length) throw new Error('META_PAGE_MISMATCH');
       yield { ads, page: page + 1 };
-      if (!payload.paging?.next) return;
+      if (!payload.paging?.next) { yield completedCollection(brand, 'meta_official'); return; }
       const nextAfter = payload.paging?.cursors?.after;
       if (!nextAfter || nextAfter === after) throw new Error('META_PAGINATION_INVALID');
       after = nextAfter;

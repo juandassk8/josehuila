@@ -1,0 +1,6 @@
+**
+!services
+!services/scrapling
+!services/scrapling/requirements.txt
+!services/scrapling/capture.py
+!services/scrapling/server.py

@@ -2,8 +2,13 @@ import { AuthError, getUser, isTeamManager, isTeamMember, requireCompanyAccess, 
 import { parseMetaPageId } from './_lib/adLibrary/core.js';
 import { enqueueBrand, sourceRetryAt, crawlQueueStatus } from './_lib/adLibrary/queue.js';
 import { collectionStatus } from './_lib/adLibrary/collectionStatus.js';
+import { readSettings } from './_lib/adminOperations/settings.js';
 import { createMediaStorage } from './_lib/adLibrary/storage.js';
 import { readCursor, workspaceParams } from './_lib/adLibrary/workspace.js';
+import { requestResolution, getResolution } from './_lib/adLibrary/brandResolution.js';
+import { buildSignals } from './_lib/adLibrary/signals.js';
+import { createBrandRequest, listBrandRequests, cancelBrandRequest, completeBrandRequest } from './_lib/adLibrary/brandRequests.js';
+import { readBrandNetwork, familyBrandIds } from './_lib/adLibrary/brandNetwork.js';
 
 export const config = { api: { bodyParser: { sizeLimit: '16kb' } } };
 
@@ -39,25 +44,28 @@ async function followedBrands(companyId) {
   if (!follows.length) return [];
   const brands = result(await sb.from('ad_library_brands').select('*').in('id', follows.map(row => row.brand_id)));
   const order = new Map(follows.map((row, index) => [row.brand_id, index]));
-  const alias = new Map(follows.map(row => [row.brand_id, row.alias]));
-  return brands.map(brand => ({ ...brand, display_name: alias.get(brand.id) || brand.name }))
+  return brands.map(brand => ({ ...brand, display_name: brand.name }))
     .sort((a, b) => order.get(a.id) - order.get(b.id));
 }
 
 async function queryParams(companyId, userId, query) {
   const brands = await followedBrands(companyId);
   if (query.brandId && !brands.some(brand => brand.id === query.brandId)) fail(403, 'Marca no seguida por esta empresa');
-  return workspaceParams(companyId, userId, query);
+  if (query.familyId && query.brandId) fail(400, 'Elige una agrupación o una fanpage.');
+  const members = query.familyId ? familyBrandIds(await readBrandNetwork(serviceClient(), companyId, brands), query.familyId) : null;
+  return { ...workspaceParams(companyId, userId, query), p_brands: members };
 }
 
 async function brandCollection(companyId, brandId, knownBrand) {
   const brand = knownBrand || (await followedBrands(companyId)).find(item => item.id === brandId);
   if (!brand) fail(403, 'Marca no seguida por esta empresa');
-  const [queue, latest] = await Promise.all([
+  const [queue, latest, settings] = await Promise.all([
     crawlQueueStatus(brand.id),
     serviceClient().from('ad_library_crawl_runs').select('id,status,ads_seen,finished_at,error_code').eq('brand_id', brand.id)
       .order('started_at', { ascending: false }).limit(1),
+    readSettings(),
   ]);
+  if (!settings.enabled) { queue.paused = true; queue.retryAt = null; }
   return collectionStatus(brand, queue, result(latest)?.[0]);
 }
 
@@ -66,7 +74,7 @@ async function listAds(companyId, userId, query) {
   const params = await queryParams(companyId, userId, query);
   const pageSize = Math.min(Math.max(Math.trunc(Number(query.limit) || 30), 1), 50);
   const sort = query.sort || 'newest';
-  const rows = result(await sb.rpc('ad_library_workspace_page', { ...params, p_sort: sort,
+  const rows = result(await sb.rpc('ad_library_workspace_scope_page', { ...params, p_sort: sort,
     ...readCursor(query.cursor, sort), p_limit: pageSize + 1 }));
   const ads = rows.slice(0, pageSize);
   const tail = ads.at(-1);
@@ -126,11 +134,16 @@ async function adHistory(companyId, adId) {
 }
 
 async function follow(companyId, userId, body) {
-  const pageId = parseMetaPageId(body.pageUrl || body.pageId);
+  let candidate;
+  if (body.resolutionId) {
+    const resolution = await getResolution(companyId, userId, body.resolutionId);
+    candidate = resolution.state === 'completed' && resolution.candidates.find(item => item.pageId === body.pageId);
+    if (!candidate) fail(400, 'Elige una fanpage de la búsqueda completada.');
+  }
+  const pageId = candidate?.pageId || parseMetaPageId(body.pageUrl || body.pageId);
   if (!pageId) fail(400, 'Usa el enlace de la biblioteca con view_all_page_id o el ID exacto de página');
   const requestedCountry = String(body.country || 'ALL').trim().toUpperCase();
   if (requestedCountry !== 'ALL' && !/^[A-Z]{2}$/.test(requestedCountry)) fail(400, 'País inválido');
-  const alias = String(body.name || '').trim().slice(0, 120) || null;
   const sb = serviceClient();
   const source = process.env.ADLIB_COLLECTOR || 'meta_web';
   if (!['meta_web', 'meta_official'].includes(source)) fail(503, 'Fuente de anuncios no configurada');
@@ -141,8 +154,12 @@ async function follow(companyId, userId, body) {
   }, { onConflict: 'source,meta_page_id,country', ignoreDuplicates: true }));
   const brand = result(await sb.from('ad_library_brands').select('*').eq('source', source)
     .eq('meta_page_id', pageId).eq('country', country).single());
+  if (candidate && brand.name !== candidate.name) {
+    result(await sb.from('ad_library_brands').update({ name: candidate.name }).eq('id', brand.id));
+    brand.name = candidate.name;
+  }
   result(await sb.from('ad_library_follows').upsert({ company_id: companyId, brand_id: brand.id,
-    active: true, alias, created_by: userId }, { onConflict: 'company_id,brand_id' }));
+    active: true, alias: null, created_by: userId }, { onConflict: 'company_id,brand_id' }));
   if (brand.last_complete_scan_at && Date.parse(brand.next_crawl_at) > Date.now())
     return { brand, queued: false, cached: true, collection: await brandCollection(companyId, brand.id, brand) };
   let queued = true;
@@ -166,6 +183,21 @@ async function sync(companyId, brandId) {
   return { queued: true, collection: await brandCollection(companyId, brand.id, brand) };
 }
 
+async function signals(companyId, brandId, query) {
+  if (!(await followedBrands(companyId)).some(brand => brand.id === brandId)) fail(403, 'Elige una marca seguida por esta empresa');
+  const sb = serviceClient();
+  const snapshots = result(await sb.from('ad_library_signal_days').select('observed_at,country,active_status,ordering,entries')
+    .eq('brand_id', brandId).order('observed_at', { ascending: false }).limit(21));
+  const scores = buildSignals(snapshots);
+  const offset = Math.min(10000, Math.max(0, Math.trunc(Number(query.offset) || 0)));
+  const page = scores.ads.slice(offset, offset + 50);
+  const ads = page.length ? result(await sb.from('ad_library_ads').select('id,source_ad_id,body,title,media_type,source_url')
+    .eq('brand_id', brandId).in('source_ad_id', page.map(row => row.source_ad_id))) : [];
+  const byId = new Map(ads.map(row => [row.source_ad_id, row]));
+  return { ...scores, total: scores.ads.length, nextOffset: scores.ads.length > offset + 50 ? offset + 50 : null,
+    ads: page.map(row => ({ ...row, ...byId.get(row.source_ad_id) })) };
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
@@ -174,13 +206,24 @@ export default async function handler(req, res) {
     const companyId = body.companyId;
     const write = req.method === 'POST' && action !== 'save';
     const user = await authorize(req, companyId, write);
-    if (req.method === 'GET' && action === 'brands') return res.json({ brands: await followedBrands(companyId), sourceRetryAt: await sourceRetryAt() });
+    if (req.method === 'GET' && action === 'brands') {
+      const settings = await readSettings();
+      const brands = await followedBrands(companyId);
+      return res.json({ brands, network: await readBrandNetwork(serviceClient(), companyId, brands), sourceRetryAt: settings.enabled ? await sourceRetryAt() : null });
+    }
     if (req.method === 'GET' && action === 'collection') return res.json(await brandCollection(companyId, body.brandId));
+    if (req.method === 'GET' && action === 'brand-requests') return res.json({ requests: await listBrandRequests(companyId) });
+    if (req.method === 'GET' && action === 'resolution') return res.json(await getResolution(companyId, user.id, body.resolutionId));
+    if (req.method === 'GET' && action === 'signals') return res.json(await signals(companyId, body.brandId, body));
     if (req.method === 'GET' && action === 'ads') return res.json(await listAds(companyId, user.id, body));
-    if (req.method === 'GET' && action === 'insights') return res.json(result(await serviceClient().rpc('ad_library_workspace_insights', await queryParams(companyId, user.id, body))));
+    if (req.method === 'GET' && action === 'insights') return res.json(result(await serviceClient().rpc('ad_library_workspace_scope_insights', await queryParams(companyId, user.id, body))));
     if (req.method === 'GET' && action === 'history') return res.json(await adHistory(companyId, body.adId));
     if (req.method === 'POST' && action === 'save') return res.json(await saveAd(companyId, user.id, body));
     if (req.method === 'POST' && action === 'follow') return res.json(await follow(companyId, user.id, body));
+    if (req.method === 'POST' && action === 'resolve-brand') return res.json(await requestResolution(companyId, user.id, body.url));
+    if (req.method === 'POST' && action === 'request-brand') return res.json(await createBrandRequest(companyId, user.id, body.url));
+    if (req.method === 'POST' && action === 'cancel-brand-request') return res.json(await cancelBrandRequest(companyId, body.requestId));
+    if (req.method === 'POST' && action === 'select-brand-request') return res.json(await completeBrandRequest(companyId, body.requestId, body.pageId));
     if (req.method === 'POST' && action === 'pause') return res.json(await pause(companyId, body.brandId));
     if (req.method === 'POST' && action === 'sync') return res.json(await sync(companyId, body.brandId));
     return res.status(400).json({ error: 'Acción inválida' });

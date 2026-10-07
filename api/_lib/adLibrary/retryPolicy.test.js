@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { metaRateLimitError, rateLimitDelayMs, sourceCooldownMs } from './retryPolicy.js';
+import { metaRateLimitError, rateLimitDelayMs, sourceCooldownMs, retryAfterMs } from './retryPolicy.js';
 
 describe('source retry policy', () => {
+  it('preserves longer source waits expressed as seconds or HTTP dates', () => {
+    const now = Date.parse('2026-09-28T12:00:00Z');
+    expect(retryAfterMs('7200', now)).toBe(7_200_000);
+    expect(retryAfterMs('Mon, 28 Sep 2026 14:00:00 GMT', now)).toBe(7_200_000);
+    for (const value of [null, '', 'invalid', '0', '-1', 'Mon, 28 Sep 2026 11:00:00 GMT'])
+      expect(retryAfterMs(value, now)).toBeUndefined();
+  });
   it('uses fifteen minutes instead of six hours and permits a bounded configuration', () => {
     expect(sourceCooldownMs({})).toBe(900_000);
     expect(sourceCooldownMs({ ADLIB_RATE_LIMIT_COOLDOWN_SECONDS: '60' })).toBe(60_000);

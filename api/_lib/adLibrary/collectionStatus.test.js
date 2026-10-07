@@ -4,6 +4,11 @@ import { crawlQueueStatus } from './queue.js';
 
 const ready = { available: true, workers: 1 };
 describe('collection status', () => {
+  it('reports an administrative pause without attributing it to Meta, but lets running work finish', () => {
+    expect(collectionStatus({}, { ...ready, paused: true, retryAt: 'later', job: { state: 'waiting' } }))
+      .toMatchObject({ phase: 'paused', retryAt: null });
+    expect(collectionStatus({}, { ...ready, paused: true, job: { state: 'active' } }).phase).toBe('running');
+  });
   it('distinguishes a new queued brand under a shared cooldown from a completed empty scan', () => {
     const queue = { ...ready, retryAt: '2026-09-26T07:22:25Z', job: { state: 'waiting' } };
     expect(collectionStatus({}, queue)).toMatchObject({ phase: 'rate_limited', queued: true, hasCompleteScan: false, retryAt: queue.retryAt });

@@ -56,10 +56,13 @@ Claude desde la carpeta del clon, también con `--worktree` si habrá trabajo pa
 - Claude Code: interfaz, filtros, tarjetas y experiencia de la biblioteca.
 - Ambos pueden revisar el trabajo del otro. El reparto cambia según la tarea.
 
-Asignación vigente desde el 26/09/2026: el usuario encargó a Claude el scraper;
-Codex mantiene MCP e integración. La bitácora local registra los archivos de
-cada tarea y las instrucciones locales de Claude enlazan su guía de acceso al
-VPS. Las credenciales y el helper SSH permanecen fuera del repositorio.
+Asignación vigente desde el 07/10/2026: Codex completó Universo de marca y el
+usuario asignó a Claude el Mapa creativo TOFU/MOFU/BOFU. Lee el
+[encargo completo y contexto de la reunión](encargo-claude-mapa-creativo.md).
+La base actual se publica por autorización del usuario en `codex/creative-mcp`;
+no asumir que está en `main`. Cada agente continúa en su carpeta y rama propia.
+El scraper fue el encargo anterior de Claude. La bitácora local registra los
+archivos de cada tarea. Las credenciales y el helper SSH quedan fuera de Git.
 
 Asignar un objetivo y archivos concretos antes de comenzar. Cambios de contratos
 de API, SQL o dependencias compartidas requieren coordinación. Cada tarea debe

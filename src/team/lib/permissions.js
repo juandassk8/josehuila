@@ -82,6 +82,7 @@ export const OVERRIDABLE_VIEWS = [
 export function canAccessViewByRole(member, view) {
   if (!member) return false;
   const role = member.role;
+  if (view === "administracion") return role === "admin" && member.active !== false;
 
   // Vistas universales.
   const commonViews = ["warroom", "agenda", "rutina", "tiempo", "equipo", "trash", "settings"];
@@ -123,6 +124,8 @@ export function canAccessViewByRole(member, view) {
 export function canAccessView(member, view) {
   if (!member) return false;
   if (member.active === false) return false;
+  // Global operations cannot be delegated through a per-view access override.
+  if (view === "administracion") return member.role === "admin";
   const overrides = member.access_overrides || {};
   if (Object.prototype.hasOwnProperty.call(overrides, view)) {
     return overrides[view] === true;

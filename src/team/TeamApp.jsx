@@ -40,6 +40,7 @@ import { AdminPlanPage } from "./planimpl/AdminPlanPage.jsx";
 import { lazy, Suspense } from "react";
 const OnboardingEquipoPage = lazy(() => import("../estandar/OnboardingEquipoPage.jsx").then((m) => ({ default: m.OnboardingEquipoPage })));
 const FinancePage = lazy(() => import("./finance/FinancePage.jsx").then((m) => ({ default: m.FinancePage })));
+const AdministrationPage = lazy(() => import("./admin/AdministrationPage.jsx"));
 import { useContent } from "./hooks/useContent.js";
 import { SpaceModal } from "./spaces/SpaceModal.jsx";
 import { createSpace, updateSpace, archiveSpace, deleteSpaceCascade } from "./data/db.js";
@@ -392,6 +393,10 @@ function TeamWorkspace({ member, signOut, refreshMember }) {
         onRefresh={refreshMember}
       />
     );
+  } else if (allowedView === "administracion") {
+    content = <Suspense fallback={<div role="status" style={{ padding: 32 }}>Cargando administración…</div>}>
+      <AdministrationPage currentMember={member} onNavigate={navigate} />
+    </Suspense>;
   } else if (allowedView === "settings") {
     content = (
       <SettingsPage

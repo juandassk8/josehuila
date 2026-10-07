@@ -30,6 +30,10 @@ function fmtDateLabel() {
 // exactos de antes — solo cambia el agrupamiento visual, no quién ve qué.
 const NAV_GROUPS = [
   {
+    label: "Sistema",
+    items: [{ key: "administracion", label: "Administración", icon: "settings", roles: ["admin"] }],
+  },
+  {
     label: "Tu día",
     items: [
       { key: "warroom", label: "War Room", icon: "warroom", roles: ["admin", "member", "editor"] },
@@ -72,6 +76,7 @@ const MORE_ITEMS = [
 // cae al default por rol/nombre. Así denegar una vista (p.ej. finance/planimpl a un
 // admin) OCULTA el ítem del menú, no solo redirige al hacer clic.
 const canSee = (item, member) => {
+  if (item.key === "administracion") return member?.role === "admin" && member.active !== false;
   const overrides = member?.access_overrides || {};
   if (Object.prototype.hasOwnProperty.call(overrides, item.key)) return overrides[item.key] === true;
   const role = member?.role || "member";

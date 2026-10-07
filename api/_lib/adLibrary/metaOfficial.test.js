@@ -16,7 +16,8 @@ describe('MetaOfficialCollector', () => {
       } });
     const pages = [];
     for await (const page of collector.pages(brand)) pages.push(page);
-    expect(pages).toHaveLength(2);
+    expect(pages.filter(page => !page.completion)).toHaveLength(2);
+    expect(pages.at(-1).completion).toMatchObject({ engine: 'meta_official', evidence: 'pagination_end' });
     expect(urls).toHaveLength(2);
     expect(urls[1]).toContain('after=CURSOR');
     expect(urls.join(' ')).not.toContain('SECRET');

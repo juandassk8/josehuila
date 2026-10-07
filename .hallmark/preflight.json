@@ -1,0 +1,13 @@
+{
+  "scope": "sidebar navigation and workspace picker components",
+  "genre": "atmospheric",
+  "theme": "user-supplied Inforce glass kit",
+  "framework": "React 19 / Vite 8",
+  "tokens": "src/nueva/tokens.css",
+  "reference": "../NUEVA INTERFAZ/kit-diseno/tokens.css",
+  "fonts": ["Sora", "DM Mono"],
+  "spacing": "4-point scale",
+  "motion": "CSS transitions, reduced-motion respected; no new motion library",
+  "preserve": ["palette", "typefaces", "spacing", "routes", "permissions", "flush sidebar"],
+  "macrostructure": "component scope; skipped"
+}

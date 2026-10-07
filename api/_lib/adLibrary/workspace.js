@@ -6,7 +6,7 @@ export function workspaceParams(companyId, userId, query) {
   const status = query.status || 'all', format = query.format || 'all', sort = query.sort || 'newest';
   const search = String(query.search || '').trim(), groupType = query.groupType || '', groupValue = String(query.groupValue || '');
   if (!['active', 'historical', 'all'].includes(status) || !['all', 'video', 'image', 'carousel'].includes(format) ||
-    !['newest', 'longest'].includes(sort) || search.length > 120 || !['', 'landing', 'hook', 'launch'].includes(groupType) ||
+    !['newest', 'longest'].includes(sort) || search.length > 120 || !['', 'landing', 'hook', 'launch', 'domain'].includes(groupType) ||
     groupValue.length > 2048 || (query.brandId && !uuid.test(query.brandId))) invalid();
   return { p_company: companyId, p_user: userId, p_brand: query.brandId || null, p_status: status,
     p_search: search, p_format: format, p_saved: query.saved === 'true', p_group_type: groupType, p_group_value: groupValue };

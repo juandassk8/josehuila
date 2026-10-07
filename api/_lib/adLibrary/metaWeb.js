@@ -1,7 +1,10 @@
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
 import { startSocksBridge } from './socksBridge.js';
-import { metaRateLimitError, sourceCooldownMs } from './retryPolicy.js';
+import { metaRateLimitError, sourceCooldownMs, retryAfterMs } from './retryPolicy.js';
+import { ProxyCooldowns } from './proxyCooldowns.js';
+import { completedCollection } from './collectorContract.js';
+import { verifiedImpressionOrder } from './signals.js';
 
 const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const text = value => typeof value === 'string' && value.trim() ? value.trim() : null;
@@ -12,6 +15,15 @@ export function mediaSource(raw, kind) {
     const url = new URL(raw);
     if (url.protocol !== 'https:' || url.username || url.password || url.port || !/(^|\.)(fbcdn\.net|fbsbx\.com)$/.test(url.hostname)) return null;
     return { url: url.href, kind, sourceKey: hash([kind, url.origin, url.pathname]) };
+  } catch { return null; }
+}
+
+function normalizeLandingUrl(raw) {
+  try {
+    const url = new URL(raw);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return null;
+    const target = url.hostname === 'l.facebook.com' && url.pathname === '/l.php' ? new URL(url.searchParams.get('u')) : url;
+    return ['http:', 'https:'].includes(target.protocol) && !target.username && !target.password ? target.href : null;
   } catch { return null; }
 }
 
@@ -28,16 +40,7 @@ export function normalizeMetaWebAd(raw, pageId) {
     add(item.original_image_url || item.resized_image_url, 'image');
   }
   const media = [...new Map(assets.map(asset => [asset.sourceKey, asset])).values()].slice(0, 20);
-  let landing = null;
-  try {
-    const url = new URL(snapshot.link_url);
-    if (['http:', 'https:'].includes(url.protocol) && !url.username && !url.password) {
-      if (url.hostname === 'l.facebook.com' && url.pathname === '/l.php') {
-        const target = new URL(url.searchParams.get('u'));
-        if (['http:', 'https:'].includes(target.protocol) && !target.username && !target.password) landing = target.href;
-      } else landing = url.href;
-    }
-  } catch { /* Not every ad publishes a destination. */ }
+  const landing = normalizeLandingUrl(snapshot.link_url);
   const version = {
     body: text(snapshot.body?.text), title: text(snapshot.title), caption: text(snapshot.caption),
     cta: text(snapshot.cta_text), landing_url: landing,
@@ -45,7 +48,8 @@ export function normalizeMetaWebAd(raw, pageId) {
     source_start_at: date(raw.start_date), source_stop_at: raw.is_active ? null : date(raw.end_date),
     status: raw.is_active ? 'active' : 'inactive',
     media_sources: media.map(({ sourceKey, kind }) => ({ sourceKey, kind })),
-    cards: (snapshot.cards || []).map(card => ({ body: text(card.body?.text || card.body), title: text(card.title), description: text(card.link_description) })),
+    cards: (snapshot.cards || []).map(card => ({ body: text(card.body?.text || card.body), title: text(card.title), description: text(card.link_description),
+      ...(card.link_url ? { landing_url: normalizeLandingUrl(card.link_url) } : {}) })),
   };
   return { ...version, source_ad_id: String(raw.ad_archive_id), page_name: text(raw.page_name || snapshot.page_name),
     source_url: `https://www.facebook.com/ads/library/?id=${raw.ad_archive_id}`,
@@ -65,15 +69,19 @@ export function searchConnections(payload, pageId) {
     const connection = node.ad_library_main?.search_results_connection;
     if (connection) {
       if (!Array.isArray(connection.edges) || typeof connection.page_info?.has_next_page !== 'boolean') throw new Error('META_SCHEMA_CHANGED');
-      const rawAds = [];
-      const pending = [...connection.edges];
-      while (pending.length) {
-        const item = pending.pop();
-        if (!item || typeof item !== 'object') continue;
-        if (item.ad_archive_id && item.snapshot) rawAds.push(item);
-        else pending.push(...Object.values(item).filter(value => value && typeof value === 'object'));
+      const rawAds = [], ads = [];
+      for (const [group, edge] of connection.edges.entries()) {
+        const pending = [edge];
+        while (pending.length) {
+          const item = pending.pop();
+          if (!item || typeof item !== 'object') continue;
+          if (item.ad_archive_id && item.snapshot) {
+            rawAds.push(item);
+            const ad = normalizeMetaWebAd(item, pageId);
+            if (ad) ads.push({ ...ad, source_order_group: group });
+          } else pending.push(...Object.values(item).filter(value => value && typeof value === 'object').reverse());
+        }
       }
-      const ads = rawAds.map(raw => normalizeMetaWebAd(raw, pageId)).filter(Boolean);
       if (rawAds.length !== ads.length || (connection.edges.length && !ads.length)) throw new Error('META_PAGE_MISMATCH');
       output.push({ ads, hasNext: connection.page_info.has_next_page, cursor: connection.page_info.end_cursor || null });
     }
@@ -121,17 +129,7 @@ export function proxiesFromEnv(env = process.env) {
 
 const PROXY_FAILURE = /net::ERR_(PROXY_[A-Z_]+|SOCKS_[A-Z_]+|TUNNEL_CONNECTION_FAILED|NO_SUPPORTED_PROXIES)/;
 
-export class ProxyCooldowns {
-  constructor(now = Date.now) { this.now = now; this.until = new Map(); }
-  key(proxy) { return hash([proxy?.server || 'direct', proxy?.username || '']); }
-  remaining(proxy) {
-    const key = this.key(proxy);
-    const remaining = Math.max(0, (this.until.get(key) || 0) - this.now());
-    if (!remaining) this.until.delete(key);
-    return remaining;
-  }
-  block(proxy, duration) { this.until.set(this.key(proxy), this.now() + duration); }
-}
+export { ProxyCooldowns } from './proxyCooldowns.js';
 
 // Shared across brands in this worker, so the next brand uses the healthy route.
 const workerProxyCooldowns = new ProxyCooldowns();
@@ -148,7 +146,7 @@ export class MetaWebCollector {
     let lastError;
     for (let index = 0; index < routes.length; index++) {
       const proxy = routes[index];
-      if (this.proxyCooldowns.remaining(proxy)) continue;
+      if (await this.proxyCooldowns.remaining(proxy)) continue;
       try {
         for await (const page of this.pagesVia(brand, proxy)) {
           const ads = page.ads.filter(ad => {
@@ -163,11 +161,11 @@ export class MetaWebCollector {
       } catch (error) {
         if (!['META_PROXY_UNAVAILABLE', 'META_RATE_LIMITED'].includes(error.message)) throw error;
         lastError = error;
-        if (error.message === 'META_RATE_LIMITED') this.proxyCooldowns.block(proxy, this.cooldownMs);
+        if (error.message === 'META_RATE_LIMITED') await this.proxyCooldowns.block(proxy, error.retryAfterMs || this.cooldownMs);
         if (index < routes.length - 1) console.warn('[ad-library] retrying configured route', error.message, index + 2);
       }
     }
-    const remaining = routes.map(proxy => this.proxyCooldowns.remaining(proxy)).filter(ms => ms > 0);
+    const remaining = (await Promise.all(routes.map(proxy => this.proxyCooldowns.remaining(proxy)))).filter(ms => ms > 0);
     if (remaining.length) throw metaRateLimitError(Math.min(...remaining));
     throw lastError || new Error('META_PROXY_UNAVAILABLE');
   }
@@ -191,10 +189,13 @@ export class MetaWebCollector {
     const batches = [];
     const seen = new Set();
     let failure = null, pageCount = 0, hasNext = true;
+    let verifiedOrder = false;
+    const orderedAds = new Map();
     let progressAt = Date.now();
     const startedAt = progressAt;
-    const ingest = body => {
+    const ingest = (body, requestOrder = false) => {
       for (const batch of parseWebResponse(body, brand.meta_page_id)) {
+        if (requestOrder) verifiedOrder = true;
         const identity = hash([batch.cursor, batch.hasNext, batch.ads.map(ad => ad.source_ad_id)]);
         if (seen.has(identity)) continue;
         seen.add(identity);
@@ -216,8 +217,11 @@ export class MetaWebCollector {
       page.on('response', response => {
         if (!new URL(response.url()).pathname.startsWith('/api/graphql')) return;
         const task = (async () => {
-          if (response.status() === 429) { failure = new Error('META_RATE_LIMITED'); return; }
-          try { ingest(await response.text()); }
+          if (response.status() === 429) {
+            failure = metaRateLimitError(retryAfterMs(response.headers?.()['retry-after']) || this.cooldownMs);
+            return;
+          }
+          try { ingest(await response.text(), verifiedImpressionOrder(response.request?.().postData?.())); }
           catch (error) { if (error.message?.startsWith('META_')) failure = error; }
         })();
         pending.add(task);
@@ -225,10 +229,12 @@ export class MetaWebCollector {
       });
       const url = new URL('https://www.facebook.com/ads/library/');
       Object.entries({ active_status: brand.last_complete_scan_at ? 'active' : 'all', ad_type: 'all', country: brand.country || 'ALL', search_type: 'page', view_all_page_id: brand.meta_page_id }).forEach(([key, value]) => url.searchParams.set(key, value));
+      url.searchParams.set('sort_data[direction]', 'desc');
+      url.searchParams.set('sort_data[mode]', 'total_impressions');
       const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 45_000 }).catch(error => {
         throw PROXY_FAILURE.test(error.message || '') ? new Error('META_PROXY_UNAVAILABLE', { cause: error }) : error;
       });
-      if (response?.status() === 429) throw new Error('META_RATE_LIMITED');
+      if (response?.status() === 429) throw metaRateLimitError(retryAfterMs(response.headers?.()['retry-after']) || this.cooldownMs);
       const readScripts = async () => {
         try { for (const body of await page.locator('script[type="application/json"]').allTextContents()) ingest(body); }
         catch (error) { if (!error.message?.includes('Execution context was destroyed')) throw error; }
@@ -241,13 +247,27 @@ export class MetaWebCollector {
           if (++pageCount > this.maxPages) throw new Error('META_PAGE_LIMIT');
           const batch = batches.shift();
           hasNext = batch.hasNext;
+          const groups = new Map(), batchIds = new Set();
+          for (const ad of batch.ads) if (!orderedAds.has(ad.source_ad_id) && !batchIds.has(ad.source_ad_id)) {
+            batchIds.add(ad.source_ad_id);
+            if (!groups.has(ad.source_order_group)) groups.set(ad.source_order_group, []);
+            groups.get(ad.source_order_group).push(ad);
+          }
+          for (const group of groups.values()) {
+            const rank = orderedAds.size + (group.length + 1) / 2;
+            for (const ad of group) orderedAds.set(ad.source_ad_id, { id: ad.source_ad_id, rank, startedAt: ad.source_start_at });
+          }
           yield { ads: batch.ads, page: pageCount };
           progressAt = Date.now();
         }
         if (pageCount && !hasNext) {
           await Promise.all(pending);
           if (failure) throw failure;
-          if (!batches.length) return;
+          if (!batches.length) {
+            const complete = completedCollection(brand, 'meta_web');
+            if (verifiedOrder) complete.completion.ranking = { ordering: 'total_impressions_desc_request', entries: [...orderedAds.values()] };
+            yield complete; return;
+          }
           continue;
         }
         if (Date.now() - startedAt > this.maxDurationMs) throw new Error('META_CRAWL_TIMEOUT');
@@ -259,8 +279,8 @@ export class MetaWebCollector {
       }
     } finally {
       await Promise.allSettled([context?.close()]);
-      await Promise.allSettled([browser.close(), ...pending]);
-      await bridge?.close();
+      try { await browser.close(); }
+      finally { await Promise.allSettled(pending); await bridge?.close(); }
     }
   }
 }

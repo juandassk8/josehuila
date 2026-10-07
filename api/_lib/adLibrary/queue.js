@@ -1,7 +1,19 @@
 import { Queue } from 'bullmq';
+import Redis from 'ioredis';
 
 let queue;
 let mediaQueue;
+let commandConnection;
+
+// BullMQ 6 exposes a backend, not a raw queue.client/worker.client. Application
+// keys (heartbeats, connection checks, cooldowns) use our explicit Redis client.
+export function commandsRedis() {
+  if (!commandConnection) {
+    commandConnection = new Redis({ ...redisConnection({ producer: true }), commandTimeout: 5000 });
+    commandConnection.on('error', () => {}); // Callers return sanitized availability states.
+  }
+  return commandConnection;
+}
 
 export function redisConnection({ producer = false } = {}) {
   const raw = process.env.ADLIB_REDIS_URL;

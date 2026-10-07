@@ -1,0 +1,25 @@
+[
+  {
+    "date": "2026-10-06",
+    "macrostructure": "administration workbench with integrated full-height side rail",
+    "theme": "studied-DNA (source: supplied Inforce kit; user refinement)",
+    "enrichment": "none",
+    "brief": "Mismo lateral integrado en administración, ocho opciones del sistema y sin navegación de empresa."
+  },
+  {
+    "date": "2026-10-06",
+    "macrostructure": "workbench with integrated full-height side rail",
+    "theme": "studied-DNA (source: NUEVA INTERFAZ/kit-diseno; user refinement)",
+    "enrichment": "none",
+    "brief": "Usuario pide integrar barra lateral sin márgenes exteriores ni apariencia flotante; conservar móvil y backend."
+  },
+  {
+    "date": "2026-10-06",
+    "macrostructure": "workbench with floating side rail and split studio auth",
+    "theme": "studied-DNA (source: NUEVA INTERFAZ/kit-diseno)",
+    "enrichment": "none",
+    "brief": "Nueva experiencia Inforce en /nueva con backend existente, Universo de marca y Biblioteca; administración separada.",
+    "critique": "P5 H4 E4 S5 R4 V4",
+    "review": "Referencia del usuario prioritaria. Contraste, foco, móvil, copy y ausencia de métricas inventadas revisados. Tarjetas de biblioteca preservan su funcionalidad existente."
+  }
+]

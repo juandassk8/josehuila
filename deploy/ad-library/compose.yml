@@ -1,5 +1,27 @@
 name: inforce-ad-library
 services:
+  # Optional Linux VPS sidecar. No public port, database or storage access.
+  scrapling:
+    profiles: [scrapling]
+    image: inforce-scrapling:0.4.15
+    build:
+      context: ../..
+      dockerfile: deploy/ad-library/Dockerfile.scrapling
+    network_mode: host
+    env_file:
+      - ${INFORCE_SCRAPLING_ENV:-/etc/inforce/scrapling.env}
+    restart: unless-stopped
+    init: true
+    mem_limit: ${ADLIB_SCRAPLING_MEMORY_LIMIT:-4g}
+    shm_size: 256m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3081/health', timeout=2)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
   redis:
     image: redis:7-alpine
     command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
@@ -37,7 +59,7 @@ services:
     command: ["node", "services/ad-library/worker.mjs"]
 
   media-worker:
-    image: inforce-ad-library:${ADLIB_IMAGE_TAG:-local}
+    image: inforce-ad-library:${ADLIB_MEDIA_IMAGE_TAG:-${ADLIB_IMAGE_TAG:-local}}
     network_mode: host
     env_file:
       - ${INFORCE_API_ENV:-/etc/inforce/api.env}

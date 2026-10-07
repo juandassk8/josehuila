@@ -3,11 +3,11 @@ import { collectionCopy, collectionNotice, collectionRevision } from './collecti
 
 describe('collection messaging', () => {
   it('does not promise immediate content when a follow failed to enqueue', () => {
-    expect(collectionNotice({ queued: false }, true)).toContain('No se pudo poner la consulta en cola');
+    expect(collectionNotice({ queued: false }, true)).toContain('seguimiento quedó guardado');
     expect(collectionNotice({ queued: false, cached: true }, true)).toContain('biblioteca ya está disponible');
   });
   it('explains shared source waiting without promising a completion time', () => {
-    expect(collectionCopy({ phase: 'rate_limited', retryAt: '2026-09-26T07:22:25Z' }).description).toContain('Esa hora no garantiza');
+    expect(collectionCopy({ phase: 'rate_limited', retryAt: '2026-09-26T07:22:25Z' }).description).toContain('en segundo plano');
     expect(collectionCopy({ phase: 'running', progress: { adsSeen: 29 } }).description).toContain('29 anuncios recibidos');
   });
   it('refreshes on progress or completion but preserves pagination across idle polls', () => {

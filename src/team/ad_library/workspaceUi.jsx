@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { date, number, request, safeHref, formatName, statusName } from './workspaceHelpers.js';
+import { PageAvatar } from './PageAvatar.jsx';
 
 const paths = {
   grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
@@ -33,9 +34,9 @@ export function Creative({ ad, compact = false }) {
   </>;
 }
 
-export function AdCard({ ad, onOpen, onSave, saving, rank }) {
+export function AdCard({ ad, pageId, onOpen, onSave, saving, rank }) {
   return <article className="adlib-ad">
-    <header className="adlib-ad-top"><span className="adlib-avatar" aria-hidden="true">{(ad.page_name || 'M').slice(0, 1)}</span>
+    <header className="adlib-ad-top"><PageAvatar pageId={pageId} name={ad.page_name} />
       <strong title={ad.page_name}>{ad.page_name || 'Anunciante'}</strong>
       <button className={`adlib-icon ${ad.saved ? 'selected' : ''}`} disabled={saving} onClick={() => onSave(ad)} aria-label={ad.saved ? 'Quitar de mis guardados' : 'Guardar anuncio'} aria-pressed={!!ad.saved}><Icon name="save" /></button></header>
     <div className="adlib-ad-status"><span className={`adlib-dot ${ad.status}`} />{statusName(ad.status)}<span>{number(ad.running_days)} d{!ad.source_start_at ? ' observados' : ''}</span></div>
@@ -46,7 +47,7 @@ export function AdCard({ ad, onOpen, onSave, saving, rank }) {
   </article>;
 }
 
-export function AdDetail({ ad, companyId, onClose, onSave, saving }) {
+export function AdDetail({ ad, pageId, companyId, onClose, onSave, saving }) {
   const dialog = useRef(null);
   const [history, setHistory] = useState(null), [error, setError] = useState('');
   useEffect(() => {
@@ -64,7 +65,7 @@ export function AdDetail({ ad, companyId, onClose, onSave, saving }) {
     return () => { cancelled = true; };
   }, [ad.id, companyId]);
   return <dialog className="adlib-dialog" ref={dialog} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }} aria-labelledby="adlib-detail-title">
-    <div className="adlib-dialog-header"><div><p className="adlib-eyebrow">Detalle del anuncio</p><h2 id="adlib-detail-title">{ad.page_name || 'Anunciante'}</h2></div><button autoFocus className="adlib-icon" onClick={onClose} aria-label="Cerrar detalle"><Icon name="close" /></button></div>
+    <div className="adlib-dialog-header"><div><p className="adlib-eyebrow">Detalle del anuncio</p><div className="adlib-detail-brand"><PageAvatar pageId={pageId} name={ad.page_name} large /><h2 id="adlib-detail-title">{ad.page_name || 'Anunciante'}</h2></div></div><button autoFocus className="adlib-icon" onClick={onClose} aria-label="Cerrar detalle"><Icon name="close" /></button></div>
     <div className="adlib-detail-grid"><div><Creative ad={ad} /></div><div className="adlib-detail-copy">
       <div className="adlib-detail-status"><span className={`adlib-dot ${ad.status}`} />{statusName(ad.status)} · {number(ad.running_days)} días{!ad.source_start_at ? ' observados' : ''}</div>
       <h3>{ad.title || 'Copy del anuncio'}</h3><p className="adlib-full-copy">{ad.body || ad.caption || 'Sin texto disponible'}</p>
@@ -90,7 +91,7 @@ export function Overview({ insights, onGroup, onTab }) {
       <div className="adlib-format-list">{insights.formats.map((format, i) => <div key={format.name}><span className={`adlib-swatch tone-${i % 4}`} />{formatName(format.name)}<strong>{number(format.total)}</strong><span>{total ? Math.round(format.total / total * 100) : 0}%</span></div>)}</div>
       {!total && <p className="adlib-caption">Todavía no hay datos para estos filtros.</p>}
     </section>
-    <section><div className="adlib-panel-heading"><h3>Destinos más usados</h3><Icon name="link" /></div><div className="adlib-top-list">{insights.destinations.slice(0, 4).map(item => <button key={item.value} onClick={() => onGroup('landing', item)} title={item.value}><span>{item.value.replace(/^https?:\/\//, '')}</span><strong>{number(item.total)}</strong></button>)}{!insights.destinations.length && <p className="adlib-caption">Sin páginas de destino disponibles.</p>}</div><button className="adlib-text-button" onClick={() => onTab('destinations')}>Explorar destinos <Icon name="arrow" /></button></section>
+    <section><div className="adlib-panel-heading"><h3>Destinos más usados</h3><Icon name="link" /></div><div className="adlib-top-list">{insights.destinations.slice(0, 4).map(item => <button key={item.value} onClick={() => onGroup('landing', item)} title={item.value}><span>{item.value.replace(/^https?:\/\//, '')}{!!item.fanpages?.length && <small className="adlib-destination-names">{item.fanpages.map(page => page.name).join(' · ')}</small>}</span><strong>{number(item.total)}</strong></button>)}{!insights.destinations.length && <p className="adlib-caption">Sin páginas de destino disponibles.</p>}</div><button className="adlib-text-button" onClick={() => onTab('destinations')}>Explorar destinos <Icon name="arrow" /></button></section>
     <section><div className="adlib-panel-heading"><h3>Aperturas con más duración</h3><Icon name="hook" /></div><div className="adlib-top-list hooks">{insights.hooks.slice(0, 3).map(item => <button key={item.value} onClick={() => onGroup('hook', item)}><span>{item.value}</span><strong>{number(item.days)} d</strong></button>)}{!insights.hooks.length && <p className="adlib-caption">Sin copy disponible.</p>}</div><button className="adlib-text-button" onClick={() => onTab('hooks')}>Explorar ganchos del copy <Icon name="arrow" /></button></section>
   </div>;
 }

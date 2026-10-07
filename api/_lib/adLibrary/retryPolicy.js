@@ -17,3 +17,10 @@ export function metaRateLimitError(retryAfterMs) {
   error.retryAfterMs = rateLimitDelayMs({ retryAfterMs });
   return error;
 }
+
+// HTTP Retry-After can be seconds or a date. Invalid/past values use our default.
+export function retryAfterMs(value, now = Date.now()) {
+  if (typeof value !== 'string' || !value.trim()) return undefined;
+  const ms = /^\d+(\.\d+)?$/.test(value.trim()) ? Number(value) * 1000 : Date.parse(value) - now;
+  return Number.isFinite(ms) && ms > 0 && ms < 8.64e15 - now ? Math.ceil(ms) : undefined;
+}

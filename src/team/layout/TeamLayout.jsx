@@ -6,10 +6,11 @@ import { Sidebar } from "./Sidebar.jsx";
 export function TeamLayout({ member, members, currentView, onNavigate, spaces, currentSpaceId, onSelectSpace, onSignOut, onCreateSpace, onEditSpace, onArchiveSpace, onDeleteSpace, children }) {
   const { isDark } = useTheme();
   const [libraryNav, setLibraryNav] = useState(false);
+  const operations = currentView === "administracion";
 
   return (
     <div
-      className={currentView === "adlibrary" ? `team-layout-adlibrary${libraryNav ? " nav-open" : ""}` : undefined}
+      className={operations ? `team-layout-operations${libraryNav ? " nav-open" : ""}` : currentView === "adlibrary" ? `team-layout-adlibrary${libraryNav ? " nav-open" : ""}` : undefined}
       style={{
         background: DS.bg,
         minHeight: "100vh",
@@ -19,7 +20,7 @@ export function TeamLayout({ member, members, currentView, onNavigate, spaces, c
         alignItems: "flex-start",
       }}
     >
-      {currentView === "adlibrary" && <button className="adlib-mobile-navigation" aria-expanded={libraryNav} onClick={() => setLibraryNav(value => !value)} style={{ color: DS.textPrimary, background: DS.bgSide, border: DS.border }}>
+      {(operations || currentView === "adlibrary") && <button className={operations ? "ops-mobile-navigation" : "adlib-mobile-navigation"} aria-expanded={libraryNav} onClick={() => setLibraryNav(value => !value)} style={{ color: DS.textPrimary, background: DS.bgSide, border: DS.border }}>
         {libraryNav ? "Cerrar menú de Inforce" : "Menú de Inforce"}
       </button>}
       <Sidebar

@@ -1,0 +1,41 @@
+@font-face { font-family: 'Sora'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/nueva/sora-400.ttf') format('truetype'); }
+@font-face { font-family: 'Sora'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/nueva/sora-500.ttf') format('truetype'); }
+@font-face { font-family: 'Sora'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/nueva/sora-600.ttf') format('truetype'); }
+@font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/nueva/dm-mono-400.ttf') format('truetype'); }
+@font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/nueva/dm-mono-500.ttf') format('truetype'); }
+
+/* Source: NUEVA INTERFAZ/kit-diseno/tokens.css. Scoped to the new frontend. */
+.nf-app {
+  --bg-void: #03050A; --bg-night: #070B14; --bg-graphite: #0D1322;
+  --blue-pulse: #1F6BFF; --blue-ion: #4DA3FF; --blue-ice: #A9D4FF; --blue-deep: #1450C8;
+  --action-from: #2A66E8; --action-to: #1443B8;
+  --text-1: #F3F6FB; --text-2: #A3AEC2; --text-3: #8995AA; --text-on-action: #FFFFFF;
+  --success: #3DDC97; --warning: #FFB547; --danger: #FF5D6E;
+  --line-1: rgba(255,255,255,.06); --line-2: rgba(255,255,255,.10); --line-3: rgba(255,255,255,.16);
+  --glass-1-bg: rgba(255,255,255,.03); --glass-1-border: rgba(255,255,255,.07); --glass-1-blur: 12px;
+  --glass-2-bg: linear-gradient(160deg, rgba(255,255,255,.09), rgba(255,255,255,.02) 60%);
+  --glass-2-border: rgba(255,255,255,.11); --glass-2-blur: 24px; --glass-2-highlight: inset 0 1px 0 rgba(255,255,255,.16);
+  --glass-3-bg: linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.03) 60%);
+  --glass-3-border: rgba(255,255,255,.16); --glass-3-blur: 40px;
+  --glass-3-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 40px 80px rgba(0,0,0,.6);
+  --neon-base: inset 0 -36px 50px -30px rgba(77,163,255,.6), inset 0 1px 0 rgba(255,255,255,.16), 0 24px 60px -16px rgba(31,107,255,.18);
+  --neon-focus: 0 0 0 3px rgba(77,163,255,.16), 0 0 20px rgba(77,163,255,.3);
+  --neon-action: inset 0 1px 0 rgba(255,255,255,.22), 0 10px 28px -10px rgba(20,67,184,.9);
+  --halo: radial-gradient(ellipse, rgba(31,107,255,.22), rgba(31,107,255,0) 65%);
+  --halo-soft: radial-gradient(ellipse, rgba(77,163,255,.09), rgba(77,163,255,0) 65%);
+  --selected-bg: rgba(77,163,255,.10); --selected-border: rgba(77,163,255,.25);
+  --error-bg: rgba(255,93,110,.07); --error-border: rgba(255,93,110,.25);
+  --overlay: rgba(3,5,10,.8); --surface-dialog: #101724;
+  --font-sans: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px; --s-16: 64px;
+  --r-sm: 8px; --r-nav: 12px; --r-input: 14px; --r-card-sm: 20px; --r-card: 24px; --r-hero: 32px; --r-pill: 999px;
+  --ease: cubic-bezier(.2,.8,.2,1); --dur-fast: 120ms; --dur: 200ms; --dur-slow: 320ms;
+  --h-control: 44px; --h-input-lg: 52px;
+  /* Existing administration components keep their contracts and use these aliases. */
+  --ink: var(--text-1); --ink-2: var(--text-2); --ink-3: var(--text-3); --ink-4: var(--text-3);
+  --blue: var(--blue-ion); --sel: var(--blue-ion); --green: var(--success); --amber: var(--warning);
+  --brand: var(--danger); --brand-soft: var(--error-bg); --surface: var(--glass-1-bg);
+  --surface-solid: var(--bg-graphite); --surface-2: var(--glass-1-bg); --raised: var(--bg-graphite);
+  --line: var(--line-2); --hover: var(--glass-1-bg); --sel-soft: var(--selected-bg); --bg: var(--bg-void);
+}

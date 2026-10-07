@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile, readFile, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { digest, randomToken, equal, signToken, verifyToken, hashPassword, checkPassword } from './security.mjs';
+import { createCompanyAssetHandler, authorizeCompanyAsset } from './company-assets.mjs';
 
 const { Pool } = pg;
 const fail = (status, message) => { throw Object.assign(new Error(message), { status }); };
@@ -170,6 +171,7 @@ export function createBackend() {
     const prefix = isPublic ? '/backend/storage/v1/object/public/' : '/backend/storage/v1/object/';
     const [bucket, ...parts] = url.pathname.slice(prefix.length).split('/').map(decodeURIComponent);
     const name = parts.join('/');
+    if (bucket === 'company-assets') return companyAsset(req, res, name, isPublic);
     if (!['despliegue-examples', 'feedback-images', 'tutorials', 'content-screenshots'].includes(bucket)) fail(404, 'Carpeta no encontrada');
     if (isPublic && (req.method === 'GET' || req.method === 'HEAD')) {
       // Las portadas y tutoriales se comparten fuera de la app. Capturas de
@@ -214,6 +216,11 @@ export function createBackend() {
     }
     fail(405, 'Método no permitido');
   }
+  const companyAsset = createCompanyAssetHandler({ pool, filesRoot, userFor, sessionFromCookie, bodyBytes,
+    authorize: (companyId, actor, write) => authorizeCompanyAsset(companyId, actor, write, {
+      sign: user => signToken({ sub: user.id, email: user.email, role: 'authenticated' }, secret, 60),
+    }),
+  });
   const subscribers = new Set();
   let listener;
   let retryTimer;

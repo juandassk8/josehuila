@@ -57,8 +57,9 @@ seis horas tras un límite de Meta:
    empieza de nuevo y deduplica por anuncio/versión antes de guardar. Un recorrido
    se declara completo únicamente si una salida termina la paginación.
 3. El worker recuerda temporalmente qué proxy recibió el límite y lo omite en
-   las siguientes marcas hasta que venza su pausa. Este estado vive en memoria
-   del worker; la pausa global al agotar las salidas se conserva en Redis.
+   las siguientes marcas hasta que venza su pausa. En la versión del 26/09 ese
+   estado era local al proceso; la etapa del 28/09 descrita abajo lo conserva en
+   Redis y lo comparte con Scrapling. La pausa global también permanece en Redis.
 4. Si ambas salidas están limitadas, el job conserva su lugar y reintenta cuando
    venza el intervalo restante. `ADLIB_RATE_LIMIT_COOLDOWN_SECONDS` acepta de 60 a
    3600 segundos; valores ausentes o inválidos usan 900. El próximo intento de la
@@ -125,3 +126,144 @@ La imagen instala Google Chrome estable mediante el CLI de Playwright y seleccio
 `scripts/ad-library-browser-smoke.mjs` comprueba lanzamiento, DOM y JavaScript sin red externa. Su éxito solo verifica compatibilidad del navegador, no acceso a Meta. El cambio de navegador no elimina el límite global ni demuestra que el navegador anterior causara la restricción. Mantener el período de espera y evaluar el resultado de la siguiente consulta ordinaria.
 
 Activación verificada el 25/26 de septiembre de 2026: imagen `inforce-ad-library:chrome-stable`, Chrome `154.0.8037.57`, canal `chrome`. Se recreó solo `worker`; Redis, scheduler y medios continuaron en sus contenedores. La etiqueta se fija en `deploy/ad-library/.env` del VPS (`ADLIB_IMAGE_TAG=chrome-stable`, sin secretos); los comandos operativos pueden especificar `docker compose --env-file deploy/ad-library/.env -f deploy/ad-library/compose.yml …`. La imagen previa se conserva con etiqueta `before-chrome` para reversión. La prueba offline pasó y la cola conservó sus dos jobs esperando con el TTL de Meta vigente.
+
+## Etapa local del 28/09: coordinador y Scrapling opcional
+
+Código preparado el 28/09 y **desplegado el 29/09**, con piloto desde el VPS.
+`ADLIB_SCRAPLING_ENABLED=false` es el valor predeterminado. No se conectan todavía
+ScrapeGraphAI ni Foreplay y no se consumen sus créditos.
+
+El worker exige ahora un evento terminal con motor, página de Meta, país, filtro
+de actividad y evidencia `pagination_end`. Un generador vacío o que termine sin
+ese evento falla como `COLLECTION_INCOMPLETE`. La prueba se publica después de
+cerrar el intento; solo entonces se concilian ausencias. Los anuncios válidos de
+una consulta parcial se conservan. La importación de capturas existente emite su
+propia evidencia `stored_capture`; esto no implementa el histórico de Foreplay.
+
+El coordinador mantiene `meta_web` como identidad del catálogo aunque un intento
+lo ejecute Scrapling. Deduplica anuncios/versión/estado entre intentos. Se puede
+pasar al respaldo una vez si faltan datos de búsqueda, se estanca la paginación,
+vence el tiempo de consulta o falta evidencia terminal. Un límite de Meta,
+necesidad de login, cambio de esquema, proxy agotado o fallo de infraestructura
+detiene esa secuencia. Cada motor conserva el máximo de 500 páginas y 15 minutos
+por ruta; como hay hasta dos rutas por motor, el trabajo completo puede durar más.
+BullMQ mantiene sus reintentos ordinarios; Scrapling no añade reintentos internos.
+
+Las pausas de rutas se guardan en Redis mediante claves SHA-256 del servidor y
+usuario del proxy, sin credenciales legibles. Los motores comparten el tiempo
+restante y un reinicio no lo elimina. HTTP `Retry-After` válido prevalece sobre
+la pausa configurable, incluso si pide más de una hora. La configuración de
+15 minutos se utiliza cuando la fuente no proporciona ese plazo. Se mantiene
+la frecuencia de consultas exitosas de 6/24 horas.
+
+`services/scrapling` usa Python y Scrapling 0.4.15 con Patchright 1.62.1. Abre un
+contexto nuevo por consulta; captura JSON inicial y respuestas GraphQL posteriores
+al scroll. Node reutiliza el normalizador existente y verifica la página de Meta
+y el final de paginación. El servicio solo escucha en `127.0.0.1:3081`, requiere
+token y permite una consulta a la vez. No recibe credenciales de DB ni storage.
+No acepta URLs de destino arbitrarias: Node envía ID de página, filtros, límites
+y el proxy explícito. Los medios siguen en su cola independiente.
+Si Node desconecta la consulta, el servicio cancela la captura y espera su
+limpieza antes de liberar el turno para otra consulta.
+
+### Preparación del piloto en Linux
+
+1. Respaldar y aplicar `db/ad_library_collectors.sql` **antes de iniciar el nuevo
+   worker**, incluso si Scrapling queda desactivado. El migrador existente descubre
+   este archivo automáticamente. Refrescar el esquema de PostgREST. Añade
+   `collector_attempts`, `collector_engine` y `completion_evidence` al registro de
+   corridas; no cambia anuncios existentes.
+2. Instalar el código/imagen nuevos del worker con el respaldo desactivado.
+   Comprobar que la consulta ordinaria registra evidencia terminal y los intentos.
+3. Generar un token privado aleatorio de al menos 32 caracteres. Guardar el mismo
+   `ADLIB_SCRAPLING_TOKEN` en `/etc/inforce/ad-library.env` y en un archivo exclusivo
+   `/etc/inforce/scrapling.env` con permisos 600. Este último contiene **solo ese
+   token**; no reutilizar el archivo con claves de DB, R2 o de otros servicios.
+4. Revisar RAM disponible y mantener **una sola instancia del worker de crawls**,
+   con `ADLIB_WORKER_CONCURRENCY=1`. El arranque rechaza otra concurrencia cuando
+   Scrapling está habilitado. El máximo del sidecar es 4 GiB; no reserva esa RAM.
+   El coordinador cierra el navegador anterior antes de iniciar otro motor.
+5. Construir/iniciar solo el sidecar opcional:
+
+   ```sh
+   docker compose -f deploy/ad-library/compose.yml --profile scrapling up -d --build scrapling
+   ```
+
+   No exponer el puerto 3081 en nginx ni en el firewall. El perfil está pensado
+   para la red host del VPS Linux. Verificar salud y ejecutar primero la prueba
+   offline de navegador dentro de esa imagen, montando `test_capture.py` en `/app`.
+6. Para un piloto acotado, configurar `ADLIB_SCRAPLING_ENABLED=true` y
+   `ADLIB_SCRAPLING_URL=http://127.0.0.1:3081` en el archivo privado del worker y
+   recrear solo ese worker. Comprobar una marca pequeña y otra paginada mediante
+   un entorno de prueba aislado. No provocar límites reales de Meta para activar
+   el respaldo. Comparar IDs, medios, páginas, duración, memoria y evidencia final.
+
+Reversión del respaldo: poner `ADLIB_SCRAPLING_ENABLED=false`, recrear el worker
+y detener el sidecar cuando no tenga una consulta en curso. Conservar las nuevas
+columnas y el registro de corridas; son compatibles con la versión anterior.
+No borrar datos ni las pausas de Redis.
+
+### Pruebas locales de esta etapa
+
+```sh
+npx vitest run api/_lib/adLibrary services/ad-library/worker.test.js
+python -m unittest discover -s services/scrapling -v
+SCRAPLING_BROWSER_TEST=1 python -m unittest discover -s services/scrapling -v
+```
+
+La última prueba requiere instalar `services/scrapling/requirements.txt` en un
+entorno aislado y `python -m patchright install chromium`. Toda la navegación
+de esa prueba se intercepta con datos sintéticos; no consulta Meta. En Windows
+puede usarse `SCRAPLING_TEST_CHROME=1` para probar con el Chrome ya instalado.
+Se comprobó lectura inicial + GraphQL tras scroll con Chrome en Windows. El
+Chromium descargado no arrancó por una dependencia de Windows (`WinError 14001`);
+no se modificó el sistema para resolverla. Docker no estaba iniciado localmente:
+la construcción y el navegador del contenedor Linux quedan para el piloto.
+
+El éxito de estas pruebas acredita transporte, validación y recuperación local;
+no demuestra cobertura ni acceso sostenido a Meta. Los límites de autorización,
+presupuesto y cobertura de los proveedores pagos siguen pendientes del piloto.
+
+Verificación de esta entrega: 834 pruebas Vitest y 8 pruebas Node del servidor
+aprobadas; 90 pruebas focales repetidas tras el ajuste final de cierre. Siete
+pruebas Python sin navegador y la prueba con Chrome real aprobadas. También pasó
+el smoke existente de cambio de proxy con dos navegadores y respuestas sintéticas.
+Lint completo sin errores (492 advertencias existentes), lint de los JS nuevos
+y modificados sin errores, build aprobado y Compose validado con el perfil
+opcional. Hubo un timeout inicial en una prueba de OAuth al ejecutar varias
+verificaciones a la vez; pasó aislada y en la repetición completa, sin modificarla.
+
+### Activación y piloto en VPS del 29/09/2026
+
+Activa: `/opt/inforce/releases/20260929-scrapling`. Worker
+`inforce-ad-library:scrapling-coordinator` (`f9baab422279`), sidecar
+`inforce-scrapling:0.4.15` (`a987a94950bb`). Scrapling está habilitado como respaldo
+para los fallos recuperables definidos arriba; la ruta principal sigue siendo
+`meta_web`. Una instancia del worker, concurrencia 1 y límite 4 GiB por motor.
+Scheduler, Redis y media-worker conservaron sus contenedores.
+
+La versión parte de `4d482b1` más los cambios locales de CODEX-010, **sin un nuevo
+commit Git**. `PATCH_MANIFEST.json` y `SOURCE_MANIFEST.json` identifican el contenido
+desplegado. No asumir que `origin/main` ya contiene esta entrega.
+Respaldo: `/var/backups/inforce/scrapling-20260929T153612Z`, con dump y configuración.
+La migración `ad_library_collectors.sql` fue aplicada y registrada; el backend
+verificó acceso a las columnas nuevas antes de reanudar la cola.
+
+Las ocho pruebas Python, incluido Chromium real y scroll, pasaron en Linux
+`--network none`. También pasó el smoke del worker con dos navegadores y 429
+sintético. El piloto real de Scrapling usó los proxies configurados y no escribió
+en el catálogo: ProdentaCol 9 anuncios/1 página/8,7 s; Bonapet 42 anuncios/3 páginas/
+15,3 s. Todos tenían medios identificados; el piloto no descargó ni archivó esos
+medios. Los 42 de Bonapet coinciden con los activos del catálogo, que conserva 71
+registros históricos en total. No implica cobertura histórica completa.
+
+Una consulta ordinaria por la cola, ya con el worker nuevo, terminó ProdentaCol
+con 9 anuncios y `collector_engine=meta_web` a las 15:39:22 UTC. Guardó los intentos
+y la evidencia terminal; esta consulta sí actualizó el catálogo mediante el flujo
+normal. Salud pública 200, MCP 401 esperado sin credenciales y cola reanudada con
+un worker, sin TTL ni trabajos pendientes al terminar la verificación.
+
+La etapa siguiente tiene un [cliente y piloto de ScrapeGraphAI](../../docs/ad-library-scrapegraph-pilot.md)
+preparados **localmente**, con presupuesto persistente y validación de evidencia.
+El usuario confirmó que todavía no tiene clave. No está incluido como respaldo
+automático ni se ejecutaron llamadas de pago. Foreplay sigue pendiente.

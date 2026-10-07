@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { serviceClient } from '../api/_lib/auth.js';
 import { crawlBrand } from '../services/ad-library/worker.mjs';
+import { completedCollection } from '../api/_lib/adLibrary/collectorContract.js';
 
 const [path, companyId] = process.argv.slice(2);
 assert.ok(path && companyId, 'Usage: node scripts/ad-library-import-capture.mjs CAPTURE_JSON COMPANY_ID');
@@ -27,8 +28,9 @@ const brand = data(await client.from('ad_library_brands').select('*').eq('source
 assert.ok(!brand.last_complete_scan_at || Date.parse(brand.last_complete_scan_at) <= Date.parse(capture.observedAt), 'Capture is older than the saved collection');
 data(await client.from('ad_library_follows').upsert({ company_id: companyId, brand_id: brand.id, active: true }, { onConflict: 'company_id,brand_id' }));
 const result = await crawlBrand(brand.id, { client, observedAt: capture.observedAt, collectionMethod: 'stored_capture',
-  collectorFactory: () => ({ async *pages() {
+  collectorFactory: () => ({ async *pages(selectedBrand) {
     for (let offset = 0; offset < capture.ads.length; offset += 20) yield { ads: capture.ads.slice(offset, offset + 20) };
+    yield completedCollection(selectedBrand, 'stored_capture', 'stored_capture');
   } }),
 });
 data(await client.from('ad_library_brands').update({ next_crawl_at: new Date(Date.now() + 6 * 3600_000).toISOString() }).eq('id', brand.id));

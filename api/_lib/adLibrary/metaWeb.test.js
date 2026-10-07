@@ -7,6 +7,29 @@ const raw = () => ({ ad_archive_id: '2348098406020535', page_id: '64675158851271
 const payload = (ad, next = false) => ({ data: { ad_library_main: { search_results_connection: { edges: [{ node: { collated_results: [ad] } }], page_info: { has_next_page: next, end_cursor: 'cursor' } } } } });
 
 describe('public Meta page normalization', () => {
+  it('preserves actual carousel destinations without treating titles or unsafe URLs as evidence', () => {
+    const ad = raw();
+    ad.snapshot.cards = [
+      { title: 'brand.net', link_url: 'https://l.facebook.com/l.php?u=https%3A%2F%2Fbrand.com%2Fproduct' },
+      { title: 'Second store', link_url: 'https://brand.net/product' },
+      { title: 'guessed.com' }, { link_url: 'javascript:alert(1)' },
+    ];
+    const normalized = normalizeMetaWebAd(ad, ad.page_id);
+    expect(normalized.version.cards.map(card => card.landing_url)).toEqual([
+      'https://brand.com/product', 'https://brand.net/product', undefined, null,
+    ]);
+    ad.snapshot.cards[1].link_url = 'https://brand.org/product';
+    expect(normalizeMetaWebAd(ad, ad.page_id).content_hash).not.toBe(normalized.content_hash);
+  });
+  it('preserves Meta edge and variant order, retaining groups instead of reversing the ranking', () => {
+    const input = payload(raw());
+    input.data.ad_library_main.search_results_connection.edges = [
+      { node: { collated_results: [{ ...raw(), ad_archive_id: '111111' }, { ...raw(), ad_archive_id: '222222' }] } },
+      { node: { collated_results: [{ ...raw(), ad_archive_id: '333333' }] } },
+    ];
+    const ads = parseWebResponse(JSON.stringify(input), raw().page_id)[0].ads;
+    expect(ads.map(ad => [ad.source_ad_id, ad.source_order_group])).toEqual([['111111', 0], ['222222', 0], ['333333', 1]]);
+  });
   it('keeps active ads active despite the moving end_date and does not version rotating CDN signatures', () => {
     const first = normalizeMetaWebAd(raw(), '646751588512715');
     const changed = raw();
@@ -106,6 +129,12 @@ describe('backup proxy', () => {
     });
     expect(await collect(collector)).toEqual([{ ads: [], page: 1 }]);
     expect(used).toEqual(['http://a.example:1', 'http://b.example:2']);
+  });
+  it('reaches a third configured proxy when the first two cannot connect',async()=>{
+    const proxies=['a','b','c'].map(name=>({server:`http://${name}.example:8000`}));
+    const collector=new MetaWebCollector({proxies,proxyCooldowns:new ProxyCooldowns()}),used=[];
+    collector.pagesVia=async function* (_,proxy){used.push(proxy.server);if(proxy!==proxies[2])throw new Error('META_PROXY_UNAVAILABLE');yield {ads:[],page:1};};
+    expect(await collect(collector)).toEqual([{ads:[],page:1}]);expect(used).toEqual(proxies.map(p=>p.server));
   });
   it('exhausts both configured routes once and reports the remaining pause', async () => {
     const { collector, used } = collectorWith(async function* () { yield* []; throw new Error('META_RATE_LIMITED'); });

@@ -14,7 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 const RESERVED_ZONES = new Set([
   "cliente", "admin", "equipo", "api",
   "signup", "login", "forgot-password", "onboarding", "app", "debug",
-  "brief", "inicio", "creative-connect",
+  "brief", "inicio", "creative-connect", "nueva",
 ]);
 
 // Las public-landing routes no son una "zona" sino páginas standalone. Pero
@@ -31,6 +31,7 @@ export function matchZone(pathname) {
   const parts = (pathname || "/").split("/").filter(Boolean);
   if (parts.length === 0) return { zone: "root", rest: "", segments: [] };
   const first = parts[0].toLowerCase();
+  if (first === "nueva") return { zone: "nueva", rest: parts.slice(1).join("/"), segments: parts.slice(1) };
   if (first === "creative-connect") return { zone: "creative-connect", rest: "", segments: [] };
   if (first === "cliente") return { zone: "client", rest: parts.slice(1).join("/"), segments: parts.slice(1) };
   if (first === "admin") return { zone: "admin", rest: parts.slice(1).join("/"), segments: parts.slice(1) };
